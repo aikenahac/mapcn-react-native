@@ -1,50 +1,52 @@
-# Welcome to your Expo app 👋
+<div align="center">
+  <img src="https://github.com/AnmolSaini16/mapcn/blob/main/public/banner.png?raw=true" alt="mapcn banner" />
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+  <h1>mapcn - react native</h1>
+  <p><strong>Beautiful maps, made simple.</strong></p>
 
-## Get started
+  <p>
+    Free & open source map components. Zero config, one command setup.<br/>
+    Built on <a href="https://maplibre.org/">MapLibre GL</a>, styled with <a href="https://www.nativewind.dev/">Nativewind</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn/ui</a>.
+  </p>
 
-1. Install dependencies
+  <p>
+    <a href="https://mapcn.vercel.app">Get Started</a> •
+    <a href="https://mapcn.vercel.app/docs/installation">Installation</a> •
+    <a href="https://mapcn.vercel.app/docs/basic-map">Examples</a>
+  </p>
+</div>
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## Features
 
-   ```bash
-   npx expo start
-   ```
+- 🎨 **Theme-aware** — Automatically adapts to light/dark mode
+- 🎯 **Zero config** — Works out of the box with sensible defaults
+- 📦 **shadcn/ui compatible** — Uses the same patterns and styling conventions
+- 🗺️ **MapLibre GL powered** — Full access to MapLibre's powerful mapping capabilities
+- 🧩 **Composable** — Build complex map UIs with simple, declarative components
+- 📍 **Markers & Popups** — Rich marker system with popups, tooltips, and labels
+- 🛤️ **Routes** — Draw routes and paths on your maps
+- 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
 
-In the output, you'll find options to open the app in a
+## Basemap Terms of Service
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) which are based on OpenStreetMap data.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
+- **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
+- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider.
 
-## Get a fresh project
+## Contributing
 
-When you're ready, run:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-```bash
-npm run reset-project
-```
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## License
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+MIT License - see the [LICENSE](LICENSE) file for details.
