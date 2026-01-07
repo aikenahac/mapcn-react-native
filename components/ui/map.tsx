@@ -164,27 +164,32 @@ function useMarkerContext() {
 }
 
 type MapMarkerProps = {
-  longitude: number;
-  latitude: number;
-  children: ReactNode;
+  children?: ReactNode;
+  label?: string;
   /** Anchor point for the marker (0.0 to 1.0). Default is center (0.5, 0.5) */
   anchor?: { x: number; y: number };
   /** Allow marker to overlap with other markers */
   allowOverlap?: boolean;
   /** Callback when marker is pressed */
   onPress?: () => void;
-};
+} & (
+  | { coordinate: [number, number]; longitude?: never; latitude?: never }
+  | { longitude: number; latitude: number; coordinate?: never }
+);
 
 function MapMarker({
-  longitude,
-  latitude,
   children,
+  label,
   anchor = { x: 0.5, y: 0.5 },
   allowOverlap = false,
   onPress,
+  ...positionProps
 }: MapMarkerProps) {
   const id = useId();
-  const coordinate: [number, number] = [longitude, latitude];
+
+  const coordinate: [number, number] = 'coordinate' in positionProps && positionProps.coordinate
+    ? positionProps.coordinate
+    : [positionProps.longitude, positionProps.latitude];
 
   return (
     <MarkerContext.Provider value={{ coordinate }}>
@@ -194,7 +199,12 @@ function MapMarker({
         anchor={anchor}
         allowOverlap={allowOverlap}
       >
-        <Pressable onPress={onPress}>{children}</Pressable>
+        <Pressable onPress={onPress}>
+          <View style={markerStyles.content}>
+            {children || <DefaultMarkerIcon />}
+            {label && <MarkerLabel>{label}</MarkerLabel>}
+          </View>
+        </Pressable>
       </MarkerView>
     </MarkerContext.Provider>
   );
