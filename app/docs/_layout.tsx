@@ -1,12 +1,14 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
-import { Stack, Link } from "expo-router";
 import { DocsSidebar } from "@/components/docs/docs-sidebar";
 import { ArrowLeftIcon } from "@/lib/icons";
+import { Link, Stack } from "expo-router";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function DocsLayout() {
   return (
-    <View className="flex-1 flex-row bg-background">
-      <DocsSidebar />
+    <View className="flex-1 bg-background" style={{ flexDirection: 'row' }}>
+      <View className="w-1/4">
+        <DocsSidebar />
+      </View>
 
       <View className="flex-1">
         <View className="border-b border-border bg-card px-6 py-4">
@@ -23,7 +25,7 @@ export default function DocsLayout() {
         </View>
 
         <ScrollView className="flex-1">
-          <View className="max-w-3xl px-6 py-12 mx-auto">
+          <View className="max-w-3xl px-6 py-12" style={{ width: '100%' }}>
             <Stack screenOptions={{ headerShown: false }} />
           </View>
         </ScrollView>

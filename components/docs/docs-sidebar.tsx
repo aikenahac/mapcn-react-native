@@ -1,7 +1,7 @@
-import { Link, usePathname, type Href } from "expo-router";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { BookOpen, Code, FileText, Grid3x3, Layers, Map as MapIcon, MapPin, Route, Sparkles } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { BookOpen, Code, Map as MapIcon, MapPin, Layers, Route, Grid3x3, Sparkles, FileText } from "@/lib/icons";
+import { Link, usePathname, type Href } from "expo-router";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 interface NavItem {
   title: string;
@@ -35,7 +35,7 @@ export function DocsSidebar() {
   const pathname = usePathname();
 
   return (
-    <ScrollView className="flex-1 w-64 border-r border-border bg-card">
+    <ScrollView className="border-r border-border bg-card">
       <View className="p-6 gap-6">
         {navItems.map((group) => (
           <View key={group.title} className="gap-3">

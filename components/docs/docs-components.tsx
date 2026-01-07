@@ -9,9 +9,9 @@ export function DocsHeader({
   description: string;
 }) {
   return (
-    <View className="mb-8">
-      <Text className="text-4xl font-bold text-foreground mb-3">{title}</Text>
-      <Text className="text-lg text-muted-foreground">{description}</Text>
+    <View className="mb-8" style={{ width: '100%' }}>
+      <Text className="text-4xl font-bold text-foreground mb-3" style={{ width: '100%' }}>{title}</Text>
+      <Text className="text-lg text-muted-foreground" style={{ width: '100%' }}>{description}</Text>
     </View>
   );
 }
@@ -26,9 +26,9 @@ export function DocsSection({
   className?: string;
 }) {
   return (
-    <View className={cn("mb-8", className)}>
+    <View className={cn("mb-8", className)} style={{ width: '100%' }}>
       {title && (
-        <Text className="text-2xl font-semibold text-foreground mb-4">{title}</Text>
+        <Text className="text-2xl font-semibold text-foreground mb-4" style={{ width: '100%' }}>{title}</Text>
       )}
       {children}
     </View>
@@ -57,7 +57,7 @@ export function DocsParagraph({
   className?: string;
 }) {
   return (
-    <Text className={cn("text-base text-muted-foreground leading-relaxed mb-4", className)}>
+    <Text className={cn("text-base text-muted-foreground leading-relaxed mb-4", className)} style={{ width: '100%' }}>
       {children}
     </Text>
   );
