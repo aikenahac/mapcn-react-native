@@ -91,5 +91,9 @@ function createBuildName({ platform, profile }) {
     extension = 'tar.gz'; // iOS Simulator builds are packaged as tar.gz
   }
 
+  if (profile === "production" && platform === "android") {
+    extension = 'aab'
+  }
+
   return `./builds/${profile}-${appConfig.expo.slug}.${extension}`;
 }
