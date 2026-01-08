@@ -1,9 +1,9 @@
-import { View, Text, Pressable } from "react-native";
-import { Link } from "expo-router";
 import { MapPin } from "@/lib/icons";
+import { Link } from "expo-router";
+import type { ReactNode } from "react";
+import { Pressable, Text, View } from "react-native";
 import { ThemeToggle } from "./theme-toggle";
 import { Separator } from "./ui/separator";
-import type { ReactNode } from "react";
 
 interface HeaderProps {
   leftContent?: ReactNode;
@@ -19,7 +19,7 @@ export function Header({ leftContent }: HeaderProps) {
             <Pressable style={{ flexDirection: "row" }} className="flex items-center gap-2 active:opacity-70">
               <MapPin size={16} className="text-foreground" />
               <Text className="text-base font-semibold tracking-tight text-foreground">
-                MapLibre RN
+                mapcn RN
               </Text>
             </Pressable>
           </Link>

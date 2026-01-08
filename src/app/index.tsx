@@ -150,10 +150,10 @@ export default function HomeScreen() {
         <View className="px-6 py-8 w-full gap-8">
           <View className="items-center gap-4">
             <Text className="text-4xl font-bold text-center text-foreground">
-              MapLibre React Native
+              mapcn React Native
             </Text>
             <Text className="text-lg text-center text-muted-foreground max-w-2xl">
-              Interactive examples for the MapLibre React Native library.
+              Interactive examples for the mapcn React Native component.
               Explore different use cases and patterns on your device.
             </Text>
           </View>

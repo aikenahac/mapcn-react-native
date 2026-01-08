@@ -30,7 +30,7 @@
     --chart-5: 27 87% 67%;
   }
 
-  .dark:root {
+  .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
