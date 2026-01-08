@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="https://github.com/AnmolSaini16/mapcn/blob/main/public/banner.png?raw=true" alt="mapcn banner" />
+  <img src="https://github.com/aikenahac/mapcn-react-native-docs/blob/master/public/banner.png?raw=true" alt="mapcn banner" />
 
-  <h1>mapcn - react native</h1>
+  <h1>mapcn-react-native</h1>
   <p><strong>Beautiful maps, made simple.</strong></p>
 
   <p>
@@ -10,9 +10,9 @@
   </p>
 
   <p>
-    <a href="https://mapcn.vercel.app">Get Started</a> •
-    <a href="https://mapcn.vercel.app/docs/installation">Installation</a> •
-    <a href="https://mapcn.vercel.app/docs/basic-map">Examples</a>
+    <a href="https://mapcn-rn.aiken.si/">Get Started</a> •
+    <a href="https://mapcn-rn.aiken.si/docs/installation">Installation</a> •
+    <a href="https://mapcn-rn.aiken.si/docs/basic-map">Examples</a>
   </p>
 </div>
 
