@@ -405,7 +405,7 @@ function MapRoute({
   };
 
   return (
-    <ShapeSource id={sourceId} shape={shape}>
+    <ShapeSource id={sourceId} data={shape}>
       <LineLayer
         id={layerId}
         style={{

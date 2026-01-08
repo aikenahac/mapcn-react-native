@@ -57,7 +57,7 @@ export default function LayerMarkersExample() {
 
           <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
             <Map zoom={13} center={[-122.4083, 37.802]}>
-              <ShapeSource id="layer-markers-source" shape={geojson}>
+              <ShapeSource id="layer-markers-source" data={geojson}>
                 <CircleLayer
                   id="layer-markers-circles"
                   style={{

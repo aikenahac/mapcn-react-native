@@ -69,7 +69,7 @@ export default function CustomLayerExample() {
 
           <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
             <Map zoom={12} center={[-122.4394, 37.7649]}>
-              <ShapeSource id="custom-layer-source" shape={geojson}>
+              <ShapeSource id="custom-layer-source" data={geojson}>
                 <FillLayer
                   id="custom-layer-fill"
                   style={{
