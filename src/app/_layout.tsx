@@ -36,6 +36,22 @@ function RootLayoutContent() {
             <Stack.Screen name="examples/trending" />
             <Stack.Screen name="examples/ev-charging" />
             <Stack.Screen name="examples/locate-me" />
+
+            <Stack.Screen name="maptiler/index" />
+            <Stack.Screen name="maptiler/examples/basic-map" />
+            <Stack.Screen name="maptiler/examples/markers" />
+            <Stack.Screen name="maptiler/examples/popup" />
+            <Stack.Screen name="maptiler/examples/map-controls" />
+            <Stack.Screen name="maptiler/examples/route" />
+            <Stack.Screen name="maptiler/examples/osrm-route" />
+            <Stack.Screen name="maptiler/examples/advanced-usage" />
+            <Stack.Screen name="maptiler/examples/custom-layer" />
+            <Stack.Screen name="maptiler/examples/layer-markers" />
+            <Stack.Screen name="maptiler/examples/analytics" />
+            <Stack.Screen name="maptiler/examples/delivery" />
+            <Stack.Screen name="maptiler/examples/trending" />
+            <Stack.Screen name="maptiler/examples/ev-charging" />
+            <Stack.Screen name="maptiler/examples/locate-me" />
           </Stack>
           <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
           <PortalHost />

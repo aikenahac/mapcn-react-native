@@ -31,7 +31,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Simple map with center and zoom",
     icon: MapPin,
     color: "text-blue-500",
-    href: "/examples/basic-map" as Href,
+    href: "/maptiler/examples/basic-map" as Href,
   },
   {
     id: "markers",
@@ -39,7 +39,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Markers with labels across the city",
     icon: MapPin,
     color: "text-indigo-500",
-    href: "/examples/markers" as Href,
+    href: "/maptiler/examples/markers" as Href,
   },
   {
     id: "popup",
@@ -47,7 +47,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Interactive markers with detailed content",
     icon: Layers,
     color: "text-red-500",
-    href: "/examples/popup" as Href,
+    href: "/maptiler/examples/popup" as Href,
   },
   {
     id: "map-controls",
@@ -55,7 +55,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Zoom and locate controls with user location",
     icon: Settings,
     color: "text-purple-500",
-    href: "/examples/map-controls" as Href,
+    href: "/maptiler/examples/map-controls" as Href,
   },
   {
     id: "route",
@@ -63,7 +63,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Draw routes between points with custom styling",
     icon: Route,
     color: "text-blue-600",
-    href: "/examples/route" as Href,
+    href: "/maptiler/examples/route" as Href,
   },
   {
     id: "osrm-route",
@@ -71,7 +71,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Fetch real driving routes from OSRM API",
     icon: NavigationIcon,
     color: "text-violet-500",
-    href: "/examples/osrm-route" as Href,
+    href: "/maptiler/examples/osrm-route" as Href,
   },
   {
     id: "advanced-usage",
@@ -79,7 +79,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Dynamic layer toggling and mixed content",
     icon: Settings,
     color: "text-cyan-500",
-    href: "/examples/advanced-usage" as Href,
+    href: "/maptiler/examples/advanced-usage" as Href,
   },
   {
     id: "custom-layer",
@@ -87,7 +87,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Render polygons from GeoJSON data",
     icon: Layers,
     color: "text-sky-500",
-    href: "/examples/custom-layer" as Href,
+    href: "/maptiler/examples/custom-layer" as Href,
   },
   {
     id: "layer-markers",
@@ -95,7 +95,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Efficient marker rendering with data-driven styling",
     icon: MapPin,
     color: "text-amber-500",
-    href: "/examples/layer-markers" as Href,
+    href: "/maptiler/examples/layer-markers" as Href,
   },
   {
     isSeparator: true,
@@ -106,7 +106,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Visualize active users with animated markers",
     icon: BarChart3,
     color: "text-emerald-500",
-    href: "/examples/analytics" as Href,
+    href: "/maptiler/examples/analytics" as Href,
   },
   {
     id: "delivery",
@@ -114,7 +114,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Track delivery routes with custom markers",
     icon: NavigationIcon,
     color: "text-blue-500",
-    href: "/examples/delivery" as Href,
+    href: "/maptiler/examples/delivery" as Href,
   },
   {
     id: "trending",
@@ -122,7 +122,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Display popular spots with engagement metrics",
     icon: TrendingUp,
     color: "text-orange-500",
-    href: "/examples/trending" as Href,
+    href: "/maptiler/examples/trending" as Href,
   },
   {
     id: "ev-charging",
@@ -130,7 +130,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Find stations with real-time availability status",
     icon: Zap,
     color: "text-yellow-500",
-    href: "/examples/ev-charging" as Href,
+    href: "/maptiler/examples/ev-charging" as Href,
   },
   {
     id: "locate-me",
@@ -138,7 +138,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     description: "Display user location with controls and permissions",
     icon: NavigationIcon,
     color: "text-purple-500",
-    href: "/examples/locate-me" as Href,
+    href: "/maptiler/examples/locate-me" as Href,
   },
 ];
 
@@ -155,6 +155,9 @@ export default function HomeScreen() {
             <Text className="text-lg text-center text-muted-foreground max-w-2xl">
               Interactive examples for the mapcn React Native component.
               Explore different use cases and patterns on your device.
+            </Text>
+            <Text className="text-lg text-center text-muted-foreground max-w-2xl">
+              Using maptiler for commercial use
             </Text>
           </View>
 
@@ -192,32 +195,6 @@ export default function HomeScreen() {
                 </Link>
               );
             })}
-          </View>
-
-          <View className="gap-4">
-            <Text className="text-2xl font-bold text-foreground">Maptiler Examples</Text>
-            
-            <Link href={"/maptiler"} asChild>
-                  <Pressable className="active:opacity-70">
-                    <Card className="px-4">
-                      <View className="flex-row items-start gap-4">
-                        <View
-                          className={`w-12 h-12 rounded-lg bg-muted items-center justify-center`}
-                        >
-                          <MapPin size={24} className={"text-blue-500"} />
-                        </View>
-                        <View className="flex-1">
-                          <Text className="text-lg font-semibold text-foreground mb-1">
-                            {"Maptiler Examples"}
-                          </Text>
-                          <Text className="text-sm text-muted-foreground">
-                            {"Same examples using Maptiler, for cheaper commercial usage."}
-                          </Text>
-                        </View>
-                      </View>
-                    </Card>
-                  </Pressable>
-                </Link>
           </View>
 
           <View className="p-6 bg-muted/30 rounded-lg border border-border mt-4">

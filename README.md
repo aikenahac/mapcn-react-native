@@ -29,13 +29,39 @@
 - 🛤️ **Routes** — Draw routes and paths on your maps
 - 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
 
-## Basemap Terms of Service
+## Basemap Options
 
-This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) which are based on OpenStreetMap data.
+This project provides two map component options:
+
+### Option 1: Carto Basemaps (Default)
+
+Import from `@/components/ui/map` to use [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps).
 
 - **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
 - **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
-- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider.
+
+### Option 2: Maptiler (Cheaper Alternative for commercial use)
+
+Import from `@/components/ui/map-maptiler` to use [Maptiler](https://maptiler.com) tiles.
+
+
+**Setup:**
+
+1. Get a free access token at [https://cloud.maptiler.com/account/keys/](https://cloud.maptiler.com/account/keys/)
+2. Create a `.env` file in the project root:
+   ```env
+   EXPO_PUBLIC_MAPTILER_API_KEY=your_token_here
+   ```
+3. Update your imports:
+   ```tsx
+   import { Map } from "@/components/ui/map-maptiler";
+   ```
+
+**Pricing:**
+- Free 100k requests
+- Pricing details: [https://www.maptiler.com/cloud/pricing/](https://www.maptiler.com/cloud/pricing/)
+
+Both components have identical APIs and props. Choose based on your licensing and budget needs.
 
 ## Contributing
 
