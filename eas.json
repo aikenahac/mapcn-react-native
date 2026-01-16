@@ -17,11 +17,13 @@
     "preview": {
       "distribution": "internal",
       "env": {
+        "EXPO_PUBLIC_MAPTILER_API_KEY": "@EXPO_PUBLIC_MAPTILER_API_KEY"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
+        "EXPO_PUBLIC_MAPTILER_API_KEY": "@EXPO_PUBLIC_MAPTILER_API_KEY"
       }
     }
   },

@@ -31,6 +31,8 @@
 
 ## Basemap Options
 
+Alternatively use the [mapbox version](https://github.com/aikenahac/mapcn-react-native-mapbox)
+
 This project provides two map component options:
 
 ### Option 1: Carto Basemaps (Default)
@@ -43,7 +45,6 @@ Import from `@/components/ui/map` to use [CARTO Basemaps](https://docs.carto.com
 ### Option 2: Maptiler (Cheaper Alternative for commercial use)
 
 Import from `@/components/ui/map-maptiler` to use [Maptiler](https://maptiler.com) tiles.
-
 
 **Setup:**
 
@@ -58,6 +59,7 @@ Import from `@/components/ui/map-maptiler` to use [Maptiler](https://maptiler.co
    ```
 
 **Pricing:**
+
 - Free 100k requests
 - Pricing details: [https://www.maptiler.com/cloud/pricing/](https://www.maptiler.com/cloud/pricing/)
 
