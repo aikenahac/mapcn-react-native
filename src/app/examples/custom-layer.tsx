@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
+import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map } from "@/components/ui/map";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { FillLayer, ShapeSource } from "@maplibre/maplibre-react-native";
@@ -7,6 +9,8 @@ import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function CustomLayerExample() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const geojson = {
     type: "FeatureCollection" as const,
     features: [
@@ -56,7 +60,7 @@ export default function CustomLayerExample() {
           </Link>
         }
       />
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
             <Text className="text-3xl font-bold text-foreground mb-2">
@@ -67,7 +71,7 @@ export default function CustomLayerExample() {
             </Text>
           </View>
 
-          <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
+          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
             <Map zoom={12} center={[-122.4394, 37.7649]}>
               <ShapeSource id="custom-layer-source" data={geojson}>
                 <FillLayer
@@ -94,7 +98,7 @@ export default function CustomLayerExample() {
                 </View>
               </View>
             </View>
-          </View>
+          </ScrollViewMapWrapper>
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">Features</Text>

@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
+import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map, MapMarker } from "@/components/ui/map-maptiler";
 import { ArrowLeftIcon, TrendingUp } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function TrendingExample() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const trendingLocations: Array<{ coordinate: [number, number]; count: number }> = [
     { coordinate: [-122.4194, 37.7749], count: 1240 },
     { coordinate: [-122.4083, 37.7849], count: 980 },
@@ -23,7 +27,7 @@ export default function TrendingExample() {
           </Link>
         }
       />
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
             <Text className="text-3xl font-bold text-foreground mb-2">
@@ -34,7 +38,7 @@ export default function TrendingExample() {
             </Text>
           </View>
 
-          <View className="h-[500px] rounded-xl overflow-hidden border border-border">
+          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border">
             <Map zoom={12} center={[-122.4194, 37.7749]}>
               {trendingLocations.map((loc, idx) => (
                 <MapMarker
@@ -50,7 +54,7 @@ export default function TrendingExample() {
                 </MapMarker>
               ))}
             </Map>
-          </View>
+          </ScrollViewMapWrapper>
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">Features</Text>

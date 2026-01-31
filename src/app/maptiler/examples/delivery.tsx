@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
+import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map, MapMarker, MapRoute } from "@/components/ui/map-maptiler";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function DeliveryExample() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const deliveryRoute: Array<[number, number]> = [
     [-122.4194, 37.7749],
     [-122.4083, 37.7849],
@@ -23,7 +27,7 @@ export default function DeliveryExample() {
           </Link>
         }
       />
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
             <Text className="text-3xl font-bold text-foreground mb-2">
@@ -34,7 +38,7 @@ export default function DeliveryExample() {
             </Text>
           </View>
 
-          <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
+          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
             <Map zoom={12} center={[-122.4194, 37.7749]}>
               <MapRoute coordinates={deliveryRoute} color="#3b82f6" width={4} />
               {deliveryRoute.map((coord, idx) => (
@@ -60,7 +64,7 @@ export default function DeliveryExample() {
                 </View>
               </View>
             </View>
-          </View>
+          </ScrollViewMapWrapper>
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">Features</Text>

@@ -1,5 +1,6 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
+import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map, MapControls, MapUserLocation, useMap } from "@/components/ui/map-maptiler";
 import { ArrowLeftIcon } from "@/lib/icons";
 import * as Location from "expo-location";
@@ -34,6 +35,8 @@ function MapContent({ hasPermission }: { hasPermission: boolean }) {
 }
 
 export default function LocateMeExample() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
@@ -54,7 +57,7 @@ export default function LocateMeExample() {
           </Link>
         }
       />
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
             <Text className="text-3xl font-bold text-foreground mb-2">
@@ -77,11 +80,11 @@ export default function LocateMeExample() {
             </View>
           )}
 
-          <View className="h-[500px] rounded-xl overflow-hidden border border-border">
+          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border">
             <Map zoom={12} center={[-122.4194, 37.7749]}>
               {hasPermission && <MapContent hasPermission={hasPermission} />}
             </Map>
-          </View>
+          </ScrollViewMapWrapper>
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">

@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
+import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map, MapMarker } from "@/components/ui/map-maptiler";
 import { ArrowLeftIcon, Zap } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function EVChargingExample() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const chargingStations: Array<{ coordinate: [number, number]; status: string }> = [
     { coordinate: [-122.4194, 37.7749], status: "available" },
     { coordinate: [-122.4083, 37.7849], status: "in-use" },
@@ -36,7 +40,7 @@ export default function EVChargingExample() {
           </Link>
         }
       />
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
             <Text className="text-3xl font-bold text-foreground mb-2">
@@ -47,7 +51,7 @@ export default function EVChargingExample() {
             </Text>
           </View>
 
-          <View className="h-[500px] rounded-xl overflow-hidden border border-border">
+          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border">
             <Map zoom={12} center={[-122.4194, 37.7749]}>
               {chargingStations.map((station, idx) => (
                 <MapMarker
@@ -65,7 +69,7 @@ export default function EVChargingExample() {
                 </MapMarker>
               ))}
             </Map>
-          </View>
+          </ScrollViewMapWrapper>
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">Status Legend</Text>

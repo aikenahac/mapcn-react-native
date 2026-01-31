@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
+import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map } from "@/components/ui/map-maptiler";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { CircleLayer, ShapeSource, SymbolLayer } from "@maplibre/maplibre-react-native";
@@ -7,6 +9,8 @@ import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function LayerMarkersExample() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const geojson = {
     type: "FeatureCollection" as const,
     features: [
@@ -44,7 +48,7 @@ export default function LayerMarkersExample() {
           </Link>
         }
       />
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
             <Text className="text-3xl font-bold text-foreground mb-2">
@@ -55,7 +59,7 @@ export default function LayerMarkersExample() {
             </Text>
           </View>
 
-          <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
+          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
             <Map zoom={13} center={[-122.4083, 37.802]}>
               <ShapeSource id="layer-markers-source" data={geojson}>
                 <CircleLayer
@@ -97,7 +101,7 @@ export default function LayerMarkersExample() {
                 • Efficient rendering for large datasets
               </Text>
             </View>
-          </View>
+          </ScrollViewMapWrapper>
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">Features</Text>
