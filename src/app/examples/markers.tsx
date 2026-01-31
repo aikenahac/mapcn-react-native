@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
+import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map, MapMarker } from "@/components/ui/map";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function MarkersExample() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const locations = [
     { coordinate: [-122.4194, 37.7749] as [number, number], label: "San Francisco" },
     { coordinate: [-122.4083, 37.7849] as [number, number], label: "North Beach" },
@@ -23,7 +27,7 @@ export default function MarkersExample() {
           </Link>
         }
       />
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
             <Text className="text-3xl font-bold text-foreground mb-2">
@@ -34,7 +38,10 @@ export default function MarkersExample() {
             </Text>
           </View>
 
-          <View className="h-[500px] rounded-xl overflow-hidden border border-border">
+          <ScrollViewMapWrapper
+            onScrollEnabledChange={setScrollEnabled}
+            className="h-[500px] rounded-xl overflow-hidden border border-border"
+          >
             <Map zoom={12} center={[-122.4194, 37.7749]}>
               {locations.map((loc, idx) => (
                 <MapMarker key={idx} coordinate={loc.coordinate} label={loc.label}>
@@ -42,7 +49,7 @@ export default function MarkersExample() {
                 </MapMarker>
               ))}
             </Map>
-          </View>
+          </ScrollViewMapWrapper>
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">Features</Text>

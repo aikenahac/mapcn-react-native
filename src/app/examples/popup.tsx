@@ -1,5 +1,6 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
+import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map, MapMarker } from "@/components/ui/map";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
@@ -8,6 +9,8 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function PopupExample() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const [selectedMarker, setSelectedMarker] = useState<number | null>(0);
 
   const locations = [
@@ -36,7 +39,7 @@ export default function PopupExample() {
           </Link>
         }
       />
-      <ScrollView className="flex-1">
+      <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
             <Text className="text-3xl font-bold text-foreground mb-2">
@@ -47,7 +50,7 @@ export default function PopupExample() {
             </Text>
           </View>
 
-          <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
+          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
             <Map zoom={12} center={[-122.4194, 37.7749]}>
               {locations.map((loc, idx) => (
                 <MapMarker key={idx} coordinate={loc.coordinate}>
@@ -90,7 +93,7 @@ export default function PopupExample() {
                 </View>
               </View>
             )}
-          </View>
+          </ScrollViewMapWrapper>
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">
