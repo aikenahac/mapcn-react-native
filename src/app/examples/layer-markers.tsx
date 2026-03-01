@@ -4,7 +4,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map } from "@/components/ui/map";
 import { ArrowLeftIcon } from "@/lib/icons";
-import { CircleLayer, ShapeSource, SymbolLayer } from "@maplibre/maplibre-react-native";
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
@@ -61,9 +61,10 @@ export default function LayerMarkersExample() {
 
           <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
             <Map zoom={13} center={[-122.4083, 37.802]}>
-              <ShapeSource id="layer-markers-source" data={geojson}>
-                <CircleLayer
+              <GeoJSONSource id="layer-markers-source" data={geojson}>
+                <Layer
                   id="layer-markers-circles"
+                  type="circle"
                   style={{
                     circleRadius: [
                       "interpolate",
@@ -80,8 +81,9 @@ export default function LayerMarkersExample() {
                     circleStrokeColor: "#ffffff",
                   }}
                 />
-                <SymbolLayer
+                <Layer
                   id="layer-markers-labels"
+                  type="symbol"
                   style={{
                     textField: ["get", "title"],
                     textSize: 12,
@@ -91,7 +93,7 @@ export default function LayerMarkersExample() {
                     textOffset: [0, 2],
                   }}
                 />
-              </ShapeSource>
+              </GeoJSONSource>
             </Map>
 
             <View className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-border shadow-lg">

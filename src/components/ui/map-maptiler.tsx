@@ -3,15 +3,16 @@ import { cn } from "@/lib/utils";
 import {
   Callout,
   Camera,
-  LineLayer,
+  GeoJSONSource,
+  Layer,
   LocationManager,
-  MapView,
-  MarkerView,
-  ShapeSource,
+  Map as MapLibreMap,
+  Marker,
   UserLocation,
   useCurrentPosition,
   type CameraRef,
-  type MapViewRef,
+  type MapRef,
+  type StyleSpecification,
 } from "@maplibre/maplibre-react-native";
 import {
   createContext,
@@ -25,7 +26,7 @@ import {
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 type MapContextValue = {
-  mapRef: React.RefObject<MapViewRef | null>;
+  mapRef: React.RefObject<MapRef | null>;
   cameraRef: React.RefObject<CameraRef | null>;
   isLoaded: boolean;
   theme: "light" | "dark";
@@ -46,11 +47,11 @@ const defaultStyles = {
   light: getMapStyle("light"),
 };
 
-type MapStyleOption = string | object;
+type MapStyleOption = string | StyleSpecification;
 
 type MapProps = {
   children?: ReactNode;
-  /** Custom map styles for light and dark themes. Overrides the default MapTiler styles. */
+  /** Custom map styles for light and dark themes. Overrides the default Carto styles. */
   styles?: {
     light?: MapStyleOption;
     dark?: MapStyleOption;
@@ -79,7 +80,7 @@ function Map({
   className,
   showLoader = true,
 }: MapProps) {
-  const mapRef = useRef<MapViewRef | null>(null);
+  const mapRef = useRef<MapRef | null>(null);
   const cameraRef = useRef<CameraRef | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const { colorScheme } = useTheme();
@@ -87,8 +88,8 @@ function Map({
 
   const mapStyle =
     theme === "dark"
-      ? styles?.dark ?? defaultStyles.dark
-      : styles?.light ?? defaultStyles.light;
+      ? (styles?.dark ?? defaultStyles.dark)
+      : (styles?.light ?? defaultStyles.light);
 
   const handleMapIdle = () => {
     if (!isLoaded) {
@@ -96,10 +97,20 @@ function Map({
     }
   };
 
+  console.log(mapStyle);
+
+  if (!mapStyle) {
+    return (
+      <View className="flex-1 flex items-center justify-center">
+        <Text className="text-foreground">No MapTiler API Key</Text>
+      </View>
+    );
+  }
+
   return (
     <MapContext.Provider value={{ mapRef, cameraRef, isLoaded, theme }}>
       <View className={cn("flex-1 relative", className)}>
-        <MapView
+        <MapLibreMap
           ref={mapRef}
           style={{ flex: 1 }}
           mapStyle={mapStyle}
@@ -116,11 +127,28 @@ function Map({
             duration={1000}
           />
           {children}
-        </MapView>
+        </MapLibreMap>
         {showLoader && !isLoaded && <DefaultLoader />}
       </View>
     </MapContext.Provider>
   );
+}
+
+function anchorObjectToAnchorString(anchor: { x: number; y: number }) {
+  const horizontal =
+    anchor.x <= 0.25 ? "left" : anchor.x >= 0.75 ? "right" : "center";
+  const vertical =
+    anchor.y <= 0.25 ? "top" : anchor.y >= 0.75 ? "bottom" : "center";
+
+  if (horizontal === "center" && vertical === "center") return "center";
+  if (horizontal === "center") return vertical;
+  if (vertical === "center") return horizontal;
+
+  return `${vertical}-${horizontal}` as
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right";
 }
 
 type MarkerContextValue = {
@@ -147,7 +175,7 @@ function MapMarker({
   children,
   label,
   anchor = { x: 0.5, y: 0.5 },
-  allowOverlap = false,
+  allowOverlap: _allowOverlap = false,
   onPress,
   ...positionProps
 }: MapMarkerProps) {
@@ -160,11 +188,10 @@ function MapMarker({
 
   return (
     <MarkerContext.Provider value={{ coordinate }}>
-      <MarkerView
+      <Marker
         id={id}
-        coordinate={coordinate}
-        anchor={anchor}
-        allowOverlap={allowOverlap}
+        lngLat={coordinate}
+        anchor={anchorObjectToAnchorString(anchor)}
       >
         <Pressable onPress={onPress}>
           <View className="flex flex-row items-center justify-center">
@@ -172,7 +199,7 @@ function MapMarker({
             {label && <MarkerLabel>{label}</MarkerLabel>}
           </View>
         </Pressable>
-      </MarkerView>
+      </Marker>
     </MarkerContext.Provider>
   );
 }
@@ -369,7 +396,7 @@ function ControlButton({
 }: {
   onPress: () => void;
   label: string;
-  children: React.ReactNode;
+  children: ReactNode;
   disabled?: boolean;
 }) {
   return (
@@ -419,9 +446,10 @@ function MapRoute({
   };
 
   return (
-    <ShapeSource id={sourceId} data={shape}>
-      <LineLayer
+    <GeoJSONSource id={sourceId} data={shape}>
+      <Layer
         id={layerId}
+        type="line"
         style={{
           lineColor: color,
           lineWidth: width,
@@ -431,7 +459,7 @@ function MapRoute({
           lineCap: "round",
         }}
       />
-    </ShapeSource>
+    </GeoJSONSource>
   );
 }
 

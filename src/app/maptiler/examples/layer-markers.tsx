@@ -1,11 +1,11 @@
-import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map } from "@/components/ui/map-maptiler";
 import { ArrowLeftIcon } from "@/lib/icons";
-import { CircleLayer, ShapeSource, SymbolLayer } from "@maplibre/maplibre-react-native";
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
 import { Link } from "expo-router";
+import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function LayerMarkersExample() {
@@ -59,11 +59,15 @@ export default function LayerMarkersExample() {
             </Text>
           </View>
 
-          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
+          <ScrollViewMapWrapper
+            onScrollEnabledChange={setScrollEnabled}
+            className="h-[500px] rounded-xl overflow-hidden border border-border relative"
+          >
             <Map zoom={13} center={[-122.4083, 37.802]}>
-              <ShapeSource id="layer-markers-source" data={geojson}>
-                <CircleLayer
+              <GeoJSONSource id="layer-markers-source" data={geojson}>
+                <Layer
                   id="layer-markers-circles"
+                  type="circle"
                   style={{
                     circleRadius: [
                       "interpolate",
@@ -80,8 +84,9 @@ export default function LayerMarkersExample() {
                     circleStrokeColor: "#ffffff",
                   }}
                 />
-                <SymbolLayer
+                <Layer
                   id="layer-markers-labels"
+                  type="symbol"
                   style={{
                     textField: ["get", "title"],
                     textSize: 12,
@@ -91,26 +96,31 @@ export default function LayerMarkersExample() {
                     textOffset: [0, 2],
                   }}
                 />
-              </ShapeSource>
+              </GeoJSONSource>
             </Map>
 
             <View className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-border shadow-lg">
-              <Text className="text-sm font-medium text-foreground mb-2">Features:</Text>
+              <Text className="text-sm font-medium text-foreground mb-2">
+                Features:
+              </Text>
               <Text className="text-sm text-muted-foreground">
-                • Circle size based on count property{"\n"}• Automatic label positioning{"\n"}
-                • Efficient rendering for large datasets
+                • Circle size based on count property{"\n"}• Automatic label
+                positioning{"\n"}• Efficient rendering for large datasets
               </Text>
             </View>
           </ScrollViewMapWrapper>
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Features</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Features
+            </Text>
             <View className="p-4 bg-card border border-border rounded-lg">
               <Text className="text-base font-medium text-foreground mb-1">
                 Data-Driven Styling
               </Text>
               <Text className="text-sm text-muted-foreground">
-                Marker size and appearance automatically adjust based on data properties
+                Marker size and appearance automatically adjust based on data
+                properties
               </Text>
             </View>
             <View className="p-4 bg-card border border-border rounded-lg">

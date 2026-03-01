@@ -1,11 +1,11 @@
-import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map } from "@/components/ui/map-maptiler";
 import { ArrowLeftIcon } from "@/lib/icons";
-import { FillLayer, ShapeSource } from "@maplibre/maplibre-react-native";
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
 import { Link } from "expo-router";
+import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function CustomLayerExample() {
@@ -71,37 +71,49 @@ export default function CustomLayerExample() {
             </Text>
           </View>
 
-          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
+          <ScrollViewMapWrapper
+            onScrollEnabledChange={setScrollEnabled}
+            className="h-[500px] rounded-xl overflow-hidden border border-border relative"
+          >
             <Map zoom={12} center={[-122.4394, 37.7649]}>
-              <ShapeSource id="custom-layer-source" data={geojson}>
-                <FillLayer
+              <GeoJSONSource id="custom-layer-source" data={geojson}>
+                <Layer
                   id="custom-layer-fill"
+                  type="fill"
                   style={{
                     fillColor: "#3b82f6",
                     fillOpacity: 0.3,
                     fillOutlineColor: "#1d4ed8",
                   }}
                 />
-              </ShapeSource>
+              </GeoJSONSource>
             </Map>
 
             <View className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-border shadow-lg">
-              <Text className="text-sm font-medium text-foreground mb-2">Areas Shown:</Text>
+              <Text className="text-sm font-medium text-foreground mb-2">
+                Areas Shown:
+              </Text>
               <View className="gap-2">
                 <View className="flex-row items-center gap-2">
                   <View className="w-4 h-4 bg-blue-500 opacity-30 rounded" />
-                  <Text className="text-sm text-muted-foreground">Golden Gate Park</Text>
+                  <Text className="text-sm text-muted-foreground">
+                    Golden Gate Park
+                  </Text>
                 </View>
                 <View className="flex-row items-center gap-2">
                   <View className="w-4 h-4 bg-blue-500 opacity-30 rounded" />
-                  <Text className="text-sm text-muted-foreground">Mission District</Text>
+                  <Text className="text-sm text-muted-foreground">
+                    Mission District
+                  </Text>
                 </View>
               </View>
             </View>
           </ScrollViewMapWrapper>
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Features</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Features
+            </Text>
             <View className="p-4 bg-card border border-border rounded-lg">
               <Text className="text-base font-medium text-foreground mb-1">
                 GeoJSON Support

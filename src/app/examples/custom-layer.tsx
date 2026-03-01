@@ -4,7 +4,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Map } from "@/components/ui/map";
 import { ArrowLeftIcon } from "@/lib/icons";
-import { FillLayer, ShapeSource } from "@maplibre/maplibre-react-native";
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
@@ -73,16 +73,17 @@ export default function CustomLayerExample() {
 
           <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
             <Map zoom={12} center={[-122.4394, 37.7649]}>
-              <ShapeSource id="custom-layer-source" data={geojson}>
-                <FillLayer
+              <GeoJSONSource id="custom-layer-source" data={geojson}>
+                <Layer
                   id="custom-layer-fill"
+                  type="fill"
                   style={{
                     fillColor: "#3b82f6",
                     fillOpacity: 0.3,
                     fillOutlineColor: "#1d4ed8",
                   }}
                 />
-              </ShapeSource>
+              </GeoJSONSource>
             </Map>
 
             <View className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-border shadow-lg">
