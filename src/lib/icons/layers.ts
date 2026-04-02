@@ -1,6 +1,4 @@
-import { Layers } from "lucide-react-native";
+import { Layers as LucideLayers } from "lucide-react-native";
 import { iconWithClassName } from "./icon-with-classname";
 
-iconWithClassName(Layers);
-
-export { Layers };
+export const Layers = iconWithClassName(LucideLayers);

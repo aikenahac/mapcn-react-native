@@ -1,5 +1,4 @@
-import { Navigation } from 'lucide-react-native';
+import { Navigation as LucideNavigation } from 'lucide-react-native';
 import { iconWithClassName } from './icon-with-classname';
 
-iconWithClassName(Navigation);
-export { Navigation };
+export const Navigation = iconWithClassName(LucideNavigation);

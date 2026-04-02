@@ -3,7 +3,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-  BarChart3,
+  BarChart3Icon,
   Layers,
   MapPin,
   Navigation as NavigationIcon,
@@ -104,7 +104,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     id: "analytics",
     title: "Real-time Activity",
     description: "Visualize active users with animated markers",
-    icon: BarChart3,
+    icon: BarChart3Icon,
     color: "text-emerald-500",
     href: "/maptiler/examples/analytics" as Href,
   },
@@ -153,8 +153,8 @@ export default function HomeScreen() {
               mapcn React Native
             </Text>
             <Text className="text-lg text-center text-muted-foreground max-w-2xl">
-              Interactive examples for the mapcn React Native component.
-              Explore different use cases and patterns on your device.
+              Interactive examples for the mapcn React Native component. Explore
+              different use cases and patterns on your device.
             </Text>
             <Text className="text-lg text-center text-muted-foreground max-w-2xl">
               Using maptiler for commercial use
@@ -165,9 +165,7 @@ export default function HomeScreen() {
             <Text className="text-2xl font-bold text-foreground">Examples</Text>
             {examples.map((example) => {
               if ("isSeparator" in example) {
-                return (
-                  <Separator key="separator" />
-                );
+                return <Separator key="separator" />;
               }
 
               const Icon = example.icon;

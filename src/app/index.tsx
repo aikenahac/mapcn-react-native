@@ -3,7 +3,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-  BarChart3,
+  BarChart3Icon,
   Layers,
   MapPin,
   Navigation as NavigationIcon,
@@ -104,7 +104,7 @@ const examples: Array<Example | { isSeparator: boolean }> = [
     id: "analytics",
     title: "Real-time Activity",
     description: "Visualize active users with animated markers",
-    icon: BarChart3,
+    icon: BarChart3Icon,
     color: "text-emerald-500",
     href: "/examples/analytics" as Href,
   },
@@ -153,8 +153,8 @@ export default function HomeScreen() {
               mapcn React Native
             </Text>
             <Text className="text-lg text-center text-muted-foreground max-w-2xl">
-              Interactive examples for the mapcn React Native component.
-              Explore different use cases and patterns on your device.
+              Interactive examples for the mapcn React Native component. Explore
+              different use cases and patterns on your device.
             </Text>
           </View>
 
@@ -162,9 +162,7 @@ export default function HomeScreen() {
             <Text className="text-2xl font-bold text-foreground">Examples</Text>
             {examples.map((example) => {
               if ("isSeparator" in example) {
-                return (
-                  <Separator key="separator" />
-                );
+                return <Separator key="separator" />;
               }
 
               const Icon = example.icon;
@@ -195,29 +193,33 @@ export default function HomeScreen() {
           </View>
 
           <View className="gap-4">
-            <Text className="text-2xl font-bold text-foreground">Maptiler Examples</Text>
-            
+            <Text className="text-2xl font-bold text-foreground">
+              Maptiler Examples
+            </Text>
+
             <Link href={"/maptiler"} asChild>
-                  <Pressable className="active:opacity-70">
-                    <Card className="px-4">
-                      <View className="flex-row items-start gap-4">
-                        <View
-                          className={`w-12 h-12 rounded-lg bg-muted items-center justify-center`}
-                        >
-                          <MapPin size={24} className={"text-blue-500"} />
-                        </View>
-                        <View className="flex-1">
-                          <Text className="text-lg font-semibold text-foreground mb-1">
-                            {"Maptiler Examples"}
-                          </Text>
-                          <Text className="text-sm text-muted-foreground">
-                            {"Same examples using Maptiler, for cheaper commercial usage."}
-                          </Text>
-                        </View>
-                      </View>
-                    </Card>
-                  </Pressable>
-                </Link>
+              <Pressable className="active:opacity-70">
+                <Card className="px-4">
+                  <View className="flex-row items-start gap-4">
+                    <View
+                      className={`w-12 h-12 rounded-lg bg-muted items-center justify-center`}
+                    >
+                      <MapPin size={24} className={"text-blue-500"} />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-lg font-semibold text-foreground mb-1">
+                        {"Maptiler Examples"}
+                      </Text>
+                      <Text className="text-sm text-muted-foreground">
+                        {
+                          "Same examples using Maptiler, for cheaper commercial usage."
+                        }
+                      </Text>
+                    </View>
+                  </View>
+                </Card>
+              </Pressable>
+            </Link>
           </View>
 
           <View className="p-6 bg-muted/30 rounded-lg border border-border mt-4">

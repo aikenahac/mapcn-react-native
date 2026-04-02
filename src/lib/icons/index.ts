@@ -1,6 +1,6 @@
 export { ArrowLeftIcon } from "./arrow-left";
 export { ArrowRightIcon } from "./arrow-right";
-export { BarChart3 } from "./bar-chart-3";
+export { BarChart3Icon } from "./bar-chart-3";
 export { BookOpenIcon } from "./book-open";
 export { CheckIcon } from "./check";
 export { CopyIcon } from "./copy";

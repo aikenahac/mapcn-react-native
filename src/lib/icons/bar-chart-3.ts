@@ -1,5 +1,4 @@
-import { BarChart3 } from 'lucide-react-native';
-import { iconWithClassName } from './icon-with-classname';
+import { BarChart3 } from "lucide-react-native";
+import { iconWithClassName } from "./icon-with-classname";
 
-iconWithClassName(BarChart3);
-export { BarChart3 };
+export const BarChart3Icon = iconWithClassName(BarChart3);

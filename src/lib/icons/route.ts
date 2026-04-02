@@ -1,6 +1,4 @@
-import { Route } from "lucide-react-native";
+import { Route as LucideRoute } from "lucide-react-native";
 import { iconWithClassName } from "./icon-with-classname";
 
-iconWithClassName(Route);
-
-export { Route };
+export const Route = iconWithClassName(LucideRoute);

@@ -1,5 +1,4 @@
-import { Zap } from 'lucide-react-native';
+import { Zap as LucideZap } from 'lucide-react-native';
 import { iconWithClassName } from './icon-with-classname';
 
-iconWithClassName(Zap);
-export { Zap };
+export const Zap = iconWithClassName(LucideZap);
