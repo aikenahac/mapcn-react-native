@@ -97,8 +97,6 @@ function Map({
     }
   };
 
-  console.log(mapStyle);
-
   if (!mapStyle) {
     return (
       <View className="flex-1 flex items-center justify-center">

@@ -6,7 +6,7 @@
 
   <p>
     Free & open source map components. Zero config, one command setup.<br/>
-    Built on <a href="https://maplibre.org/maplibre-react-native/">MapLibre React Native</a>, styled with <a href="https://www.nativewind.dev/">Nativewind</a>, works seamlessly with <a href="https://reactnativereusables.com/">React Native Reusables</a>.
+    Built on <a href="https://maplibre.org/maplibre-react-native/">MapLibre React Native</a>, styled with <a href="https://uniwind.dev/">Uniwind</a>, works seamlessly with <a href="https://reactnativereusables.com/">React Native Reusables</a>.
   </p>
 
   <p>

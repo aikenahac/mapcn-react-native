@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React Native mobile application built with Expo SDK 54, using file-based routing via Expo Router. The app features MapLibre-based map integration with location services and uses NativeWind (Tailwind CSS) for styling.
+This is a React Native mobile application built with Expo SDK 55, using file-based routing via Expo Router. The app features MapLibre-based map integration with location services and uses Uniwind (Tailwind CSS v4) for styling.
 
 ## Development Commands
 
@@ -40,10 +40,10 @@ eas build --profile production           # Production build (auto-increment vers
 - `unstable_settings.anchor` set to `'(tabs)'` in root layout
 
 ### Styling System
-- **NativeWind v4**: Tailwind CSS for React Native
-  - Metro config: `metro.config.js` includes `withNativeWind` with `global.css` input
-  - Babel config: Uses `nativewind/babel` preset with `jsxImportSource: "nativewind"`
-  - Tailwind config: Custom theme with CSS variables for shadcn-style design tokens
+- **Uniwind**: Tailwind CSS v4 for React Native
+  - Metro config: `metro.config.js` includes `withUniwindConfig` with `global.css` input
+  - Babel config: Uses the standard Expo preset only; Uniwind does not need a Babel preset
+  - Global CSS: `global.css` defines the theme tokens and semantic color utilities
   - Use `className` prop for styling components
 
 ### Map Integration (@maplibre/maplibre-react-native)
@@ -63,7 +63,7 @@ eas build --profile production           # Production build (auto-increment vers
 ### TypeScript Configuration
 - Path alias: `@/*` maps to project root
 - Strict mode enabled
-- Includes nativewind types via `nativewind-env.d.ts`
+- Includes Uniwind types via `uniwind-env.d.ts`
 
 ### Native Configuration (app.json)
 - **React Native New Architecture**: Enabled (`newArchEnabled: true`)
@@ -94,7 +94,7 @@ npx expo run:ios    # or run:android
 - Override with custom map style URLs via `styles` prop on `<Map>`
 
 ### Component Structure
-- UI components in `components/ui/`
-- Hooks in `hooks/`
-- Utilities in `lib/`
-- App screens in `app/`
+- UI components in `src/components/ui/`
+- Hooks in `src/hooks/`
+- Utilities in `src/lib/`
+- App screens in `src/app/`

@@ -1,4 +1,7 @@
 import { SafeAreaView } from "react-native-safe-area-context";
+import { withUniwind } from "uniwind";
+
+const StyledSafeAreaView = withUniwind(SafeAreaView);
 
 export function ScreenContainer({
   children,
@@ -8,8 +11,8 @@ export function ScreenContainer({
   className?: string;
 }) {
   return (
-    <SafeAreaView edges={["top", "bottom"]} className={className}>
+    <StyledSafeAreaView edges={["top", "bottom"]} className={className}>
       {children}
-    </SafeAreaView>
+    </StyledSafeAreaView>
   );
 }

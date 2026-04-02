@@ -1,5 +1,8 @@
 import { cn } from '@/lib/utils';
 import * as SeparatorPrimitive from '@rn-primitives/separator';
+import { withUniwind } from 'uniwind';
+
+const StyledSeparatorRoot = withUniwind(SeparatorPrimitive.Root);
 
 function Separator({
   className,
@@ -8,7 +11,7 @@ function Separator({
   ...props
 }: SeparatorPrimitive.RootProps & React.RefAttributes<SeparatorPrimitive.RootRef>) {
   return (
-    <SeparatorPrimitive.Root
+    <StyledSeparatorRoot
       decorative={decorative}
       orientation={orientation}
       className={cn(
