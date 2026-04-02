@@ -2,12 +2,11 @@
   "expo": {
     "name": "mapcn-react-native",
     "slug": "mapcn-rn",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "scheme": "mapcn-rn",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "icon": "./src/assets/images/icon.icon/",
       "supportsTablet": true,
@@ -22,7 +21,6 @@
       }
     },
     "android": {
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": [
         "ACCESS_FINE_LOCATION",
@@ -51,7 +49,10 @@
           }
         }
       ],
-      "@maplibre/maplibre-react-native"
+      "@maplibre/maplibre-react-native",
+      "expo-font",
+      "expo-image",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
