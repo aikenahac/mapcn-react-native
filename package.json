@@ -1,0 +1,27 @@
+{
+  "name": "mapcn-rn",
+  "version": "0.1.1",
+  "description": "Tiny CLI wrapper for installing mapcn React Native components.",
+  "repository": "https://github.com/aikenahac/mapcn-rn",
+  "type": "module",
+  "bin": {
+    "mapcn-rn": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "node --import tsx src/cli.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.1",
+    "execa": "^9.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
