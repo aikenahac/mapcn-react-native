@@ -141,15 +141,6 @@ export default function InstallationPage() {
         next={{ title: "CLI", href: "/docs/cli" }}
       >
       <DocsNote>
-        <strong>Beta Version:</strong> This library requires{" "}
-        <DocsCode>@maplibre/maplibre-react-native@11.0.0-beta.10</DocsCode>,
-        which is currently in beta. Version 11 is used due to its support for the new architecture.
-        Breaking changes may arise.
-        <br />
-        You can use the <DocsLink href="/docs/commercial-use">mapbox version</DocsLink>, which uses stable <DocsCode>@rnmapbox/maps</DocsCode>
-      </DocsNote>
-
-      <DocsNote>
         <strong>Expo Development Client:</strong> MapLibre React Native (and Mabpox) require
         a{" "}
         <DocsLink
@@ -212,7 +203,7 @@ export default function InstallationPage() {
         <PackageManagerCodeBlock command={installMapboxMapCode} />
 
         <div className="flex flex-row items-center justify-between gap-2">
-          <h2 className="font-bold text-lg">Install maptiler-based map:</h2>
+          <h2 className="font-bold text-lg">Install maptiler map (uses maplibre base):</h2>
           <Badge asChild>
             <Link href="/docs/commercial-use">Additionial setup</Link>
           </Badge>

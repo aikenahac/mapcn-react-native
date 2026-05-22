@@ -4,7 +4,7 @@
   "title": "Map (React Native)",
   "description": "A MapLibre-powered map component for React Native with markers, popups, labels, routes, and controls.",
   "dependencies": [
-    "@maplibre/maplibre-react-native@11.0.0-beta.10",
+    "@maplibre/maplibre-react-native@11.2.1",
     "expo-location@^19.0.8"
   ],
   "registryDependencies": [],

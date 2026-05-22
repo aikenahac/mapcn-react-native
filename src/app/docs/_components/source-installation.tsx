@@ -106,7 +106,7 @@ export async function SourceInstallation({ variant }: SourceInstallationProps) {
           <strong>Default basemap:</strong> This variant uses MapLibre React Native with CARTO
           basemaps. It is easy to drop in, but CARTO basemap licensing may not fit every
           commercial deployment. If you need a provider-backed commercial setup, use the
-          MapTiler or Mapbox variants instead.
+          MapTiler (uses maplibre base) or Mapbox variants instead.
         </DocsNote>
       )}
 

@@ -1,5 +1,5 @@
 import { Zap, Moon, Puzzle, Code } from "lucide-react";
-import { DocsLayout, DocsSection, DocsLink, DocsCode } from "./_components/docs";
+import { DocsLayout, DocsSection, DocsLink } from "./_components/docs";
 import { Metadata } from "next";
 
 const features = [
@@ -76,32 +76,6 @@ export default function IntroductionPage() {
           </DocsLink>
           .
         </p>
-      </DocsSection>
-
-      <DocsSection>
-        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 mt-4">
-          <div className="flex items-start gap-3">
-            <div className="flex size-5 items-center justify-center rounded-full bg-amber-500/20 shrink-0 mt-0.5">
-              <span className="text-xs font-bold text-amber-600">!</span>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
-                Beta Version Notice
-              </p>
-              <p className="text-sm text-amber-800 dark:text-amber-200">
-                This library requires{" "}
-                <code className="px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/50 text-xs font-mono">
-                  @maplibre/maplibre-react-native@11.0.0-beta.10
-                </code>
-                , which is currently in beta. Version 11 is used due to its support for the new architecture.
-                Breaking changes may arise.
-              </p>
-
-              <p>You may use the <DocsLink href="/docs/commercial-use">Mapbox version</DocsLink>, which uses <DocsCode>
-                <DocsLink href="https://rnmapbox.github.io/">@rnmapbox/maps</DocsLink></DocsCode>, which is not in beta.</p>
-            </div>
-          </div>
-        </div>
       </DocsSection>
 
       <DocsSection title="Why mapcn-react-native?">
