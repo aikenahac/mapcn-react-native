@@ -16,7 +16,7 @@ import {
 } from "@maplibre/maplibre-react-native";
 import {
   createContext,
-  useContext,
+  use,
   useEffect,
   useId,
   useRef,
@@ -40,7 +40,7 @@ type MapContextValue = {
 const MapContext = createContext<MapContextValue | null>(null);
 
 function useMap() {
-  const context = useContext(MapContext);
+  const context = use(MapContext);
   if (!context) {
     throw new Error("useMap must be used within a Map component");
   }
@@ -103,7 +103,7 @@ function Map({
   };
 
   return (
-    <MapContext.Provider value={{ mapRef, cameraRef, isLoaded, theme }}>
+    <MapContext value={{ mapRef, cameraRef, isLoaded, theme }}>
       <View className={cn("flex-1 relative", className)}>
         <MapLibreMap
           ref={mapRef}
@@ -125,7 +125,7 @@ function Map({
         </MapLibreMap>
         {showLoader && !isLoaded && <DefaultLoader />}
       </View>
-    </MapContext.Provider>
+    </MapContext>
   );
 }
 
@@ -175,7 +175,7 @@ function MapMarker({
     : [positionProps.longitude, positionProps.latitude];
 
   return (
-    <MarkerContext.Provider value={{ coordinate }}>
+    <MarkerContext value={{ coordinate }}>
       <Marker
         id={id}
         lngLat={coordinate}
@@ -188,7 +188,7 @@ function MapMarker({
           </View>
         </Pressable>
       </Marker>
-    </MarkerContext.Provider>
+    </MarkerContext>
   );
 }
 

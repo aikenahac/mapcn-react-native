@@ -20,7 +20,7 @@ npm run web            # Open in web browser
 ```bash
 npm run build          # Custom build script
 npm run lint           # Run ESLint
-npx expo prebuild --clean   # Regenerate native projects (after app.json changes)
+npx expo prebuild --clean   # Regenerate native projects on demand for local native validation
 ```
 
 ### EAS Build Profiles (see eas.json)
@@ -42,7 +42,7 @@ eas build --profile production           # Production build (auto-increment vers
 ### Styling System
 - **Uniwind**: Tailwind CSS v4 for React Native
   - Metro config: `metro.config.js` includes `withUniwindConfig` with `global.css` input
-  - Babel config: Uses the standard Expo preset only; Uniwind does not need a Babel preset
+  - Babel config: No custom Babel config is required; Expo's default preset is enough
   - Global CSS: `global.css` defines the theme tokens and semantic color utilities
   - Use `className` prop for styling components
 
@@ -66,7 +66,7 @@ eas build --profile production           # Production build (auto-increment vers
 - Includes Uniwind types via `uniwind-env.d.ts`
 
 ### Native Configuration (app.json)
-- **React Native New Architecture**: Enabled (`newArchEnabled: true`)
+- **React Native New Architecture**: Enabled by default in Expo SDK 55
 - **iOS**:
   - `NSAppTransportSecurity.NSAllowsArbitraryLoads: true` - Required for map tile loading
   - Location permission descriptions configured
@@ -82,7 +82,7 @@ eas build --profile production           # Production build (auto-increment vers
 3. Call hooks like `useCurrentPosition()` unconditionally (not inside conditionals)
 
 ### Rebuilding After Config Changes
-After modifying `app.json` (permissions, plugins, native settings):
+This repo uses Continuous Native Generation, so `ios/` and `android/` are generated only when needed. After modifying `app.json` (permissions, plugins, native settings):
 ```bash
 npx expo prebuild --clean
 npx expo run:ios    # or run:android
