@@ -5,14 +5,15 @@ import { Footer } from "./_components/footer";
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
-      <Header className="max-w-5xl mx-auto w-full" />
+    <div className="home-page min-h-screen bg-background flex flex-col overflow-x-hidden">
+      <div className="home-ambient" aria-hidden="true" />
+      <Header className="home-header sticky top-0 z-50 mx-auto w-full max-w-7xl" />
 
-      <main className="flex-1 px-6 py-20 mx-auto w-full">
-        <section className="max-w-5xl w-full mx-auto space-y-20">
+      <main className="relative z-10 flex-1 w-full">
+        <div className="mx-auto w-full max-w-7xl px-6 sm:px-8">
           <Hero />
           <Examples />
-        </section>
+        </div>
       </main>
 
       <Footer />

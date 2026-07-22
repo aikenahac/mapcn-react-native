@@ -188,6 +188,252 @@
 .delay-700 { animation-delay: 700ms; }
 .delay-800 { animation-delay: 800ms; }
 
+/* Landing page */
+.home-page {
+  --home-sky: #38bdf8;
+  --home-emerald: #34d399;
+  position: relative;
+  isolation: isolate;
+}
+
+.home-page::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  content: "";
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--border) 36%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 28%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to bottom, black, transparent 38%);
+  opacity: 0.45;
+}
+
+.home-ambient {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: 62rem;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 76% 22%, rgba(56, 189, 248, 0.16), transparent 27rem),
+    radial-gradient(circle at 62% 34%, rgba(52, 211, 153, 0.09), transparent 22rem),
+    radial-gradient(circle at 8% 8%, rgba(167, 139, 250, 0.08), transparent 20rem);
+  filter: saturate(1.2);
+}
+
+.home-header {
+  background: color-mix(in oklab, var(--background) 78%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 58%, transparent);
+  backdrop-filter: blur(18px) saturate(1.35);
+}
+
+.home-display-accent {
+  width: fit-content;
+  color: transparent;
+  background: linear-gradient(95deg, var(--home-sky), #0ea5e9 45%, var(--home-emerald));
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.home-primary-button {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 16px 35px -16px rgba(14, 165, 233, 0.58);
+}
+
+.home-command {
+  transition:
+    border-color 200ms ease,
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.home-command:hover {
+  border-color: color-mix(in oklab, var(--home-sky) 42%, var(--border));
+  box-shadow: 0 22px 55px -26px rgba(14, 165, 233, 0.5);
+  transform: translateY(-2px);
+}
+
+.home-stage-wrap {
+  --stage-x: 0deg;
+  --stage-y: 0deg;
+  --glow-x: 50%;
+  --glow-y: 45%;
+  perspective: 1200px;
+}
+
+.home-map-stage {
+  transform: rotateX(var(--stage-y)) rotateY(var(--stage-x));
+  transform-style: preserve-3d;
+  transition: transform 240ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  will-change: transform;
+}
+
+.home-stage-image {
+  transform: translateZ(18px);
+}
+
+.home-stage-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  transform: perspective(500px) rotateX(62deg) scale(1.45) translateY(5%);
+  transform-origin: center bottom;
+}
+
+.home-stage-glow {
+  background: radial-gradient(
+    circle at var(--glow-x) var(--glow-y),
+    rgba(56, 189, 248, 0.28),
+    transparent 28%
+  );
+  transition: background-position 180ms ease;
+}
+
+.home-stage-orbit {
+  position: absolute;
+  z-index: -1;
+  border: 1px dashed color-mix(in oklab, var(--home-sky) 25%, transparent);
+  border-radius: 999px;
+  pointer-events: none;
+  animation: home-orbit 32s linear infinite;
+}
+
+.home-stage-orbit::before,
+.home-stage-orbit::after {
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  content: "";
+  border-radius: 999px;
+  background: var(--home-sky);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.8);
+}
+
+.home-stage-orbit::before { left: -4px; }
+.home-stage-orbit::after { right: -4px; }
+
+.home-stage-orbit-one {
+  inset: 5% -7%;
+  transform: rotate(-12deg);
+}
+
+.home-stage-orbit-two {
+  inset: -5% 12%;
+  border-color: color-mix(in oklab, var(--home-emerald) 22%, transparent);
+  animation-direction: reverse;
+  animation-duration: 26s;
+  transform: rotate(64deg);
+}
+
+.home-stage-orbit-two::before,
+.home-stage-orbit-two::after {
+  background: var(--home-emerald);
+  box-shadow: 0 0 20px rgba(52, 211, 153, 0.75);
+}
+
+.home-example-card {
+  outline: none;
+  transition:
+    transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 500ms ease,
+    border-color 300ms ease;
+}
+
+.home-example-card:hover {
+  z-index: 2;
+  border-color: color-mix(in oklab, var(--home-sky) 35%, var(--border));
+  box-shadow: 0 30px 70px -38px rgba(14, 165, 233, 0.5);
+  transform: translateY(-6px);
+}
+
+.home-example-card:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--home-sky) 42%, transparent);
+}
+
+.home-cta-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.9), transparent 26%);
+  background-size: 42px 42px, 42px 42px, 100% 100%;
+  mask-image: linear-gradient(90deg, transparent, black 48%);
+}
+
+@supports (animation-timeline: view()) {
+  .home-reveal {
+    animation: home-scroll-reveal linear both;
+    animation-range: entry 0% entry 35%;
+    animation-timeline: view();
+  }
+}
+
+@keyframes home-orbit {
+  to { rotate: 360deg; }
+}
+
+@keyframes home-scroll-reveal {
+  from { opacity: 0; transform: translateY(32px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 1023px) {
+  .home-hero {
+    padding-top: 5rem;
+  }
+
+  .home-stage-wrap {
+    width: 100%;
+  }
+}
+
+@media (max-width: 639px) {
+  .home-header {
+    padding-inline: 1rem;
+  }
+
+  .home-display {
+    letter-spacing: -0.065em;
+  }
+
+  .home-header a[href*="buymeacoffee"],
+  .home-header [data-orientation="vertical"] {
+    display: none;
+  }
+
+  .home-header a[href*="github"] span {
+    display: none;
+  }
+
+  .home-map-stage {
+    border-radius: 1.5rem;
+  }
+
+  .home-stage-orbit-one { inset-inline: -4%; }
+  .home-stage-orbit-two { inset-inline: 18%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-map-stage,
+  .home-command,
+  .home-example-card,
+  .home-example-card img {
+    transition-duration: 0.01ms !important;
+  }
+
+  .home-map-stage {
+    transform: none !important;
+  }
+
+  .home-stage-orbit,
+  .home-reveal {
+    animation: none !important;
+  }
+}
+
 /* Shiki dual theme support for code blocks */
 html .shiki,
 html .shiki span {

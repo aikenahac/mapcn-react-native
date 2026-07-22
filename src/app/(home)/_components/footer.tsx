@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="w-full px-6 py-6 border-t border-border/40">
-      <div className="mx-auto max-w-5xl flex items-center justify-between text-xs text-muted-foreground">
+    <footer className="relative z-10 w-full border-t border-border/40 px-6 py-8">
+      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-5 text-xs text-muted-foreground sm:flex-row sm:items-center">
         <span>
           Built by{" "}
           <a
@@ -15,7 +15,7 @@ export function Footer() {
             Aiken
           </a>
         </span>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-5">
           <a
             href="https://github.com/aikenahac/mapcn-react-native"
             target="_blank"

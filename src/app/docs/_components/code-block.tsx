@@ -23,7 +23,7 @@ export async function CodeBlock({
         </div>
       )}
       <HorizontalScrollArea
-        className="p-4 overflow-y-visible text-sm bg-muted/20 [&_pre]:bg-transparent! [&_code]:bg-transparent!"
+        className="p-4 overflow-y-visible text-sm bg-muted/20 [&_pre]:whitespace-pre! [&_.line]:whitespace-pre! [&_pre]:bg-transparent! [&_code]:bg-transparent!"
         dangerouslySetInnerHTML={{ __html: highlighted }}
       />
     </div>
