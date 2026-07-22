@@ -72,9 +72,7 @@ export function Hero() {
         </h1>
 
         <p className="animate-fade-up delay-200 mt-7 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Ready-to-use, customizable map components built on MapLibre or Mapbox.
-          Styled with NativeWind and Uniwind, with the same component code for
-          both. Zero config. One command setup.
+          Ready-to-use, customizable map components built on MapLibre or Mapbox. Zero config. One command setup.
         </p>
 
         <div className="animate-fade-up delay-300 mt-8 flex flex-wrap items-center gap-3">
