@@ -3,7 +3,8 @@
  * See apps/demo-maplibre/src/components/ui/map-renderer.tsx for the sibling
  * implementation and the rationale for what does/doesn't live here.
  */
-import type { ComponentType } from "react";
+import type { ComponentType, ReactElement, ReactNode } from "react";
+import type { NativeSyntheticEvent } from "react-native";
 import Mapbox, {
   type Camera as MapboxCameraRef,
   type MapView as MapboxMapViewRef,
@@ -11,6 +12,8 @@ import Mapbox, {
 import type {
   Bounds,
   Coordinate,
+  Expression,
+  GeoJSONInput,
   MapCameraAnimation,
   MapFeaturePressEvent,
   MapRenderer,
@@ -40,6 +43,81 @@ export const MapboxLineLayer = Mapbox.LineLayer as unknown as ComponentType<any>
 export const MapboxFillLayer = Mapbox.FillLayer as unknown as ComponentType<any>;
 export const MapboxCircleLayer = Mapbox.CircleLayer as unknown as ComponentType<any>;
 export const MapboxSymbolLayer = Mapbox.SymbolLayer as unknown as ComponentType<any>;
+
+/**
+ * Anchors arbitrary RN content at a geographic coordinate using the
+ * renderer's native marker mechanism -- correctness (never drifts during
+ * pan/zoom) over a manually re-projected overlay, which is why `MapPopup`
+ * (plan §7.10) is built on this instead of `useMap().project()` polling.
+ */
+export function MapMarkerAnchor({
+  id,
+  coordinate,
+  children,
+}: {
+  id: string;
+  coordinate: Coordinate;
+  children: ReactElement;
+}) {
+  return (
+    <Mapbox.MarkerView id={id} coordinate={coordinate} anchor={{ x: 0.5, y: 1 }}>
+      {children}
+    </Mapbox.MarkerView>
+  );
+}
+
+export interface MapSourceProps {
+  id: string;
+  data: GeoJSONInput;
+  children?: ReactNode;
+  cluster?: boolean;
+  clusterRadius?: number;
+  clusterMaxZoom?: number;
+  /** MapLibre only -- see CAPABILITIES.clusterMinPoints. Silently ignored here, not passed to ShapeSource. */
+  clusterMinPoints?: number;
+  clusterProperties?: Record<string, unknown>;
+  onPress?: (event: NativeSyntheticEvent<unknown>) => void;
+}
+
+/** A GeoJSON data source, normalized across renderers -- the foundation MapRoute/MapGeoJSON/MapClusterLayer build on. */
+export function MapSource({ id, data, children, cluster, clusterRadius, clusterMaxZoom, clusterProperties, onPress }: MapSourceProps) {
+  return (
+    <MapboxShapeSource
+      id={id}
+      shape={data}
+      cluster={cluster}
+      clusterRadius={clusterRadius}
+      clusterMaxZoomLevel={clusterMaxZoom}
+      clusterProperties={clusterProperties}
+      onPress={onPress}
+    >
+      {children}
+    </MapboxShapeSource>
+  );
+}
+
+export type MapLayerType = "fill" | "line" | "circle" | "symbol" | "heatmap";
+
+export interface MapLayerProps {
+  id: string;
+  type: MapLayerType;
+  style?: Record<string, unknown>;
+  filter?: Expression;
+  beforeId?: string;
+}
+
+const LAYER_BY_TYPE: Record<MapLayerType, ComponentType<any>> = {
+  fill: MapboxFillLayer,
+  line: MapboxLineLayer,
+  circle: MapboxCircleLayer,
+  symbol: MapboxSymbolLayer,
+  heatmap: Mapbox.HeatmapLayer as unknown as ComponentType<any>,
+};
+
+export function MapLayer({ id, type, style, filter, beforeId }: MapLayerProps) {
+  const LayerComponent = LAYER_BY_TYPE[type];
+  return <LayerComponent id={id} style={style} filter={filter} aboveLayerID={beforeId} />;
+}
 
 export const RENDERER: MapRenderer = "mapbox";
 

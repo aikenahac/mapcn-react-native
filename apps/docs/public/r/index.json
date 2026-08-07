@@ -24,7 +24,7 @@
         }
       },
       "category": "core",
-      "contentHash": "sha256-ff3d56b219e5ae2b",
+      "contentHash": "sha256-71b1352d84ada1ef",
       "description": "The core map container: controlled/uncontrolled viewport, provider-based styling, and the useMap() imperative camera API.",
       "docsSlug": "map",
       "env": [],
@@ -50,6 +50,98 @@
       ],
       "source": "per-renderer",
       "title": "Map"
+    },
+    {
+      "capabilities": {
+        "maplibre": {
+          "note": "allowOverlap has no MapLibre equivalent; accepted but a no-op."
+        }
+      },
+      "category": "core",
+      "contentHash": "sha256-399a83d0a6b7332c",
+      "description": "MapMarker, MarkerContent and MarkerLabel -- native-anchored markers with custom content and text labels.",
+      "docsSlug": "markers",
+      "env": [],
+      "expoPlugins": {},
+      "name": "marker",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "map"
+      ],
+      "renderers": [
+        "maplibre",
+        "mapbox"
+      ],
+      "source": "per-renderer",
+      "title": "Marker"
+    },
+    {
+      "category": "core",
+      "contentHash": "sha256-4833340153ac3d9f",
+      "description": "MapPopup anchors to any coordinate via the renderer's native marker mechanism; MarkerPopup is a convenience wrapper for the common per-marker case.",
+      "docsSlug": "popups",
+      "env": [],
+      "expoPlugins": [],
+      "name": "popup",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core",
+        "map",
+        "marker"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Popup"
+    },
+    {
+      "category": "core",
+      "contentHash": "sha256-1953515e52c30489",
+      "description": "Zoom and locate-me controls, rendered through Map's overlay mechanism so the same file works unchanged on both renderers.",
+      "docsSlug": "controls",
+      "env": [],
+      "expoPlugins": [],
+      "name": "controls",
+      "permissions": {
+        "android": [
+          "ACCESS_FINE_LOCATION",
+          "ACCESS_COARSE_LOCATION"
+        ],
+        "ios": [
+          "NSLocationWhenInUseUsageDescription"
+        ]
+      },
+      "registryDependencies": [
+        "core",
+        "map"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Controls"
+    },
+    {
+      "category": "data",
+      "contentHash": "sha256-6f70d712943d3457",
+      "description": "Renders a LineString as a styled route/path, built on the same MapSource/MapLayer primitives MapGeoJSON uses.",
+      "docsSlug": "routes",
+      "env": [],
+      "expoPlugins": [],
+      "name": "route",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "map"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Route"
     }
   ],
   "schemaVersion": 2,

@@ -1,6 +1,7 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { Map, MapMarker } from "@/components/ui/map";
+import { Map } from "@/components/ui/map";
+import { MapMarker } from "@/components/ui/map-marker";
 import { ArrowLeftIcon, Zap } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";

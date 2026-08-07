@@ -1,7 +1,8 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map, MapMarker } from "@/components/ui/map";
+import { Map } from "@/components/ui/map";
+import { MapMarker } from "@/components/ui/map-marker";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { Link } from "expo-router";

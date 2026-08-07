@@ -9,6 +9,22 @@
     {
       "name": "map",
       "type": "registry:ui"
+    },
+    {
+      "name": "marker",
+      "type": "registry:ui"
+    },
+    {
+      "name": "popup",
+      "type": "registry:ui"
+    },
+    {
+      "name": "controls",
+      "type": "registry:ui"
+    },
+    {
+      "name": "route",
+      "type": "registry:ui"
     }
   ],
   "name": "mapcn-rn"

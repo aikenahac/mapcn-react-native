@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": [],
+  "description": "MapMarker, MarkerContent and MarkerLabel -- native-anchored markers with custom content and text labels.",
+  "devDependencies": [],
+  "files": [
+    {
+      "content": "import { cn } from \"@/lib/utils\";\nimport { Marker } from \"@maplibre/maplibre-react-native\";\nimport { createContext, useId, type ReactNode } from \"react\";\nimport { Pressable, Text, View } from \"react-native\";\n\nexport interface MarkerContextValue {\n  coordinate: [number, number];\n}\n\nexport const MarkerContext = createContext<MarkerContextValue | null>(null);\n\nfunction anchorObjectToAnchorString(anchor: { x: number; y: number }) {\n  const horizontal = anchor.x <= 0.25 ? \"left\" : anchor.x >= 0.75 ? \"right\" : \"center\";\n  const vertical = anchor.y <= 0.25 ? \"top\" : anchor.y >= 0.75 ? \"bottom\" : \"center\";\n\n  if (horizontal === \"center\" && vertical === \"center\") return \"center\";\n  if (horizontal === \"center\") return vertical;\n  if (vertical === \"center\") return horizontal;\n\n  return `${vertical}-${horizontal}` as \"top-left\" | \"top-right\" | \"bottom-left\" | \"bottom-right\";\n}\n\nexport type MapMarkerProps = {\n  children?: ReactNode;\n  label?: string;\n  /** Anchor point for the marker (0.0 to 1.0). Default is center (0.5, 0.5) */\n  anchor?: { x: number; y: number };\n  /** Allow marker to overlap with other markers. MapLibre has no native equivalent -- documented as a no-op here (see MAP_CAPABILITIES on the Mapbox side, which honors it). */\n  allowOverlap?: boolean;\n  /** Callback when marker is pressed */\n  onPress?: () => void;\n} & (\n  | { coordinate: [number, number]; longitude?: never; latitude?: never }\n  | { longitude: number; latitude: number; coordinate?: never }\n);\n\nexport function MapMarker({\n  children,\n  label,\n  anchor = { x: 0.5, y: 0.5 },\n  allowOverlap: _allowOverlap = false,\n  onPress,\n  ...positionProps\n}: MapMarkerProps) {\n  const id = useId();\n\n  const coordinate: [number, number] =\n    \"coordinate\" in positionProps && positionProps.coordinate\n      ? positionProps.coordinate\n      : [positionProps.longitude, positionProps.latitude];\n\n  return (\n    <MarkerContext value={{ coordinate }}>\n      <Marker id={id} lngLat={coordinate} anchor={anchorObjectToAnchorString(anchor)}>\n        <Pressable onPress={onPress}>\n          <View className=\"flex flex-row items-center justify-center\">\n            {children || <DefaultMarkerIcon />}\n            {label && <MarkerLabel>{label}</MarkerLabel>}\n          </View>\n        </Pressable>\n      </Marker>\n    </MarkerContext>\n  );\n}\n\nexport type MarkerContentProps = {\n  children?: ReactNode;\n  className?: string;\n};\n\nexport function MarkerContent({ children, className }: MarkerContentProps) {\n  return <View className={cn(\"items-center justify-center\", className)}>{children || <DefaultMarkerIcon />}</View>;\n}\n\nfunction DefaultMarkerIcon() {\n  return <View className=\"w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-md\" style={{ elevation: 5 }} />;\n}\n\nexport type MarkerLabelProps = {\n  children: ReactNode;\n  className?: string;\n  classNameText?: string;\n  position?: \"top\" | \"bottom\";\n};\n\nexport function MarkerLabel({ children, className, classNameText, position = \"top\" }: MarkerLabelProps) {\n  return (\n    <View\n      className={cn(\n        \"absolute left-1/2 translate-x-[-50%]\",\n        position === \"top\" ? \"mb-1 bottom-full\" : \"mt-1 top-full\",\n        className,\n      )}\n    >\n      <Text className={cn(\"text-[10px] font-semibold text-foreground\", classNameText)}>{children}</Text>\n    </View>\n  );\n}\n",
+      "path": "apps/demo-maplibre/src/components/ui/map-marker.tsx",
+      "target": "components/ui/map-marker.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "name": "marker",
+  "registryDependencies": [
+    "map"
+  ],
+  "title": "Marker",
+  "type": "registry:ui"
+}

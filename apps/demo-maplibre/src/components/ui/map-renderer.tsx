@@ -18,16 +18,22 @@
  */
 import {
   Camera,
+  GeoJSONSource,
+  Layer,
   Map,
+  Marker,
   type CameraRef,
   type MapRef,
   type ViewState,
   type ViewStateChangeEvent,
 } from "@maplibre/maplibre-react-native";
 import type { NativeSyntheticEvent } from "react-native";
+import type { ReactElement, ReactNode } from "react";
 import type {
   Bounds,
   Coordinate,
+  Expression,
+  GeoJSONInput,
   MapCameraAnimation,
   MapFeaturePressEvent,
   MapRenderer,
@@ -38,6 +44,73 @@ import { bboxOf } from "@/lib/mapcn/geo";
 
 export { Map as NativeMap, Camera as NativeCamera };
 export type { CameraRef as NativeCameraRef, MapRef as NativeMapRef };
+
+/**
+ * Anchors arbitrary RN content at a geographic coordinate using the
+ * renderer's native marker mechanism -- correctness (never drifts during
+ * pan/zoom) over a manually re-projected overlay, which is why `MapPopup`
+ * (plan §7.10) is built on this instead of `useMap().project()` polling.
+ */
+export function MapMarkerAnchor({
+  id,
+  coordinate,
+  children,
+}: {
+  id: string;
+  coordinate: Coordinate;
+  children: ReactElement;
+}) {
+  return (
+    <Marker id={id} lngLat={coordinate} anchor="bottom">
+      {children}
+    </Marker>
+  );
+}
+
+export interface MapSourceProps {
+  id: string;
+  data: GeoJSONInput;
+  children?: ReactNode;
+  cluster?: boolean;
+  clusterRadius?: number;
+  clusterMaxZoom?: number;
+  /** MapLibre only -- see CAPABILITIES.clusterMinPoints. */
+  clusterMinPoints?: number;
+  clusterProperties?: Record<string, unknown>;
+  onPress?: (event: NativeSyntheticEvent<unknown>) => void;
+}
+
+/** A GeoJSON data source, normalized across renderers -- the foundation MapRoute/MapGeoJSON/MapClusterLayer build on. */
+export function MapSource({ id, data, children, cluster, clusterRadius, clusterMaxZoom, clusterMinPoints, clusterProperties, onPress }: MapSourceProps) {
+  return (
+    <GeoJSONSource
+      id={id}
+      data={data as never}
+      cluster={cluster}
+      clusterRadius={clusterRadius}
+      clusterMaxZoom={clusterMaxZoom}
+      clusterMinPoints={clusterMinPoints}
+      clusterProperties={clusterProperties as never}
+      onPress={onPress as never}
+    >
+      {children}
+    </GeoJSONSource>
+  );
+}
+
+export type MapLayerType = "fill" | "line" | "circle" | "symbol" | "heatmap";
+
+export interface MapLayerProps {
+  id: string;
+  type: MapLayerType;
+  style?: Record<string, unknown>;
+  filter?: Expression;
+  beforeId?: string;
+}
+
+export function MapLayer({ id, type, style, filter, beforeId }: MapLayerProps) {
+  return <Layer id={id} type={type} style={style as never} filter={filter as never} beforeId={beforeId} />;
+}
 
 export const RENDERER: MapRenderer = "maplibre";
 

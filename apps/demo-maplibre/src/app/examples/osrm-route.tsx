@@ -1,7 +1,9 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map, MapMarker, MapRoute } from "@/components/ui/map";
+import { Map } from "@/components/ui/map";
+import { MapMarker } from "@/components/ui/map-marker";
+import { MapRoute } from "@/components/ui/map-route";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { useState } from "react";
