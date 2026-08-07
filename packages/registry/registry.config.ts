@@ -235,5 +235,15 @@ export default defineRegistry({
         maplibre: { note: "onPress and custom JS-rendered children have no Mapbox equivalent." },
       },
     }),
+    defineComponent({
+      name: "style-switcher",
+      title: "Style switcher",
+      description: "MapStyleSwitcher reads its style list from the configured basemap provider -- works standalone or nested inside MapControls via position=\"none\".",
+      category: "styling",
+      docsSlug: "style-switcher",
+      source: "shared",
+      registryDependencies: ["core", "map"],
+      files: [{ from: "components/ui/map-style-switcher.tsx", to: "@ui/map-style-switcher.tsx" }],
+    }),
   ],
 });

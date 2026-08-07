@@ -154,6 +154,8 @@ function Map({
   const colorScheme: "light" | "dark" = colorSchemeProp ?? (systemColorScheme === "dark" ? "dark" : "light");
   const provider = PROVIDERS[providerId];
 
+  const [styleOverride, setStyleOverride] = useState<string | undefined>(undefined);
+
   const isControlled = viewport !== undefined;
   const initialViewport: MapViewport = { ...DEFAULT_VIEWPORT, ...defaultViewport, ...viewport };
 
@@ -166,7 +168,7 @@ function Map({
   const lastAppliedRef = useRef<MapViewport>(initialViewport);
   const isGestureActiveRef = useRef(false);
 
-  const mapStyle = resolveMapStyle(style, colorScheme, provider);
+  const mapStyle = resolveMapStyle(styleOverride ?? style, colorScheme, provider);
 
   // createCameraController only stores these ref objects; every `.current`
   // read happens inside the closures it returns, which only ever run from
@@ -180,9 +182,11 @@ function Map({
       isLoaded,
       mapRef,
       cameraRef,
+      provider: providerId,
+      setStyle: setStyleOverride,
       ...cameraController,
     }),
-    [isLoaded, cameraController],
+    [isLoaded, cameraController, providerId],
   );
 
   useImperativeHandle(ref, () => instance, [instance]);

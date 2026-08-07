@@ -61,6 +61,10 @@
     {
       "name": "location-puck",
       "type": "registry:ui"
+    },
+    {
+      "name": "style-switcher",
+      "type": "registry:ui"
     }
   ],
   "name": "mapcn-rn"

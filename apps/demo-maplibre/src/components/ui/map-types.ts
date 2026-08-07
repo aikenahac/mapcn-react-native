@@ -115,21 +115,32 @@ export interface MapInstance {
   }): Promise<Array<Feature>>;
 
   /** Raw renderer refs. Types differ per renderer -- branch on `renderer`. */
-   
+
   mapRef: { current: any };
-   
+
   cameraRef: { current: any };
+
+  /** The configured basemap provider (see lib/mapcn/provider.ts). Read-only info for MapStyleSwitcher and friends. */
+  provider: MapProviderId;
+  /**
+   * Switches the active style by id (must be one the configured provider
+   * defines). Owned directly by `Map` (it's just the state that decides
+   * which style URL gets resolved), not by the renderer adapter -- there's
+   * no native "change style" ref method, `Map` just re-renders with a
+   * different `mapStyle` prop value.
+   */
+  setStyle(styleId: string): void;
 }
 
 /**
  * The renderer-independent camera/query methods of MapInstance, minus the
- * bookkeeping fields (`renderer`, `isLoaded`, the raw refs) that `Map`
- * itself owns. Each renderer adapter's `createCameraController()` returns
- * exactly this shape, built on top of that renderer's native map/camera
- * refs -- this is what makes the two adapters interchangeable from `Map`'s
- * point of view.
+ * bookkeeping fields (`renderer`, `isLoaded`, the raw refs, `provider`,
+ * `setStyle`) that `Map` itself owns. Each renderer adapter's
+ * `createCameraController()` returns exactly this shape, built on top of
+ * that renderer's native map/camera refs -- this is what makes the two
+ * adapters interchangeable from `Map`'s point of view.
  */
-export type MapInstanceMethods = Omit<MapInstance, "renderer" | "isLoaded" | "mapRef" | "cameraRef">;
+export type MapInstanceMethods = Omit<MapInstance, "renderer" | "isLoaded" | "mapRef" | "cameraRef" | "provider" | "setStyle">;
 
 /** Per-renderer capability flags, used to warn (not silently drop) unsupported props. */
 export interface RendererCapabilities {
