@@ -3,7 +3,9 @@
  * See apps/demo-maplibre/src/components/ui/map-renderer.tsx for the sibling
  * implementation and the rationale for what does/doesn't live here.
  */
-import type { ComponentType, ReactElement, ReactNode } from "react";
+import type { ComponentType, ReactElement, ReactNode, Ref } from "react";
+import { useImperativeHandle, useRef } from "react";
+import type { Feature } from "geojson";
 import type { NativeSyntheticEvent } from "react-native";
 import Mapbox, {
   type Camera as MapboxCameraRef,
@@ -80,10 +82,44 @@ export interface MapSourceProps {
   hitbox?: { width: number; height: number };
 }
 
+/** Normalized cluster-query surface -- see MapClusterLayer, which is the only consumer of this ref. */
+export interface MapSourceRef {
+  getClusterExpansionZoom(cluster: Feature): Promise<number>;
+  getClusterLeaves(cluster: Feature, limit: number, offset: number): Promise<Array<Feature>>;
+}
+
 /** A GeoJSON data source, normalized across renderers -- the foundation MapRoute/MapGeoJSON/MapClusterLayer build on. */
-export function MapSource({ id, data, children, cluster, clusterRadius, clusterMaxZoom, clusterProperties, onPress, hitbox }: MapSourceProps) {
+export function MapSource({
+  id,
+  data,
+  children,
+  cluster,
+  clusterRadius,
+  clusterMaxZoom,
+  clusterProperties,
+  onPress,
+  hitbox,
+  ref,
+}: MapSourceProps & { ref?: Ref<MapSourceRef> }) {
+   
+  const internalRef = useRef<any>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      async getClusterExpansionZoom(clusterFeature) {
+        return (await internalRef.current?.getClusterExpansionZoom(clusterFeature)) ?? 0;
+      },
+      async getClusterLeaves(clusterFeature, limit, offset) {
+        return (await internalRef.current?.getClusterLeaves(clusterFeature, limit, offset)) ?? [];
+      },
+    }),
+    [],
+  );
+
   return (
     <MapboxShapeSource
+      ref={internalRef}
       id={id}
       shape={data}
       cluster={cluster}

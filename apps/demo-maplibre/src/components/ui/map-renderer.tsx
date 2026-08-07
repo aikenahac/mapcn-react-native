@@ -23,12 +23,14 @@ import {
   Map,
   Marker,
   type CameraRef,
+  type GeoJSONSourceRef,
   type MapRef,
   type ViewState,
   type ViewStateChangeEvent,
 } from "@maplibre/maplibre-react-native";
+import type { Feature } from "geojson";
 import type { NativeSyntheticEvent } from "react-native";
-import type { ReactElement, ReactNode } from "react";
+import { useImperativeHandle, useRef, type ReactElement, type ReactNode, type Ref } from "react";
 import type {
   Bounds,
   Coordinate,
@@ -81,10 +83,48 @@ export interface MapSourceProps {
   hitbox?: { width: number; height: number };
 }
 
+/** Normalized cluster-query surface -- see MapClusterLayer, which is the only consumer of this ref. */
+export interface MapSourceRef {
+  getClusterExpansionZoom(cluster: Feature): Promise<number>;
+  getClusterLeaves(cluster: Feature, limit: number, offset: number): Promise<Array<Feature>>;
+}
+
 /** A GeoJSON data source, normalized across renderers -- the foundation MapRoute/MapGeoJSON/MapClusterLayer build on. */
-export function MapSource({ id, data, children, cluster, clusterRadius, clusterMaxZoom, clusterMinPoints, clusterProperties, onPress, hitbox }: MapSourceProps) {
+export function MapSource({
+  id,
+  data,
+  children,
+  cluster,
+  clusterRadius,
+  clusterMaxZoom,
+  clusterMinPoints,
+  clusterProperties,
+  onPress,
+  hitbox,
+  ref,
+}: MapSourceProps & { ref?: Ref<MapSourceRef> }) {
+  const internalRef = useRef<GeoJSONSourceRef | null>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      async getClusterExpansionZoom(clusterFeature) {
+        const clusterId = clusterFeature.properties?.cluster_id as number | undefined;
+        if (clusterId === undefined) throw new Error("[mapcn] getClusterExpansionZoom() called on a non-cluster feature");
+        return (await internalRef.current?.getClusterExpansionZoom(clusterId)) ?? 0;
+      },
+      async getClusterLeaves(clusterFeature, limit, offset) {
+        const clusterId = clusterFeature.properties?.cluster_id as number | undefined;
+        if (clusterId === undefined) throw new Error("[mapcn] getClusterLeaves() called on a non-cluster feature");
+        return (await internalRef.current?.getClusterLeaves(clusterId, limit, offset)) ?? [];
+      },
+    }),
+    [],
+  );
+
   return (
     <GeoJSONSource
+      ref={internalRef}
       id={id}
       data={data as never}
       cluster={cluster}

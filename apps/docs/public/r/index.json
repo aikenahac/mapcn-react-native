@@ -2,7 +2,7 @@
   "components": [
     {
       "category": "core",
-      "contentHash": "sha256-1aa7aeb2e51e93ee",
+      "contentHash": "sha256-451c495c9cc8eed0",
       "description": "Renderer-independent types, geo/scale/color utilities, and the provider registry that every other mapcn component depends on.",
       "docsSlug": "core",
       "env": [],
@@ -24,7 +24,7 @@
         }
       },
       "category": "core",
-      "contentHash": "sha256-4df0a2f7a7327f15",
+      "contentHash": "sha256-358ff2bdae7e018f",
       "description": "The core map container: controlled/uncontrolled viewport, provider-based styling, and the useMap() imperative camera API.",
       "docsSlug": "map",
       "env": [],
@@ -204,6 +204,92 @@
       "renderers": "any",
       "source": "shared",
       "title": "Polygon"
+    },
+    {
+      "capabilities": {
+        "mapbox": {
+          "note": "minPoints has no equivalent on Mapbox's ShapeSource; accepted but ignored."
+        }
+      },
+      "category": "data",
+      "contentHash": "sha256-de5040ec08584f9e",
+      "description": "Native point clustering with cluster/count/unclustered-point styling, tap-to-expand, and lazy cluster-leaves queries. Renders through native layers, never RN marker views, so it stays correct at 10k+ points.",
+      "docsSlug": "clustering",
+      "env": [],
+      "expoPlugins": [],
+      "name": "cluster",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core",
+        "map"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Cluster"
+    },
+    {
+      "category": "data",
+      "contentHash": "sha256-d9798644e4d475c3",
+      "description": "A high-level heatmap primitive: 5 concepts (weight, radius, intensity, opacity, colors) instead of raw heatmap-* paint properties, with the transparent-density-0 stop and weight normalization handled automatically.",
+      "docsSlug": "heatmaps",
+      "env": [],
+      "expoPlugins": [],
+      "name": "heatmap",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core",
+        "map"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Heatmap"
+    },
+    {
+      "category": "data",
+      "contentHash": "sha256-8283d0fe7fe05b02",
+      "description": "A choropleth abstraction built on native step/interpolate expression evaluation, with quantize/quantile/threshold/linear scales computed once in JS and normalized legend data emitted via onLegendChange.",
+      "docsSlug": "choropleths",
+      "env": [],
+      "expoPlugins": [],
+      "name": "choropleth",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core",
+        "map",
+        "geojson"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Choropleth"
+    },
+    {
+      "category": "data",
+      "contentHash": "sha256-751e2d6c2017f3f9",
+      "description": "A reusable legend driven entirely by plain MapLegendData -- categorical, discrete-steps, or continuous-gradient -- never coupled to a specific rendering component.",
+      "docsSlug": "legend",
+      "env": [],
+      "expoPlugins": [],
+      "name": "legend",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core",
+        "map"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Legend"
     }
   ],
   "schemaVersion": 2,

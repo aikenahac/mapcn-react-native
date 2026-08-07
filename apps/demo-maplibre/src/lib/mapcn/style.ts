@@ -59,3 +59,21 @@ export function combineFilters(...filters: Array<Expression | undefined>): Expre
 export function selectionFilter(idProperty: string, selectedId: string | number): Expression {
   return ["==", ["get", idProperty], selectedId];
 }
+
+export interface ClusterStep {
+  /** point_count threshold this step applies from. */
+  at: number;
+  color?: string;
+  radius?: number;
+}
+
+/** Compiles cluster color/radius steps into a `["step", ["get", "point_count"], ...]` expression. */
+export function clusterStepExpression(steps: Array<ClusterStep>, key: "color" | "radius", base: string | number): Expression {
+  const sorted = [...steps].sort((a, b) => a.at - b.at);
+  const expr: Expression = ["step", ["get", "point_count"], base];
+  for (const step of sorted) {
+    const value = key === "color" ? step.color : step.radius;
+    if (value !== undefined) expr.push(step.at, value);
+  }
+  return expr;
+}

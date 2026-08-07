@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   circlePaintFrom,
+  clusterStepExpression,
   combineFilters,
   fillPaintFrom,
   geometryTypeFilter,
@@ -76,5 +77,30 @@ describe("selectionFilter", () => {
   it("builds an equality filter against the id property", () => {
     expect(selectionFilter("id", "abc")).toEqual(["==", ["get", "id"], "abc"]);
     expect(selectionFilter("id", 5)).toEqual(["==", ["get", "id"], 5]);
+  });
+});
+
+describe("clusterStepExpression", () => {
+  it("builds a step expression sorted by threshold regardless of input order", () => {
+    const expr = clusterStepExpression(
+      [
+        { at: 100, color: "#c" },
+        { at: 10, color: "#a" },
+        { at: 50, color: "#b" },
+      ],
+      "color",
+      "#base",
+    );
+    expect(expr).toEqual(["step", ["get", "point_count"], "#base", 10, "#a", 50, "#b", 100, "#c"]);
+  });
+
+  it("picks radius or color based on the key argument", () => {
+    const steps = [{ at: 10, color: "#a", radius: 20 }];
+    expect(clusterStepExpression(steps, "radius", 15)).toEqual(["step", ["get", "point_count"], 15, 10, 20]);
+  });
+
+  it("skips a step missing the requested key", () => {
+    const steps = [{ at: 10, color: "#a" }];
+    expect(clusterStepExpression(steps, "radius", 15)).toEqual(["step", ["get", "point_count"], 15]);
   });
 });

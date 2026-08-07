@@ -37,6 +37,22 @@
     {
       "name": "polygon",
       "type": "registry:ui"
+    },
+    {
+      "name": "cluster",
+      "type": "registry:ui"
+    },
+    {
+      "name": "heatmap",
+      "type": "registry:ui"
+    },
+    {
+      "name": "choropleth",
+      "type": "registry:ui"
+    },
+    {
+      "name": "legend",
+      "type": "registry:ui"
     }
   ],
   "name": "mapcn-rn"
