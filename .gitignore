@@ -39,8 +39,18 @@ yarn-error.*
 
 app-example
 
-# generated native folders
-/ios
-/android
+# generated native folders (per-app, CNG output)
+**/ios
+**/android
 
 builds/
+
+# monorepo build outputs
+dist/
+.next/
+.turbo/
+.pnpm-store/
+*.tgz
+
+# CLI test fixtures write here at runtime
+packages/cli/.tmp/

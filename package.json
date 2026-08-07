@@ -1,0 +1,23 @@
+{
+  "name": "mapcn-rn-monorepo",
+  "version": "2.0.0-alpha.0",
+  "private": true,
+  "packageManager": "pnpm@11.2.2",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "pnpm -r --if-present run lint",
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "test": "pnpm -r --if-present run test",
+    "build": "pnpm -r --if-present run build",
+    "registry:sync": "pnpm --filter registry run sync",
+    "registry:check": "pnpm --filter registry run check",
+    "registry:api": "pnpm --filter registry run api",
+    "registry:docs": "pnpm --filter registry run docs"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "typescript": "~5.9.2"
+  }
+}
