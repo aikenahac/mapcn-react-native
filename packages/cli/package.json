@@ -13,7 +13,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "node --import tsx src/cli.ts",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run typecheck && pnpm run test && pnpm run build"
   },
   "dependencies": {
     "@clack/prompts": "^0.10.1",
@@ -22,6 +24,7 @@
   "devDependencies": {
     "@types/node": "^24.5.2",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
   }
 }
