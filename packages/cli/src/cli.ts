@@ -4,6 +4,9 @@ import { runInitCommand } from "./commands/init.js";
 import { runAddCommand } from "./commands/add.js";
 import { runListCommand } from "./commands/list.js";
 import { runDiffCommand } from "./commands/diff.js";
+import { runDoctorCommand } from "./commands/doctor.js";
+import { runProviderCommand } from "./commands/provider.js";
+import { runMigrateCommand } from "./commands/migrate.js";
 import { DEFAULT_REGISTRY_URL } from "./core/registry-client.js";
 import type { ProviderId, Renderer } from "./types.js";
 
@@ -13,6 +16,9 @@ Usage:
   mapcn-rn add <component...> [--overwrite] [--yes] [--renderer maplibre|mapbox]
   mapcn-rn list
   mapcn-rn diff [component]
+  mapcn-rn doctor [--json] [--verbose]
+  mapcn-rn provider <target> [--yes] [--force]
+  mapcn-rn migrate [--yes]
   mapcn-rn --help
 
 Options:
@@ -36,6 +42,9 @@ async function main(): Promise<void> {
       provider: { type: "string" },
       overwrite: { type: "boolean" },
       yes: { type: "boolean", short: "y" },
+      json: { type: "boolean" },
+      verbose: { type: "boolean" },
+      force: { type: "boolean" },
     },
   });
 
@@ -78,6 +87,36 @@ async function main(): Promise<void> {
 
     case "diff":
       await runDiffCommand({ projectRoot, component: positionals[0] });
+      return;
+
+    case "doctor":
+      await runDoctorCommand({
+        projectRoot,
+        registry,
+        json: Boolean(values.json),
+        verbose: Boolean(values.verbose),
+      });
+      return;
+
+    case "provider":
+      if (!positionals[0]) {
+        throw new Error("Usage: mapcn-rn provider <target>");
+      }
+      await runProviderCommand({
+        projectRoot,
+        registry,
+        target: positionals[0],
+        yes: Boolean(values.yes),
+        force: Boolean(values.force),
+      });
+      return;
+
+    case "migrate":
+      await runMigrateCommand({
+        projectRoot,
+        registry,
+        yes: Boolean(values.yes),
+      });
       return;
 
     default:
