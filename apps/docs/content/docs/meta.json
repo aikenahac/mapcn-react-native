@@ -1,0 +1,4 @@
+{
+  "title": "Documentation",
+  "pages": ["getting-started", "core", "data", "location", "styling", "cli", "advanced", "reference"]
+}

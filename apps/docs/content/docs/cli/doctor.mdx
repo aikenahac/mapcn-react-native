@@ -1,0 +1,55 @@
+---
+title: doctor
+description: Diagnoses the project's installation and configuration -- 14 independent checks, none of which abort the rest on failure.
+---
+
+```bash
+npx mapcn-rn doctor [--json] [--verbose]
+```
+
+`doctor` is non-mutating. Each check runs independently (a failure in one never skips the rest) and is leveled `ok` / `warn` / `error` / `info`. The process exits `1` if any check is `error`-level.
+
+## Checks
+
+| Check | Level on failure | Notes |
+| --- | --- | --- |
+| Expo/RN project detected | `error` if no `package.json`; `warn` if no `expo` dependency | |
+| Package manager detected | `warn` if no lockfile found | Never assumed -- based on the nearest lockfile. |
+| `mapcn.json` present, schema version supported | `error` | If missing, only this check and legacy-v1 detection run; everything else needs a config. |
+| Renderer package installed | `error` | Checks `package.json` deps for `@maplibre/maplibre-react-native` or `@rnmapbox/maps`, matching the configured renderer. |
+| Both renderer packages present | `error` | The documented "cannot have both" plugin conflict. |
+| Expo plugin present and matches renderer | `error`; `warn` if no `app.json` | |
+| Mapbox downloads token | `warn` | Only when `renderer` is `mapbox`; checks `MAPBOX_DOWNLOADS_TOKEN` in the environment or `.env`. |
+| Basemap provider configured | `error` if unrecognized | |
+| Required provider env key present | `error` | Only when the provider `requiresKey` (skipped entirely for CARTO). |
+| iOS location permission | `error` | Only when `location` or `location-puck` is installed. |
+| Android location permissions | `error` | Same condition as above. |
+| Legacy v1 installation detected | `info` | Only surfaces when `mapcn.json` is absent and a `components/ui/map.tsx` exists -- points at `migrate`. |
+| Local modifications | `info` (not a failure) | Reports which installed files have drifted from their recorded hash. |
+| Missing registry dependencies | `error` | Only runs when the registry manifest was reachable; skipped gracefully offline. |
+
+## Flags
+
+| Flag | Description |
+| --- | --- |
+| `--json` | Machine-readable output: `{ checks, summary: { ok, warn, error, info } }`. |
+| `--verbose` | Also print passing (`ok`-level) checks in the human-readable output. |
+
+## Example output
+
+```text
+✓ Expo project detected
+✓ Package manager: pnpm
+✓ @maplibre/maplibre-react-native installed
+✓ Expo plugin "@maplibre/maplibre-react-native" present in app.json
+✓ Basemap provider: MapTiler
+✓ EXPO_PUBLIC_MAPTILER_API_KEY is set
+ℹ 1 component file(s) have local modifications: controls/components/ui/map-controls.tsx -- this is fine, just tracked for provider/migrate safety.
+✗ Component "choropleth" depends on "geojson" which is not installed
+
+1 error(s), 0 warning(s) found
+```
+
+## Related
+
+[init](/docs/cli/init) · [migrate](/docs/cli/migrate) · [provider](/docs/cli/provider) · [Permissions](/docs/location/permissions)

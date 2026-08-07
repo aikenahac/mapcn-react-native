@@ -1,0 +1,52 @@
+---
+title: Style switcher
+description: MapStyleSwitcher reads its style list from the configured basemap provider -- works standalone or nested inside MapControls.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add style-switcher" />
+
+```ts
+import { MapStyleSwitcher } from "@/components/ui/map-style-switcher";
+```
+
+## Overview
+
+`MapStyleSwitcher` reads its available style list directly from the configured provider's catalogue (see [Map styles](/docs/styling/map-styles)) -- MapTiler yields 7 named styles, CARTO 3, `custom` whatever `init` configured. It calls `useMap().setStyle(...)` internally, so `Map` re-resolves its style automatically on selection.
+
+It can render as its own standalone overlay (the default), or be laid out by a parent via `position="none"` -- for example nested inside a custom controls layout.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | — | Controlled selection (a style id from the configured provider). |
+| `defaultValue` | `string` | provider's default light-mode style | Uncontrolled initial selection. |
+| `onValueChange` | `(styleId: string, style: MapStyleDefinition) => void` | — | |
+| `styles` | `Array<string> \| Array<MapStyleDefinition>` | every style the provider exposes | Restrict or reorder the offered styles. |
+| `position` | `"top-left" \| "top-right" \| "bottom-left" \| "bottom-right" \| "none"` | `"top-right"` | `"none"` renders inline instead of through the overlay. |
+| `layout` | `"menu" \| "inline" \| "grid"` | `"menu"` | `"menu"` shows a collapsed trigger that expands a list; `"inline"`/`"grid"` render every style at once. |
+| `showLabels` | `boolean` | `true` | |
+| `renderTrigger` | `(state: { current, open, setOpen }) => ReactNode` | — | Full control over the trigger, when `layout="menu"`. |
+| `renderItem` | `(item: MapStyleDefinition, state: { selected, select }) => ReactNode` | — | Full control over each style item's rendering. |
+| `className` | `string` | — | |
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapStyleSwitcher } from "@/components/ui/map-style-switcher";
+
+export function StyleSwitchExample() {
+  return (
+    <Map defaultViewport={{ center: [-122.4194, 37.7749], zoom: 12 }} className="flex-1">
+      <MapStyleSwitcher position="top-right" layout="menu" onValueChange={(id) => console.log("switched to", id)} />
+    </Map>
+  );
+}
+```
+
+## Related components
+
+[Map styles](/docs/styling/map-styles) · [Controls](/docs/core/controls) · [Renderers & providers](/docs/getting-started/renderers-and-providers)

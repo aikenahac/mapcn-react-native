@@ -1,0 +1,61 @@
+---
+title: Legend
+description: A reusable legend driven entirely by plain MapLegendData -- categorical, discrete-steps, or continuous-gradient -- never coupled to a rendering component.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add legend" />
+
+```ts
+import { MapLegend } from "@/components/ui/map-legend";
+import type { MapLegendData } from "@/lib/mapcn/types";
+```
+
+## Overview
+
+`MapLegend` is a pure React Native component driven entirely by data -- it has no dependency on `MapChoropleth` or `MapHeatmap` specifically. Those components (and any of your own) can produce `MapLegendData` and hand it to `MapLegend`.
+
+```ts
+type MapLegendData =
+  | { type: "categorical"; items: Array<{ label: string; color: string; value?: string | number }> }
+  | { type: "steps"; items: Array<{ label: string; color: string; from?: number; to?: number }>; unit?: string }
+  | { type: "gradient"; stops: Array<{ at: number; color: string }>; domain: [number, number]; unit?: string };
+```
+
+`lib/mapcn/scale.ts` ships builders that produce this shape: `buildChoroplethLegend(scale, computed, options?)`, `buildHeatmapLegend(colors, domain, options?)`, and `buildCategoricalLegend(entries)`. `MapChoropleth`'s `onLegendChange` calls `buildChoroplethLegend` for you automatically.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `data` | `MapLegendData` | — | Required. |
+| `title` | `string` | — | Legend heading. |
+| `position` | `"top-left" \| "top-right" \| "bottom-left" \| "bottom-right" \| "none"` | `"bottom-left"` | `"none"` renders inline (e.g. inside your own layout) instead of through the overlay. |
+| `orientation` | `"vertical" \| "horizontal"` | `"vertical"` | Layout of categorical/steps items. |
+| `formatValue` | `(value: number) => string` | rounds to 2 decimals, or integer above 1000 | Formats numeric labels in `steps`/`gradient` legends. |
+| `onItemPress` | `(item: { label, color }, index: number) => void` | — | Fires when a legend row is pressed (categorical/steps only). |
+| `className` | `string` | — | Card className. |
+| `style` | `StyleProp<ViewStyle>` | — | Merged with `className`. |
+| `children` | `ReactNode` | — | Extra content rendered below the legend body. |
+
+## Example
+
+```tsx
+import { MapLegend } from "@/components/ui/map-legend";
+import { buildCategoricalLegend } from "@/lib/mapcn/scale";
+
+const legend = buildCategoricalLegend([
+  { label: "Residential", color: "#60a5fa" },
+  { label: "Commercial", color: "#f59e0b" },
+  { label: "Industrial", color: "#ef4444" },
+]);
+
+export function LegendExample() {
+  return <MapLegend data={legend} title="Zoning" position="none" />;
+}
+```
+
+## Related components
+
+[Choropleths](/docs/data/choropleths) · [Heatmaps](/docs/data/heatmaps) · [Clustering](/docs/data/clustering)

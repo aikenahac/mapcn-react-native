@@ -1,0 +1,56 @@
+---
+title: Polygons
+description: An intent-level polygon primitive accepting raw rings or GeoJSON geometry, supporting holes and MultiPolygons for free.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add polygon" />
+
+```ts
+import { MapPolygon } from "@/components/ui/map-polygon";
+```
+
+## Overview
+
+`MapPolygon` accepts either raw coordinate rings (the ergonomic case) or a ready GeoJSON `Polygon`/`MultiPolygon` geometry or feature (the interop case). Internally it's a `MapGeoJSON` with `fill` + `line`, so holes and `MultiPolygon`s work for free through the underlying native source -- there's no special-case code for either.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | auto-generated | Source id. |
+| `coordinates` | `Position[][] \| Position[][][]` | — | Raw rings: a `Polygon`'s rings (`Position[][]`) or a `MultiPolygon`'s rings (`Position[][][]`), auto-detected by nesting depth. Mutually exclusive with `geometry`. |
+| `geometry` | `Polygon \| MultiPolygon \| Feature<Polygon \| MultiPolygon>` | — | Pre-built geometry or feature, e.g. from an external data source. |
+| `fill` | `FillStyle \| false` | `{ color: "#4285F4", opacity: 0.3 }` | |
+| `stroke` | `LineStyle \| false` | `{ color: "#4285F4", width: 2 }` | |
+| `selected` | `boolean` | `false` | Switches to `selectedStyle` when true. |
+| `selectedStyle` | `{ fill?: FillStyle; stroke?: LineStyle }` | — | |
+| `onPress` | `(event: MapFeaturePressEvent) => void` | — | |
+| `properties` | `GeoJsonProperties` | — | Extra properties, only used when building the feature from `coordinates`. |
+| `beforeId` | `string` | — | Layer id to insert before. |
+
+One of `coordinates` or `geometry` is required; passing neither throws.
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapPolygon } from "@/components/ui/map-polygon";
+
+export function ServiceArea() {
+  return (
+    <Map defaultViewport={{ center: [-122.4194, 37.7749], zoom: 12 }} className="flex-1">
+      <MapPolygon
+        coordinates={[[[-122.43, 37.76], [-122.40, 37.76], [-122.40, 37.79], [-122.43, 37.79], [-122.43, 37.76]]]}
+        fill={{ color: "#8b5cf6", opacity: 0.25 }}
+        stroke={{ color: "#8b5cf6", width: 2 }}
+      />
+    </Map>
+  );
+}
+```
+
+## Related components
+
+[Circles](/docs/data/circles) · [GeoJSON](/docs/data/geojson) · [Choropleths](/docs/data/choropleths)

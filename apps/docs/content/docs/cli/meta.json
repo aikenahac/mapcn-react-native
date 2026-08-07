@@ -1,0 +1,4 @@
+{
+  "title": "CLI",
+  "pages": ["init", "add", "list-and-diff", "doctor", "provider", "migrate"]
+}

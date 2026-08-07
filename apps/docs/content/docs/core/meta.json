@@ -1,0 +1,4 @@
+{
+  "title": "Core",
+  "pages": ["map", "camera-and-viewport", "controls", "markers", "popups"]
+}

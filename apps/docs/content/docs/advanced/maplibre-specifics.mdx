@@ -1,0 +1,32 @@
+---
+title: MapLibre specifics
+description: Capabilities and escape hatches specific to the MapLibre renderer.
+---
+
+## Package
+
+`@maplibre/maplibre-react-native@^11.3.6`, installed and managed by the CLI. Open source, no vendor lock-in, no API token required for the CARTO basemap provider.
+
+## Capabilities only MapLibre has
+
+| Capability | Notes |
+| --- | --- |
+| `clusterMinPoints` on [Clustering](/docs/data/clustering) | Minimum points to form a cluster. No `ShapeSource` equivalent on Mapbox. |
+| `onPress` / custom `children` on [Location puck](/docs/location/location-puck) | MapLibre's `<UserLocation>` is a JS component and can host arbitrary children and a press handler; Mapbox's native `<LocationPuck>` cannot. |
+| `LocationManager` | MapLibre's own permission/location manager, still importable directly from `@maplibre/maplibre-react-native` as an escape hatch alongside mapcn's `useLocationTracking`. |
+
+## Basemap providers
+
+MapLibre supports three basemap providers: `carto` (free, no key, non-commercial use only), `maptiler` (free tier, commercial-friendly), and `custom` (bring your own style URLs, configured during `init`). See [Renderers & providers](/docs/getting-started/renderers-and-providers).
+
+## Expo plugin
+
+```json
+{ "expo": { "plugins": ["@maplibre/maplibre-react-native"] } }
+```
+
+Cannot coexist with `@rnmapbox/maps` in the same `app.json` -- `mapcn-rn doctor` flags this as an error.
+
+## Related
+
+[Renderers & providers](/docs/getting-started/renderers-and-providers) · [Mapbox specifics](/docs/advanced/mapbox-specifics) · [Renderer compatibility matrix](/docs/reference/renderer-compatibility-matrix)

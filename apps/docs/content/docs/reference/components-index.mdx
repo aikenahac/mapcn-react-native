@@ -1,0 +1,31 @@
+---
+title: Components index
+description: Every registry component, its category, and its registry dependencies.
+---
+
+| Component | Category | Registry deps | Source | Docs |
+| --- | --- | --- | --- | --- |
+| `core` | core | — | shared | [Configuration](/docs/getting-started/configuration) |
+| `map` | core | `core` | per-renderer | [Map](/docs/core/map) |
+| `marker` | core | `map` | per-renderer | [Markers](/docs/core/markers) |
+| `popup` | core | `core`, `map`, `marker` | shared | [Popups](/docs/core/popups) |
+| `controls` | core | `core`, `map` | shared | [Controls](/docs/core/controls) |
+| `route` | data | `map` | shared | [Routes](/docs/data/routes) |
+| `geojson` | data | `core`, `map` | shared | [GeoJSON](/docs/data/geojson) |
+| `circle` | data | `core`, `map`, `geojson` | shared | [Circles](/docs/data/circles) |
+| `polygon` | data | `core`, `map`, `geojson` | shared | [Polygons](/docs/data/polygons) |
+| `cluster` | data | `core`, `map` | shared | [Clustering](/docs/data/clustering) |
+| `heatmap` | data | `core`, `map` | shared | [Heatmaps](/docs/data/heatmaps) |
+| `choropleth` | data | `core`, `map`, `geojson` | shared | [Choropleths](/docs/data/choropleths) |
+| `legend` | data | `core`, `map` | shared | [Legend](/docs/data/legend) |
+| `location` | location | `core` | shared | [Location tracking](/docs/location/location-tracking) |
+| `location-puck` | location | `core`, `map`, `location` | per-renderer | [Location puck](/docs/location/location-puck) |
+| `style-switcher` | styling | `core`, `map` | shared | [Style switcher](/docs/styling/style-switcher) |
+
+`npx mapcn-rn list` prints this same set against your project's installed state. `npx mapcn-rn add <name>` resolves the `Registry deps` column transitively -- you never need to install dependencies manually.
+
+`per-renderer` components have both a MapLibre and a Mapbox implementation of the same public API (imported from one shared prop-type file); `shared` components are a single, byte-identical source materialized into both demo apps.
+
+## Related
+
+[Types & API index](/docs/reference/types-and-api-index) · [CLI command reference](/docs/reference/cli-command-reference)

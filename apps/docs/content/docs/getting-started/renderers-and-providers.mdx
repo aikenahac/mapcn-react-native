@@ -1,0 +1,86 @@
+---
+title: Renderers and providers
+description: "Understand mapcn-rn's two independent choices: the native rendering SDK and the source of the basemap style."
+---
+
+mapcn-rn separates two decisions that are often conflated: **renderer** and **provider**.
+
+## Axis 1: renderer
+
+The renderer is the native SDK that draws the map and implements camera, source, layer, marker, and location-puck behavior.
+
+| Renderer | Native package | Expo plugin |
+| --- | --- | --- |
+| MapLibre | `@maplibre/maplibre-react-native@^11.3.6` | `@maplibre/maplibre-react-native` |
+| Mapbox | `@rnmapbox/maps@^10.3.5` | `@rnmapbox/maps` |
+
+Renderer-specific implementations exist only for components that need them, currently `map`, `marker`, and `location-puck`. Higher-level components are shared where both native SDKs support the same contract.
+
+The two renderer packages and Expo plugins cannot coexist in one application. Switch them with `mapcn-rn provider <target>`, then prebuild and rebuild the native client.
+
+## Axis 2: basemap provider
+
+The provider supplies named style definitions and their credentials. A provider is constrained to its compatible renderer.
+
+| Provider | Renderer | Key | Default light / dark |
+| --- | --- | --- | --- |
+| CARTO | MapLibre | None | `light` / `dark` |
+| MapTiler | MapLibre | `EXPO_PUBLIC_MAPTILER_API_KEY` | `light` / `dark` |
+| Custom | MapLibre | None managed by mapcn-rn | `light` / `dark` identifiers, but no built-in styles |
+| Mapbox | Mapbox | `EXPO_PUBLIC_MAPBOX_TOKEN` plus `MAPBOX_DOWNLOADS_TOKEN` at build time | `light` / `dark` |
+
+The `provider` prop can override the configured provider at runtime, but it does not swap the native renderer. Only choose providers compatible with the renderer installed in the app.
+
+## Built-in style catalogues
+
+These names come directly from the v2 provider registry.
+
+### CARTO
+
+| Style ID | Label | Style URL |
+| --- | --- | --- |
+| `light` | Light | `https://basemaps.cartocdn.com/gl/positron-gl-style/style.json` |
+| `dark` | Dark | `https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json` |
+| `streets` | Streets | `https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json` |
+
+The catalogue records CARTO attribution as `© CARTO`. The CLI describes this option as no-key and non-commercial-use; confirm the provider's current terms for your project.
+
+### MapTiler
+
+| Style ID | Label | MapTiler style slug |
+| --- | --- | --- |
+| `streets` | Streets | `streets-v2` |
+| `light` | Light | `basic-v2` |
+| `dark` | Dark | `dataviz-dark` |
+| `satellite` | Satellite | `satellite` |
+| `hybrid` | Hybrid | `hybrid` |
+| `outdoors` | Outdoors | `outdoor-v2` |
+| `topo` | Topo | `topo-v2` |
+
+Each URL is resolved as `https://api.maptiler.com/maps/{style-slug}/style.json?key=...`. Resolution throws a descriptive error when `EXPO_PUBLIC_MAPTILER_API_KEY` is absent. Attribution is `© MapTiler © OpenStreetMap contributors`.
+
+### Mapbox
+
+| Style ID | Label | Style URI |
+| --- | --- | --- |
+| `streets` | Streets | `mapbox://styles/mapbox/streets-v12` |
+| `light` | Light | `mapbox://styles/mapbox/light-v11` |
+| `dark` | Dark | `mapbox://styles/mapbox/dark-v11` |
+| `satellite` | Satellite | `mapbox://styles/mapbox/satellite-v9` |
+| `satelliteStreets` | Satellite Streets | `mapbox://styles/mapbox/satellite-streets-v12` |
+| `outdoors` | Outdoors | `mapbox://styles/mapbox/outdoors-v12` |
+| `standard` | Standard | `mapbox://styles/mapbox/standard` |
+
+Attribution is `© Mapbox © OpenStreetMap contributors`.
+
+### Custom
+
+The custom provider has no built-in styles, key, attribution, or documentation URL. Pass an explicit style URL, style object, or light/dark pair to `Map`. Because no catalogue entry exists, named style IDs are not resolved for you.
+
+## Switch providers
+
+<PackageManagerCodeBlock command="npx mapcn-rn provider mapbox" />
+
+The provider command prints a plan before changing anything. Depending on the target, it can remove and install renderer packages, replace Expo plugins, add an environment placeholder, rewrite installed renderer-specific component files, update `mapcn.json`, and report capability changes. It refuses a dirty Git worktree unless you explicitly pass `--force`.
+
+After any renderer change, run `npx expo prebuild --clean` and rebuild the development client.

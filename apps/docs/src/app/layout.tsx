@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { RootProvider } from "fumadocs-ui/provider/next";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import { StructuredData } from "@/components/structured-data";
@@ -151,7 +152,7 @@ export default function RootLayout({
       <head>
         <script defer data-domain="mapcn-rn.dev" src="https://plausible.aerio.cloud/js/script.outbound-links.js"></script>
       </head>
-      <body className="font-sans antialiased">
+      <body className="flex min-h-screen flex-col font-sans antialiased">
         <StructuredData
           data={[
             getOrganizationSchema(),
@@ -160,8 +161,10 @@ export default function RootLayout({
           ]}
         />
         <ThemeProvider>
-          {children}
-          <Analytics />
+          <RootProvider theme={{ enabled: false }}>
+            {children}
+            <Analytics />
+          </RootProvider>
         </ThemeProvider>
       </body>
     </html>

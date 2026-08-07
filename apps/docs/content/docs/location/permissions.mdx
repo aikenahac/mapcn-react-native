@@ -1,0 +1,51 @@
+---
+title: Permissions
+description: Foreground location permissions required by controls, location tracking, and the location puck.
+---
+
+## When permissions are needed
+
+The base `map` component requests no permissions at all. Location permissions are only required once you install one of:
+
+- [`controls`](/docs/core/controls) with `showLocate`
+- [`location`](/docs/location/location-tracking) (`useLocationTracking`/`useCurrentPosition`)
+- [`location-puck`](/docs/location/location-puck) (`MapLocationPuck`)
+
+Each of these registry components declares the same permissions, and `mapcn-rn init`/`add` write them into `app.json` automatically when it's readable.
+
+## Required permission strings
+
+```json title="app.json"
+{
+  "expo": {
+    "ios": {
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Show your location on the map."
+      }
+    },
+    "android": {
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    }
+  }
+}
+```
+
+mapcn only requests **foreground** location -- there is no background tracking or geofencing in 2.0 (see [Location tracking](/docs/location/location-tracking)), so `NSLocationAlwaysAndWhenInUseUsageDescription` is not required.
+
+## How permission requests happen
+
+- `MapControls`'s locate button and `MapLocationPuck` (with `requestPermission={true}`, the default) call `expo-location`'s permission API directly when needed.
+- `useLocationTracking({ requestPermission: true })` (the default) requests permission the first time `start()` runs, whether that's via `autoStart` or an explicit call.
+- Denial doesn't throw: `useLocationTracking`'s `status` becomes `"denied"`, and `MapLocationPuck`/`MapControls` simply don't render a location or fail gracefully with `onPermissionDenied`.
+
+## Verifying permissions
+
+```bash
+npx mapcn-rn doctor
+```
+
+`doctor` checks `app.json`'s `ios.infoPlist.NSLocationWhenInUseUsageDescription` and `android.permissions` **only when a location-dependent component is actually installed** -- a project with just `map`/`marker`/`popup` is not flagged for missing location permissions it doesn't need.
+
+## Related components
+
+[Location tracking](/docs/location/location-tracking) · [Location puck](/docs/location/location-puck) · [Controls](/docs/core/controls) · [Installation](/docs/getting-started/installation)

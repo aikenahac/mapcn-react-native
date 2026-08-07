@@ -1,0 +1,56 @@
+---
+title: migrate
+description: Assisted v1 -> v2 upgrade -- detects a v1 install, preserves the original file, and installs the equivalent v2 component set.
+---
+
+```bash
+npx mapcn-rn migrate [--yes]
+```
+
+See the full walkthrough on [Upgrade to v2](/docs/getting-started/upgrade-to-v2). This page covers the command's exact detection and reporting mechanics.
+
+## Detection
+
+`migrate` only proceeds when `mapcn.json` is absent **and** `components/ui/map.tsx` exists (relative to the detected `src` layout). If `mapcn.json` already exists, it exits immediately and points at `doctor` instead.
+
+Renderer and provider are inferred from the v1 file's own content:
+
+| Signal in `map.tsx` | Inferred |
+| --- | --- |
+| imports from `@rnmapbox/maps` (or `Mapbox`) | renderer: `mapbox`, provider: `mapbox` |
+| imports from `@maplibre/maplibre-react-native` and references `cartocdn.com` | renderer: `maplibre`, provider: `carto` |
+| imports from `@maplibre/maplibre-react-native` and references `api.maptiler.com`/`MAPTILER` | renderer: `maplibre`, provider: `maptiler` |
+| MapLibre with neither signal | renderer: `maplibre`, provider: `custom` |
+
+Whatever isn't inferred is prompted for interactively. The file is also checked for whether it looks customized (a coarse heuristic: does it still export all of `Map`, `MapMarker`, `MapControls`, `MapRoute`, `MapUserLocation`, `useMap`) -- if so, `migrate` prints a warning but proceeds the same way, since the original is always preserved regardless.
+
+## What it does
+
+1. Moves `components/ui/map.tsx` → `components/ui/map.v1.tsx.bak` (never deletes it).
+2. Writes a fresh `mapcn.json` (schema version 2) using the detected/prompted renderer and provider.
+3. Installs the v2 component set equivalent to what v1 shipped: `map`, `marker`, `popup`, `controls`, `route`, `location`, `location-puck` (plus their transitive dependencies). If this step fails -- e.g. the registry is unreachable -- the failure is reported as a warning and migration continues to the report step rather than aborting.
+4. Scans the backed-up file for known v1 API patterns and reports each match with its line number:
+
+   | Pattern | Reported note |
+   | --- | --- |
+   | `cameraRef.current.X(...)` | Use `useMap().X(...)` directly. |
+   | `MapUserLocation` | Deprecated -- rename to `MapLocationPuck` and its renamed props. |
+   | `MarkerPopup` | Now overlay-based, not native `Callout` -- review positioning/styling. |
+   | `EXPO_PUBLIC_MAPBOX_API_KEY` | Renamed to `EXPO_PUBLIC_MAPBOX_TOKEN`. |
+   | `LocationManager` | No longer re-exported from `map.tsx` -- import directly, or use `useLocationTracking`. |
+   | `useCurrentPosition` | Now returns `MapPosition` (`coordinate: [lng,lat]`), not a raw `GeolocationPosition`. |
+
+   If none of these patterns are found, it prints a note to spot-check anyway rather than claiming a clean migration.
+5. Runs the same checks as `doctor`.
+6. Prints the final migration checklist (see [Upgrade to v2](/docs/getting-started/upgrade-to-v2#migration-checklist)).
+
+## Flags
+
+| Flag | Description |
+| --- | --- |
+| `--yes` / `-y` | Skip the confirmation prompt. |
+| `--registry <url>` | Override the registry base URL. |
+
+## Related
+
+[Upgrade to v2](/docs/getting-started/upgrade-to-v2) · [doctor](/docs/cli/doctor) · [diff](/docs/cli/list-and-diff)

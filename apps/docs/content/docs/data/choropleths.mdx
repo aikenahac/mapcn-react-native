@@ -1,0 +1,82 @@
+---
+title: Choropleths
+description: A choropleth abstraction built on native step/interpolate expression evaluation, with scales computed once in JS.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add choropleth" />
+
+```ts
+import { MapChoropleth } from "@/components/ui/map-choropleth";
+```
+
+## Overview
+
+`MapChoropleth` colors polygons by a numeric feature property, computing the domain and breaks once in JavaScript (`lib/mapcn/scale.ts`) and compiling the result into a native `["step", ...]` or `["interpolate", ...]` expression -- all per-feature styling then happens natively, with zero JavaScript per frame.
+
+**Value accessors are deliberately not supported as a runtime callback.** A JS function can't participate in native style evaluation without round-tripping every feature every frame. Instead, precompute the value once:
+
+```ts
+import { precomputeValues } from "@/lib/mapcn/geo";
+
+const regions = precomputeValues(raw, (f) => f.properties.pop / f.properties.areaKm2, "density");
+```
+
+Then pass `value="density"` to `MapChoropleth`.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | auto-generated | Source id. |
+| `data` | `FeatureCollection` | — | Required. |
+| `value` | `string` | — | Required. The numeric feature property to color by. |
+| `scale` | `ChoroplethScale` | `{ type: "quantize", steps: 5 }` | See below. |
+| `opacity` | `number` | `0.7` | Fill opacity. |
+| `border` | `LineStyle \| false` | `{ color: "#ffffff", width: 1 }` | Border styling. `false` disables it. |
+| `missing` | `{ color?, opacity? } \| "hide"` | `{ color: "#e5e7eb", opacity: 0.4 }` | How features missing `value` are styled. `"hide"` makes them fully transparent. |
+| `selectedId` | `string \| number \| null` | — | Feature id to highlight. |
+| `idProperty` | `string` | `"id"` | Property compared against `selectedId`. |
+| `selected` | `{ fill?: FillStyle; border?: LineStyle }` | — | Styles for the selected feature. |
+| `onFeaturePress` | `(feature: Feature, event: MapFeaturePressEvent) => void` | — | Fires on feature press. |
+| `onLegendChange` | `(legend: MapLegendData) => void` | — | Emits normalized legend data whenever the computed scale changes -- feed this directly to `<MapLegend data={legend} />`. |
+| `beforeId` | `string` | — | Layer id to insert before. |
+| `fillStyle` / `borderStyle` | `Record<string, unknown>` | — | Raw escape hatches, merged last. |
+
+### `ChoroplethScale`
+
+```ts
+type ChoroplethScale =
+  | { type: "quantize"; steps?: number; colors?: string[]; domain?: [number, number] }
+  | { type: "quantile"; steps?: number; colors?: string[] }
+  | { type: "threshold"; breaks: number[]; colors: string[] }
+  | { type: "linear"; colors: string[]; domain?: [number, number] };
+```
+
+`quantize` splits the domain into `steps` equal-width buckets; `quantile` splits the data into `steps` equal-count buckets; `threshold` uses explicit break points; `linear` produces a continuous `interpolate` expression instead of discrete steps.
+
+## Example
+
+```tsx
+import { useState } from "react";
+import { Map } from "@/components/ui/map";
+import { MapChoropleth } from "@/components/ui/map-choropleth";
+import { MapLegend } from "@/components/ui/map-legend";
+import type { MapLegendData } from "@/lib/mapcn/types";
+
+export function ChoroplethExample({ regions }: { regions: GeoJSON.FeatureCollection }) {
+  const [legend, setLegend] = useState<MapLegendData | null>(null);
+
+  return (
+    <Map defaultViewport={{ center: [-98, 39], zoom: 4 }} className="flex-1">
+      <MapChoropleth data={regions} value="density" scale={{ type: "quantile", steps: 6 }} onLegendChange={setLegend} />
+      {legend && <MapLegend data={legend} title="Population density" formatValue={(v) => `${v.toFixed(0)}/km²`} />}
+    </Map>
+  );
+}
+```
+
+## Related components
+
+[Legend](/docs/data/legend) · [GeoJSON](/docs/data/geojson) · [Heatmaps](/docs/data/heatmaps)

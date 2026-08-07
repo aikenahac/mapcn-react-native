@@ -1,0 +1,35 @@
+---
+title: Roadmap
+description: What's designed but not yet shipped, and what's intentionally out of scope for 2.0.
+---
+
+## Shipping in 2.1: drawing
+
+`MapDrawing` and `MapDrawingControls` are **designed, not shipped** in 2.0.0 -- their contracts are fixed so nothing has to be redesigned when they land, but they are not available today. There is no third-party React Native drawing library to build on (the existing options are all `mapbox-gl-js`/web-only), so drawing will be built in-house on draggable annotations, `MapGeoJSON`, and an internal state machine.
+
+Planned shape (subject to refinement before release):
+
+```ts
+type DrawingMode = "point" | "line" | "polygon" | "rectangle" | "circle";
+interface MapDrawingProps {
+  mode?: DrawingMode | null;
+  value?: FeatureCollection;
+  defaultValue?: FeatureCollection;
+  onChange?: (value: FeatureCollection) => void;
+  selectedId?: string | null;
+  onSelectionChange?: (id: string | null) => void;
+  editable?: boolean;
+  vertex?: { color?: string; radius?: number };
+  style?: { point?: PointStyle; line?: LineStyle; fill?: FillStyle };
+}
+```
+
+## Explicitly out of scope for 2.0
+
+- **Background location tracking / geofencing.** `useLocationTracking`'s `mode` option reserves `"foreground"` today specifically so `"background"` can be added later without a breaking redesign.
+- **Offline maps.** Neither renderer's offline download APIs are wrapped.
+- **A runtime npm package.** mapcn ships no runtime dependency -- every component is copy-owned source, installed via the CLI. This isn't a roadmap item to change; it's the core design.
+
+## Related
+
+[Upgrade to v2](/docs/getting-started/upgrade-to-v2) · [Components index](/docs/reference/components-index)

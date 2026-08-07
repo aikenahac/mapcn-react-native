@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p className="text-foreground/90 leading-relaxed">
               This privacy policy applies to the mapcn React Native mobile
-              application (the "App"). This policy describes how the App
+              application (the &quot;App&quot;). This policy describes how the App
               handles user information.
             </p>
           </section>
@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
               Location Data
             </h2>
             <p className="text-foreground/90 leading-relaxed">
-              The App may request permission to access your device's location
+              The App may request permission to access your device&apos;s location
               for the purpose of displaying your current location on the map.
               This location data is:
             </p>
@@ -115,7 +115,7 @@ export default function PrivacyPolicyPage() {
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-foreground mb-4">
-              Children's Privacy
+              Children&apos;s Privacy
             </h2>
             <p className="text-foreground/90 leading-relaxed">
               The App does not knowingly collect or solicit any information from
@@ -130,7 +130,7 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p className="text-foreground/90 leading-relaxed">
               We may update this privacy policy from time to time. Any changes
-              will be posted on this page with an updated "Last Updated" date.
+              will be posted on this page with an updated &quot;Last Updated&quot; date.
             </p>
           </section>
 

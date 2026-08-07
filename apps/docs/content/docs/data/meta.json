@@ -1,0 +1,4 @@
+{
+  "title": "Data",
+  "pages": ["geojson", "clustering", "heatmaps", "choropleths", "legend", "circles", "polygons", "routes"]
+}

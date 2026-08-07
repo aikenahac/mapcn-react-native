@@ -1,0 +1,26 @@
+---
+title: Renderer compatibility matrix
+description: Capability deltas between MapLibre and Mapbox, and how mapcn's public API handles each.
+---
+
+Built from the real, committed `CAPABILITIES` constants each renderer adapter exports (`components/ui/map-renderer.tsx`), not aspirational documentation -- these are what `RendererCapabilities` (`map-types.ts`) actually declares on each renderer.
+
+| Capability | MapLibre RN 11 | Mapbox (rnmapbox) 10 | mapcn's handling |
+| --- | --- | --- | --- |
+| `clusterMinPoints` on [Clustering](/docs/data/clustering) | ✓ | ✗ | Accepted on both prop types; ignored with no effect on Mapbox, not silently dropped -- documented capability gap. |
+| Location puck `pulsing` | ✗ | ✓ | Mapbox-only prop on [`MapLocationPuck`](/docs/location/location-puck); `__DEV__` warning if passed on MapLibre. |
+| Location puck `scale` | ✗ | ✓ | Same as above. |
+| Location puck custom `images` (top/bearing/shadow) | ✗ | ✓ | Same as above. |
+| Location puck `onPress` | ✓ | ✗ | MapLibre-only; `__DEV__` warning if passed on Mapbox. |
+| Location puck custom `children` (fully custom JS-rendered puck) | ✓ | ✗ | MapLibre-only. |
+| Cluster ref methods (`getClusterExpansionZoom`/`getClusterLeaves`) | ✓ | ✓ | Full parity -- normalized signatures in `MapSourceRef`, no gap. |
+| GeoJSON source + native clustering | ✓ | ✓ | Full parity via `MapSource`. |
+| Unified layer style keys & expressions | ✓ (camelCase + style-spec expressions) | ✓ (identical camelCase + expressions) | Shared verbatim -- no translation layer, see [Custom layers & expressions](/docs/advanced/custom-layers-and-expressions). |
+| Native feature state (`setFeatureState`/`getFeatureState`) | ✗ | ✓ | **Not used by any mapcn component** -- selection everywhere uses filter expressions instead, which both renderers support identically. |
+| `querySourceFeatures` | ✗ | ✓ | Mapbox-only escape hatch, reachable via the raw `mapRef`. |
+| Globe projection | ✗ | ✓ (`projection="globe"`) | Mapbox-only `MapView` prop, reachable via `Map`'s `mapbox` escape-hatch prop bag. |
+| Offline maps | out of scope | out of scope | Neither renderer's offline APIs (`OfflineManager`, `modules/offline`) are wrapped by mapcn in 2.0. |
+
+## Related
+
+[MapLibre specifics](/docs/advanced/maplibre-specifics) · [Mapbox specifics](/docs/advanced/mapbox-specifics) · [Location puck](/docs/location/location-puck) · [Clustering](/docs/data/clustering)

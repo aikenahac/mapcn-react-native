@@ -1,0 +1,51 @@
+---
+title: Controls
+description: MapControls -- zoom and locate-me buttons rendered through Map's overlay mechanism, identical on both renderers.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add controls" />
+
+```ts
+import { MapControls } from "@/components/ui/map-controls";
+```
+
+## Overview
+
+`MapControls` renders through `Map`'s overlay mechanism (the same one that makes `MapPopup`, `MapLegend`, and `MapStyleSwitcher` byte-identical across renderers), so this file needs no renderer branching even though only Mapbox strictly requires the portal.
+
+Zoom buttons call `useMap().zoomBy(...)`, so displayed zoom never drifts from the actual camera the way a component tracking its own zoom counter could. The locate button requests foreground location permission via `expo-location`, then flies the camera to the resulting position.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `position` | `"top-left" \| "top-right" \| "bottom-left" \| "bottom-right"` | `"bottom-right"` | Overlay corner. |
+| `showZoom` | `boolean` | `true` | Shows the +/- zoom buttons. |
+| `showLocate` | `boolean` | `false` | Shows the locate-me button. |
+| `className` | `string` | — | Uniwind/NativeWind classes on the outer container. |
+| `onLocate` | `(coords: { longitude: number; latitude: number }) => void` | — | Fires with the resolved coordinates after a successful locate. |
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapControls } from "@/components/ui/map-controls";
+
+export function MapWithControls() {
+  return (
+    <Map defaultViewport={{ center: [-122.4194, 37.7749], zoom: 12 }} className="flex-1">
+      <MapControls showZoom showLocate position="bottom-right" onLocate={(c) => console.log(c)} />
+    </Map>
+  );
+}
+```
+
+## Permissions
+
+`showLocate` requires foreground location permission (`NSLocationWhenInUseUsageDescription` on iOS, `ACCESS_FINE_LOCATION`/`ACCESS_COARSE_LOCATION` on Android). See [Permissions](/docs/location/permissions).
+
+## Related components
+
+[Map](/docs/core/map) · [Location tracking](/docs/location/location-tracking) · [Style switcher](/docs/styling/style-switcher)

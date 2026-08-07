@@ -1,0 +1,81 @@
+---
+title: Popups
+description: MapPopup anchors to any coordinate via the renderer's native marker mechanism; MarkerPopup is a convenience wrapper for the per-marker case.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add popup" />
+
+```ts
+import { MapPopup, MarkerPopup } from "@/components/ui/map-popup";
+```
+
+## Overview
+
+`MapPopup` renders through `MapMarkerAnchor` -- the renderer's native marker/annotation positioning -- rather than manually re-projecting a coordinate to screen space on every viewport change. That means it never lags or drifts during pan/zoom, and it can anchor to *any* coordinate: a GeoJSON feature, a cluster, a polygon centroid, or an arbitrary map press, not just a marker.
+
+`MarkerPopup` is a convenience wrapper for the common "a popup for this marker" case. It reads the enclosing `MapMarker`'s coordinate from context when you don't pass one explicitly. Render it as a *sibling* of the `MapMarker` it belongs to (toggled by selection state) rather than literally nested inside `<MapMarker>` -- `MapPopup` creates its own independent marker-anchor, so nesting it inside another marker would anchor two markers to the same point.
+
+## Props
+
+### MapPopup
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `coordinate` | `Coordinate` | — | Required. Where the popup anchors. |
+| `visible` | `boolean` | `true` | Renders `null` when `false`. |
+| `onClose` | `() => void` | — | Enables the close button when provided. |
+| `closeButton` | `boolean` | `true` | Shows a close button (only if `onClose` is also set). |
+| `arrow` | `boolean` | `true` | Shows a small pointer arrow beneath the popup. |
+| `maxWidth` | `number` | `260` | Max popup width in points. |
+| `className` | `string` | — | Uniwind/NativeWind classes on the popup card. |
+| `style` | `StyleProp<ViewStyle>` | — | Merged with `className`. |
+| `children` | `ReactNode` | — | Required. Popup content. |
+
+### MarkerPopup
+
+Same as `MapPopup` except `coordinate` is optional (falls back to the enclosing marker) and it adds:
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `string` | — | Rendered as a bold header above `children`. |
+
+`MarkerPopup` throws if it has no `coordinate` prop and isn't rendered where a `MapMarker`'s context is available.
+
+## Example
+
+```tsx
+import { useState } from "react";
+import { Map } from "@/components/ui/map";
+import { MapMarker } from "@/components/ui/map-marker";
+import { MapPopup, MarkerPopup } from "@/components/ui/map-popup";
+
+export function PopupsExample() {
+  const [selected, setSelected] = useState<string | null>(null);
+
+  return (
+    <Map defaultViewport={{ center: [-122.4194, 37.7749], zoom: 12 }} className="flex-1">
+      <MapMarker coordinate={[-122.4194, 37.7749]} onPress={() => setSelected("sf")} />
+      {selected === "sf" && (
+        <MarkerPopup coordinate={[-122.4194, 37.7749]} title="San Francisco" onClose={() => setSelected(null)}>
+          <Text>The city by the bay.</Text>
+        </MarkerPopup>
+      )}
+
+      {/* Anchored to an arbitrary press, not a marker */}
+      <MapPopup coordinate={[-122.42, 37.78]} onClose={() => {}}>
+        <Text>Standalone popup</Text>
+      </MapPopup>
+    </Map>
+  );
+}
+```
+
+## Renderer support
+
+Neither renderer's native `Callout` is used -- `MapPopup` is intentionally built as its own overlay-anchored component so it can attach to non-marker coordinates (clusters, polygons, choropleth regions, arbitrary presses) uniformly, and so its styling and z-ordering are consistent across MapLibre and Mapbox.
+
+## Related components
+
+[Markers](/docs/core/markers) · [GeoJSON](/docs/data/geojson) · [Clustering](/docs/data/clustering) · [Choropleths](/docs/data/choropleths)

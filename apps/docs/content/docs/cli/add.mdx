@@ -1,0 +1,38 @@
+---
+title: add
+description: Installs one or more registry components, resolving transitive dependencies and never overwriting local modifications.
+---
+
+```bash
+npx mapcn-rn add <component...> [--overwrite] [--yes] [--renderer maplibre|mapbox]
+```
+
+## What it does
+
+1. Requires `mapcn.json` (run `init` first).
+2. Fetches the registry manifest and resolves every requested component's transitive `registryDependencies`, topologically sorted -- already-satisfied dependencies are skipped, and the resolved set is printed before anything is written.
+3. For each file:
+   - **New file:** written directly.
+   - **Unmodified since install:** upgraded silently if the registry version differs.
+   - **Locally modified (or an untracked file already at that path):** never overwritten. The new version is written to a `<name>.new.tsx` sidecar instead, and the CLI prints a `diff` command to review it -- unless `--overwrite` is passed, in which case the original is snapshotted to `.mapcn-backup/<timestamp>/` first, then replaced.
+4. Installs any newly-required npm dependencies with the detected package manager.
+5. Updates `mapcn.json` with the installed component versions and file hashes.
+
+## Flags
+
+| Flag | Description |
+| --- | --- |
+| `--overwrite` | Allow overwriting locally-modified files (always backed up first). |
+| `--yes` / `-y` | Skip the install confirmation prompt. |
+| `--renderer <maplibre\|mapbox>` | Install the given renderer's variant instead of the one recorded in `mapcn.json`. |
+| `--registry <url>` | Override the registry base URL. |
+
+## Example
+
+<PackageManagerCodeBlock command="npx mapcn-rn add cluster choropleth legend location-puck" />
+
+Installing `cluster` automatically resolves and installs its `map` and `core` dependencies too, if not already present.
+
+## Related
+
+[init](/docs/cli/init) · [list & diff](/docs/cli/list-and-diff) · [Configuration](/docs/getting-started/configuration)

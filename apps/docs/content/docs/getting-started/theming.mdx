@@ -1,0 +1,62 @@
+---
+title: Theming
+description: Style copied map components with Uniwind or NativeWind and coordinate basemap styles with the active color scheme.
+---
+
+mapcn-rn has two related but independent theming layers:
+
+1. React Native component chrome uses utility classes and your application's semantic color tokens.
+2. The basemap style is selected for the active light or dark color scheme.
+
+Because the component source is copied into your app, it uses your styling setup and tokens instead of shipping a separate theme runtime.
+
+## Styling detection
+
+During `init` and `migrate`, the CLI records `styling` as `uniwind`, `nativewind`, or `none`.
+
+Detection checks `metro.config.js` for `withUniwindConfig` / `uniwind/metro` or `withNativeWind` / `nativewind/metro`, then falls back to the `uniwind` or `nativewind` dependencies in `package.json`. If neither is found, it records `none` rather than assuming a styling system.
+
+The copied high-level UI components use React Native `className` strings such as `bg-card`, `border-border`, `text-foreground`, `text-muted-foreground`, and `bg-accent`. Configure those semantic tokens in the Uniwind or NativeWind theme already owned by your application.
+
+## Uniwind and NativeWind
+
+mapcn-rn does not install or configure either styling framework. Keep the framework's normal Metro integration and ensure copied files under `components`, `hooks`, and `lib` are included by its source scanning.
+
+With Uniwind, retain the `withUniwindConfig` / `uniwind/metro` integration used by your app. With NativeWind, retain `withNativeWind` / `nativewind/metro`. The CLI records the detected choice so diagnostics and future source operations can respect the project setup.
+
+If `styling` is `none`, renderer-native map layers still work, but copied overlay UI that relies on `className` needs either a compatible styling setup or local conversion to React Native `StyleSheet` / `style` props. Since you own the files, that conversion is supported as an application customization.
+
+## Basemap color scheme
+
+`Map` defaults to React Native's `useColorScheme()` and resolves the configured provider's default style for that scheme. CARTO, MapTiler, and Mapbox all define `light` and `dark` as their defaults.
+
+Override scheme selection explicitly when application theme state is authoritative:
+
+```tsx
+<Map colorScheme={isDark ? "dark" : "light"} />
+```
+
+You can also provide a self-contained light/dark style pair:
+
+```tsx
+<Map
+  style={{
+    light: "https://example.com/styles/light.json",
+    dark: "https://example.com/styles/dark.json",
+  }}
+/>
+```
+
+Or pin one named provider style regardless of the application scheme:
+
+```tsx
+<Map style="streets" />
+```
+
+Named styles are resolved against the active provider. The custom provider has an empty named-style catalogue, so use an explicit URL, style object, or light/dark pair with it.
+
+## Keep UI and map themes coordinated
+
+Pass the same application scheme to `Map` that drives your Uniwind or NativeWind theme when you need deterministic synchronization. This avoids waiting for two separate system-theme subscriptions to settle and makes per-screen theme overrides explicit.
+
+Component tokens and basemap styles remain intentionally separate: changing `bg-card` affects map controls, popups, and legends, while changing the provider style affects the rendered geography. You can customize either without coupling it to the other.

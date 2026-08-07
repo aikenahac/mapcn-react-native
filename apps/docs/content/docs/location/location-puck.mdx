@@ -1,0 +1,80 @@
+---
+title: Location puck
+description: MapLocationPuck replaces MapUserLocation (kept as a deprecated alias). Capability-gated props are documented, not faked.
+---
+
+**Renderer support:** MapLibre ✓ (⚠ `pulsing`/`scale`/`images` are Mapbox-only) &nbsp;·&nbsp; Mapbox ✓ (⚠ `onPress`/custom `children` are MapLibre-only)
+
+<PackageManagerCodeBlock command="npx mapcn-rn add location-puck" />
+
+```ts
+import { MapLocationPuck, MapUserLocation, MAP_LOCATION_PUCK_CAPABILITIES } from "@/components/ui/map-location-puck";
+```
+
+## Overview
+
+`MapLocationPuck` is one of the four renderer-specific files. MapLibre renders its own JS `<UserLocation>` component (which can host custom `children` and an `onPress` handler); Mapbox renders its native `<LocationPuck>` (which supports `pulsing`, a custom `scale`, and custom top/bearing/shadow `images`). Neither renderer's feature set is faked on the other -- unsupported props are accepted (so the prop type stays uniform) but produce a `__DEV__` console warning and have no effect, and `MAP_LOCATION_PUCK_CAPABILITIES` (a per-renderer `RendererCapabilities` object) lets you branch on what's actually supported at runtime.
+
+`follow` is implemented as camera recentering on every location update (via `useMap().flyTo`) rather than wiring into `Camera`'s native `trackUserLocation`/`followUserLocation` prop, which is declarative and owned by `Map`'s own `<Camera>` element and not reachable from a sibling component. This is a documented simplification: visually equivalent to native follow for "keep the puck centered," at the cost of one extra location subscription while `follow` is active.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `visible` | `boolean` | `true` | |
+| `bearing` | `"none" \| "heading" \| "course"` | `"none"` | Bearing source for the puck's directional indicator. |
+| `accuracyRing` | `boolean` | `true` | Shows an accuracy ring around the puck. |
+| `minDisplacement` | `number` | — | Meters between position updates. |
+| `follow` | `false \| "position" \| "heading" \| "course"` | `false` | Recenters the camera on every location update while set. |
+| `onFollowChange` | `(follow) => void` | — | Fires whenever the camera is recentered due to `follow`. |
+| `requestPermission` | `boolean` | `true` | Requests foreground location permission on mount. |
+| `onPermissionDenied` | `() => void` | — | |
+| `pulsing` | `boolean \| { color?, radius?: number \| "accuracy" }` | — | **Mapbox only.** |
+| `scale` | `number` | — | **Mapbox only.** |
+| `images` | `{ top?, bearing?, shadow? }` | — | **Mapbox only.** Custom puck images. |
+| `onPress` | `() => void` | — | **MapLibre only.** |
+| `children` | `ReactNode` | — | **MapLibre only.** Fully custom JS-rendered puck. |
+| `className` | `string` | — | |
+
+### Deprecated: `MapUserLocation`
+
+Kept as a v1-compatible alias that maps old prop names onto `MapLocationPuck`'s and prints a one-time `__DEV__` deprecation warning:
+
+| v1 prop | Maps to |
+| --- | --- |
+| `showHeading` | `bearing: "heading"` |
+| `showAccuracy` | `accuracyRing` |
+| `animated` | `pulsing` (Mapbox) / no-op (MapLibre) |
+| `autoRequestPermission` | `requestPermission` |
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapLocationPuck } from "@/components/ui/map-location-puck";
+
+export function LiveLocation() {
+  return (
+    <Map defaultViewport={{ center: [-122.4194, 37.7749], zoom: 14 }} className="flex-1">
+      <MapLocationPuck bearing="heading" follow="position" pulsing={{ color: "#4285F4" }} />
+    </Map>
+  );
+}
+```
+
+## Renderer support
+
+```ts
+interface RendererCapabilities {
+  clusterMinPoints: boolean;
+  locationPuckPulsing: boolean;   // Mapbox: true, MapLibre: false
+  locationPuckScale: boolean;     // Mapbox: true, MapLibre: false
+  locationPuckImages: boolean;    // Mapbox: true, MapLibre: false
+  locationPuckPress: boolean;     // Mapbox: false, MapLibre: true
+  locationPuckCustomChildren: boolean; // Mapbox: false, MapLibre: true
+}
+```
+
+## Related components
+
+[Location tracking](/docs/location/location-tracking) · [Permissions](/docs/location/permissions) · [Controls](/docs/core/controls)

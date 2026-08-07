@@ -1,0 +1,107 @@
+---
+title: Map
+description: The core map container -- controlled/uncontrolled viewport, provider-based styling, ornaments, gestures, and the useMap() imperative API.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓ (Mapbox renders overlay children through an internal portal since `MapView` cannot host arbitrary RN views directly -- invisible from this component's API)
+
+<PackageManagerCodeBlock command="npx mapcn-rn add map" />
+
+```ts
+import { Map, useMap } from "@/components/ui/map";
+```
+
+## Overview
+
+`Map` is the only renderer-specific container component. Its public props (`MapProps`) are identical on both renderers -- they're imported from a single shared `map-types.ts` file, so there is no drift between the MapLibre and Mapbox implementations. See [Camera & Viewport](/docs/core/camera-and-viewport) for the controlled/uncontrolled model and loop-prevention details.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Raw renderer children (sources, layers, markers) rendered inside the native map. |
+| `style` | `string \| MapStyleSource \| { light, dark }` | provider's default style | A named provider style id, an explicit URL/style spec, or a light/dark pair of either. |
+| `provider` | `MapProviderId` | from `mapcn.json` | Overrides the configured basemap provider for this instance. |
+| `colorScheme` | `"light" \| "dark"` | `useColorScheme()` | Overrides the color scheme used to resolve `style`. |
+| `viewport` | `PartialViewport` | — | Controlled. When set, the camera follows this value. |
+| `defaultViewport` | `PartialViewport` | `{ center: [0,0], zoom: 2, bearing: 0, pitch: 0 }` | Uncontrolled initial viewport. Ignored when `viewport` is set. |
+| `onViewportChange` | `(viewport, meta: { userInteraction }) => void` | — | Fires continuously while the viewport changes (throttled). |
+| `onViewportChangeEnd` | `(viewport, meta: { userInteraction }) => void` | — | Fires once movement settles. |
+| `viewportChangeThrottle` | `number` | `100` | Milliseconds between `onViewportChange` calls. |
+| `bounds` | `Bounds` | — | Fit these bounds on mount. Mutually exclusive with `defaultViewport.center`. |
+| `padding` | `EdgePadding` | — | Camera padding applied when fitting bounds/features. |
+| `minZoom` / `maxZoom` | `number` | — | Zoom clamps. |
+| `maxBounds` | `Bounds` | — | Camera pan clamp. |
+| `interactive` | `boolean` | `true` | Master gesture toggle. |
+| `gestures` | `{ pan?, zoom?, rotate?, pitch? }` | all `true` | Per-gesture toggles. |
+| `compass` / `logo` / `attribution` / `scaleBar` | `boolean \| { position }` | renderer default | Ornament visibility and corner placement. |
+| `onPress` / `onLongPress` | `(event: MapFeaturePressEvent) => void` | — | Fires with the pressed coordinate, screen point, and any features under it. |
+| `onLoad` | `() => void` | — | Fires once the native map has finished loading its style. |
+| `onError` | `(error: Error) => void` | — | Fires on a native map error. |
+| `className` | `string` | — | Container className (Uniwind/NativeWind). |
+| `containerStyle` | `StyleProp<ViewStyle>` | — | Container style, merged with `className`. |
+| `loader` | `ReactNode \| false` | a default spinner | Shown until `onLoad` fires. `false` hides it entirely. |
+| `ref` | `Ref<MapInstance>` | — | Imperative handle -- see `useMap()` below. |
+| `maplibre` | `Record<string, unknown>` | — | Advanced MapLibre-only escape hatch, loosely typed on purpose. |
+| `mapbox` | `Record<string, unknown>` | — | Advanced Mapbox-only escape hatch, loosely typed on purpose. |
+
+## useMap() / MapInstance
+
+`useMap()` returns the same `MapInstance` shape whichever renderer is active -- it throws if called outside a `<Map>` subtree.
+
+```ts
+interface MapInstance {
+  renderer: "maplibre" | "mapbox";
+  isLoaded: boolean;
+
+  getViewport(): Promise<MapViewport>;
+  setViewport(v: PartialViewport, animation?: MapCameraAnimation): void;
+  flyTo(center: Coordinate, options?: { zoom?: number } & MapCameraAnimation): void;
+  moveTo(center: Coordinate, options?: { zoom?: number } & MapCameraAnimation): void;
+  zoomTo(zoom: number, options?: MapCameraAnimation): void;
+  zoomBy(delta: number, options?: MapCameraAnimation): void;
+  fitBounds(bounds: Bounds, options?: MapCameraAnimation): void;
+  fitFeatures(data: GeoJSONInput, options?: MapCameraAnimation): void;
+  resetNorth(options?: MapCameraAnimation): void;
+
+  project(coordinate: Coordinate): Promise<{ x: number; y: number }>;
+  unproject(point: { x: number; y: number }): Promise<Coordinate>;
+  queryFeatures(options?: { point?; bounds?; layers?: string[]; filter?: unknown }): Promise<Feature[]>;
+
+  /** Raw renderer refs -- branch on `renderer` before touching these. */
+  mapRef: { current: any };
+  cameraRef: { current: any };
+
+  /** The configured basemap provider. Read by MapStyleSwitcher and friends. */
+  provider: MapProviderId;
+  /** Switches the active style by id. Owned by Map itself, not a native ref call. */
+  setStyle(styleId: string): void;
+}
+```
+
+`zoomBy` reads the live zoom directly from the map, so it never drifts the way a component keeping its own zoom counter would.
+
+## Example
+
+```tsx
+import { useState } from "react";
+import { Map, MapMarker } from "@/components/ui/map";
+
+export function BasicMap() {
+  const [viewport, setViewport] = useState({ center: [-122.4194, 37.7749], zoom: 12 });
+
+  return (
+    <Map viewport={viewport} onViewportChange={setViewport} style="streets" className="flex-1">
+      <MapMarker coordinate={[-122.4194, 37.7749]} />
+    </Map>
+  );
+}
+```
+
+## Renderer support
+
+Mapbox's `MapView` cannot render arbitrary React Native views as children the way MapLibre's can, so `Map` runs an internal overlay-portal context on Mapbox to make `MapControls`, `MapPopup`, `MapLegend`, and `MapStyleSwitcher` behave identically on both renderers. This is transparent -- you never interact with the portal directly.
+
+## Related components
+
+[Camera & Viewport](/docs/core/camera-and-viewport) · [Controls](/docs/core/controls) · [Markers](/docs/core/markers) · [Popups](/docs/core/popups) · [Style switcher](/docs/styling/style-switcher)
