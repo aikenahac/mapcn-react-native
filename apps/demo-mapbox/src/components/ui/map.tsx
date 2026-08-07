@@ -7,8 +7,8 @@ import Mapbox, {
 import * as Location from "expo-location";
 import React, {
   createContext,
+  use,
   useCallback,
-  useContext,
   useEffect,
   useId,
   useMemo,
@@ -84,7 +84,7 @@ type MapContextValue = {
 const MapContext = createContext<MapContextValue | null>(null);
 
 function useMap() {
-  const context = useContext(MapContext);
+  const context = use(MapContext);
   if (!context) {
     throw new Error("useMap must be used within a Map component");
   }
