@@ -1,0 +1,57 @@
+{
+  "components": [
+    {
+      "category": "core",
+      "contentHash": "sha256-c5090a66b22ac702",
+      "description": "Renderer-independent types, geo/scale/color utilities, and the provider registry that every other mapcn component depends on.",
+      "docsSlug": "core",
+      "env": [],
+      "expoPlugins": [],
+      "name": "core",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Core"
+    },
+    {
+      "capabilities": {
+        "mapbox": {
+          "note": "MapView cannot render arbitrary RN children as overlays; Map uses an internal overlay-portal context for that on Mapbox only."
+        }
+      },
+      "category": "core",
+      "contentHash": "sha256-ff3d56b219e5ae2b",
+      "description": "The core map container: controlled/uncontrolled viewport, provider-based styling, and the useMap() imperative camera API.",
+      "docsSlug": "map",
+      "env": [],
+      "expoPlugins": {
+        "mapbox": [
+          "@rnmapbox/maps"
+        ],
+        "maplibre": [
+          "@maplibre/maplibre-react-native"
+        ]
+      },
+      "name": "map",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core"
+      ],
+      "renderers": [
+        "maplibre",
+        "mapbox"
+      ],
+      "source": "per-renderer",
+      "title": "Map"
+    }
+  ],
+  "schemaVersion": 2,
+  "version": "2.0.0-alpha.0"
+}

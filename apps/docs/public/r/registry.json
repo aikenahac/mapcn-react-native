@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "homepage": "https://mapcn-rn.dev",
+  "items": [
+    {
+      "name": "core",
+      "type": "registry:ui"
+    },
+    {
+      "name": "map",
+      "type": "registry:ui"
+    }
+  ],
+  "name": "mapcn-rn"
+}
