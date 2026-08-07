@@ -1,0 +1,33 @@
+{
+  "cli": {
+    "version": ">= 9.0.3",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "ios-simulator": {
+      "extends": "development",
+      "ios": {
+        "simulator": true
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_API_KEY": "@EXPO_PUBLIC_MAPBOX_API_KEY"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_MAPBOX_API_KEY": "@EXPO_PUBLIC_MAPBOX_API_KEY"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
