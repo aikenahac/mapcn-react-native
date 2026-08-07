@@ -10,8 +10,15 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
+  "peerDependencies": {
+    "react": ">=19.1.0",
+    "react-native": ">=0.80.0"
+  },
   "devDependencies": {
     "@types/geojson": "^7946.0.16",
+    "@types/react": "~19.2.10",
+    "react": "19.2.3",
+    "react-native": "0.86.2",
     "typescript": "~5.9.2",
     "vitest": "^3.0.0"
   }

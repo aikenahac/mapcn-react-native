@@ -14,3 +14,4 @@ export * from "./lib/mapcn/geo";
 export * from "./lib/mapcn/colors";
 export * from "./lib/mapcn/scale";
 export * from "./lib/mapcn/provider";
+export * from "./components/ui/map-types";
