@@ -63,7 +63,7 @@ export default function LayerMarkersExample() {
             onScrollEnabledChange={setScrollEnabled}
             className="h-[500px] rounded-xl overflow-hidden border border-border relative"
           >
-            <Map zoom={13} center={[-122.4083, 37.802]}>
+            <Map defaultViewport={{ zoom: 13, center: [-122.4083, 37.802] }}>
               <GeoJSONSource id="layer-markers-source" data={geojson}>
                 <Layer
                   id="layer-markers-circles"

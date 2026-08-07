@@ -61,7 +61,7 @@ export default function OSRMRouteExample() {
           </View>
 
           <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map zoom={13} center={[-122.4139, 37.7799]}>
+            <Map defaultViewport={{ zoom: 13, center: [-122.4139, 37.7799] }}>
               {route && <MapRoute coordinates={route} color="#8b5cf6" width={4} />}
               <MapMarker coordinate={start}>
                 <View className="w-8 h-8 bg-green-500 rounded-full border-2 border-background items-center justify-center">

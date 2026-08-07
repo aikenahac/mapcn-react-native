@@ -77,7 +77,7 @@ export default function MapControlsExample() {
           )}
 
           <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border">
-            <Map zoom={12} center={[-122.4194, 37.7749]}>
+            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
               <MapContent hasPermission={hasPermission} />
             </Map>
           </ScrollViewMapWrapper>

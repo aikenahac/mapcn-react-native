@@ -127,7 +127,7 @@ export const PROVIDERS: Record<MapProviderId, MapProviderDefinition> = {
   },
 };
 
-export function providersForRenderer(renderer: MapRenderer): MapProviderDefinition[] {
+export function providersForRenderer(renderer: MapRenderer): Array<MapProviderDefinition> {
   return Object.values(PROVIDERS).filter((p) => p.renderer === renderer);
 }
 

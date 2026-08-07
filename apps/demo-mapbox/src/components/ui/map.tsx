@@ -1,9 +1,5 @@
-import { useTheme } from "@/lib/theme-context";
 import { cn } from "@/lib/utils";
-import Mapbox, {
-  type Camera as MapboxCameraRef,
-  type MapView as MapboxMapViewRef,
-} from "@rnmapbox/maps";
+import Mapbox from "@rnmapbox/maps";
 import * as Location from "expo-location";
 import React, {
   createContext,
@@ -11,79 +7,37 @@ import React, {
   useCallback,
   useEffect,
   useId,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
   type ReactNode,
+  type Ref,
 } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, useColorScheme, View } from "react-native";
+import {
+  CAPABILITIES,
+  createCameraController,
+  MapboxCallout,
+  MapboxLineLayer,
+  MapboxMapView,
+  MapboxShapeSource,
+  normalizeRegionChangeEvent,
+  RENDERER,
+  type MapboxCameraRef,
+  type MapboxMapViewRef,
+} from "./map-renderer";
+import type { MapInstance, MapProps } from "./map-types";
+import { PROVIDERS, resolveStyleUrl } from "@/lib/mapcn/provider";
+import { viewportEquals } from "@/lib/mapcn/geo";
+import type { MapViewport, PartialViewport } from "@/lib/mapcn/types";
 
-const MAPBOX_ACCESS_TOKEN = process.env.EXPO_PUBLIC_MAPBOX_API_KEY;
+export type { MapProps };
+export { CAPABILITIES as MAP_CAPABILITIES };
 
-if (MAPBOX_ACCESS_TOKEN) {
-  Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
-} else {
-  console.warn(
-    "[map-mapbox] EXPO_PUBLIC_MAPBOX_API_KEY not found. " +
-      "Get your free Mapbox token at: https://account.mapbox.com/access-tokens/",
-  );
-}
+const MapContext = createContext<MapInstance | null>(null);
 
-// Camera wrapper to provide MapLibre-compatible API
-type CameraAPI = {
-  flyTo: (params: {
-    center: [number, number];
-    zoom: number;
-    duration: number;
-  }) => void;
-  easeTo: (params: {
-    center: [number, number];
-    zoom: number;
-    duration: number;
-  }) => void;
-};
-
-type CameraWrapperRef = {
-  current: CameraAPI | null;
-};
-
-function createCameraWrapper(
-  internalCameraRef: React.RefObject<MapboxCameraRef | null>,
-): CameraWrapperRef {
-  return {
-    current: {
-      flyTo: ({ center, zoom, duration }) => {
-        internalCameraRef.current?.setCamera({
-          centerCoordinate: center,
-          zoomLevel: zoom,
-          animationDuration: duration,
-          animationMode: "flyTo",
-        });
-      },
-      easeTo: ({ center, zoom, duration }) => {
-        internalCameraRef.current?.setCamera({
-          centerCoordinate: center,
-          zoomLevel: zoom,
-          animationDuration: duration,
-          animationMode: "easeTo",
-        });
-      },
-    },
-  };
-}
-
-type MapContextValue = {
-  mapRef: React.RefObject<MapboxMapViewRef | null>;
-  cameraRef: CameraWrapperRef;
-  isLoaded: boolean;
-  theme: "light" | "dark";
-  registerOverlay: (id: string, element: ReactNode) => void;
-  unregisterOverlay: (id: string) => void;
-};
-
-const MapContext = createContext<MapContextValue | null>(null);
-
-function useMap() {
+function useMap(): MapInstance {
   const context = use(MapContext);
   if (!context) {
     throw new Error("useMap must be used within a Map component");
@@ -91,53 +45,127 @@ function useMap() {
   return context;
 }
 
-const defaultStyles = {
-  dark: Mapbox.StyleURL.Dark,
-  light: Mapbox.StyleURL.Street,
-};
+/**
+ * Mapbox's MapView can't render arbitrary RN children as overlays the way
+ * MapLibre's Map can (plan §14 risk #3) -- `MapControls` and friends
+ * register their rendered element here instead, and `Map` renders the
+ * registry as siblings of MapView. This is intentionally a separate,
+ * non-public context: `useMap()` only ever exposes the shared `MapInstance`
+ * shape, never this renderer-specific plumbing.
+ */
+const OverlayContext = createContext<{
+  registerOverlay: (id: string, element: ReactNode) => void;
+  unregisterOverlay: (id: string) => void;
+} | null>(null);
 
-type MapStyleOption = string | object;
+function useOverlay() {
+  const context = use(OverlayContext);
+  if (!context) {
+    throw new Error("useOverlay must be used within a Map component");
+  }
+  return context;
+}
 
-type MapProps = {
-  children?: ReactNode;
-  /** Custom map styles for light and dark themes. Overrides the default Mapbox styles. */
-  styles?: {
-    light?: MapStyleOption;
-    dark?: MapStyleOption;
-  };
-  /** Initial center coordinate [longitude, latitude] */
-  center?: [number, number];
-  /** Initial zoom level */
-  zoom?: number;
-  /** Container style */
-  className?: string;
-  /** Show loading indicator */
-  showLoader?: boolean;
-};
+const DEFAULT_VIEWPORT: MapViewport = { center: [0, 0], zoom: 10, bearing: 0, pitch: 0 };
+const DEFAULT_VIEWPORT_CHANGE_THROTTLE = 100;
+
+function isLightDarkPair(
+  style: NonNullable<MapProps["style"]>,
+): style is { light: string | Record<string, unknown>; dark: string | Record<string, unknown> } {
+  return typeof style === "object" && ("light" in style || "dark" in style);
+}
+
+function resolveMapStyle(
+  style: MapProps["style"],
+  colorScheme: "light" | "dark",
+  provider: (typeof PROVIDERS)[keyof typeof PROVIDERS],
+): string | Record<string, unknown> {
+  const resolved: string | Record<string, unknown> | undefined = style
+    ? isLightDarkPair(style)
+      ? style[colorScheme]
+      : style
+    : undefined;
+
+  if (resolved === undefined) {
+    const defaultStyleId = provider.defaultStyle[colorScheme];
+    return resolveStyleUrl(provider, defaultStyleId, process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
+  }
+  if (typeof resolved === "string" && !resolved.includes("://") && !resolved.startsWith("http")) {
+    return resolveStyleUrl(provider, resolved, process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
+  }
+  return resolved;
+}
 
 const DefaultLoader = () => (
-  <View className="absolute inset-0 justify-center items-center bg-white/80">
+  <View className="absolute inset-0 justify-center items-center bg-background/80">
     <ActivityIndicator size="small" color="#999" />
   </View>
 );
 
+let accessTokenSet = false;
+
+function ensureAccessToken() {
+  if (accessTokenSet) return;
+  accessTokenSet = true;
+  const token = process.env.EXPO_PUBLIC_MAPBOX_TOKEN;
+  if (token) {
+    Mapbox.setAccessToken(token);
+  } else {
+    console.warn(
+      "[mapcn] EXPO_PUBLIC_MAPBOX_TOKEN not found. Get a free token at https://account.mapbox.com/access-tokens/",
+    );
+  }
+}
+
 function Map({
   children,
-  styles,
-  center = [0, 0],
-  zoom = 10,
+  style,
+  provider: providerId = "mapbox",
+  colorScheme: colorSchemeProp,
+  viewport,
+  defaultViewport,
+  onViewportChange,
+  onViewportChangeEnd,
+  viewportChangeThrottle = DEFAULT_VIEWPORT_CHANGE_THROTTLE,
+  bounds,
+  padding,
+  minZoom,
+  maxZoom,
+  maxBounds,
+  interactive = true,
+  gestures,
+  compass = false,
+  logo = false,
+  attribution = false,
+  scaleBar = false,
+  onPress,
+  onLongPress,
+  onLoad,
+  onError: _onError,
   className,
-  showLoader = true,
-}: MapProps) {
+  containerStyle,
+  loader,
+  ref,
+}: MapProps & { ref?: Ref<MapInstance> }) {
+  ensureAccessToken();
+
   const mapRef = useRef<MapboxMapViewRef | null>(null);
-  const internalCameraRef = useRef<MapboxCameraRef | null>(null);
+  const cameraRef = useRef<MapboxCameraRef | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [overlays, setOverlays] = useState<Record<string, ReactNode>>({});
-  const { colorScheme } = useTheme();
-  const theme = colorScheme === "dark" ? "dark" : "light";
 
-  // Create camera wrapper with MapLibre-compatible API
-  const cameraRef = useMemo(() => createCameraWrapper(internalCameraRef), []);
+  const systemColorScheme = useColorScheme();
+  const colorScheme: "light" | "dark" = colorSchemeProp ?? (systemColorScheme === "dark" ? "dark" : "light");
+  const provider = PROVIDERS[providerId];
+
+  const isControlled = viewport !== undefined;
+  const initialViewport: MapViewport = { ...DEFAULT_VIEWPORT, ...defaultViewport, ...viewport };
+
+  const lastEmittedRef = useRef<MapViewport>(initialViewport);
+  const lastAppliedRef = useRef<MapViewport>(initialViewport);
+  const isGestureActiveRef = useRef(false);
+
+  const mapStyle = resolveMapStyle(style, colorScheme, provider);
 
   const registerOverlay = useCallback((id: string, element: ReactNode) => {
     setOverlays((prev) => ({ ...prev, [id]: element }));
@@ -151,47 +179,145 @@ function Map({
     });
   }, []);
 
-  const mapStyle =
-    theme === "dark"
-      ? (styles?.dark ?? defaultStyles.dark)
-      : (styles?.light ?? defaultStyles.light);
+  const overlayContextValue = useMemo(() => ({ registerOverlay, unregisterOverlay }), [registerOverlay, unregisterOverlay]);
 
-  const handleMapIdle = () => {
-    if (!isLoaded) {
-      setIsLoaded(true);
-    }
-  };
+  // createCameraController only stores these ref objects; every `.current`
+  // read happens inside the closures it returns, which only ever run from
+  // event handlers/effects (see map-renderer.tsx) -- never during render.
+  // eslint-disable-next-line react-hooks/refs
+  const cameraController = useMemo(() => createCameraController(mapRef, cameraRef), []);
+
+  const instance = useMemo<MapInstance>(
+    () => ({
+      renderer: RENDERER,
+      isLoaded,
+      mapRef,
+      cameraRef,
+      ...cameraController,
+    }),
+    [isLoaded, cameraController],
+  );
+
+  useImperativeHandle(ref, () => instance, [instance]);
+
+  const throttleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingViewport = useRef<{ viewport: MapViewport; userInteraction: boolean } | null>(null);
+
+  const flushViewportChange = useCallback(() => {
+    if (!pendingViewport.current) return;
+    const { viewport: next, userInteraction } = pendingViewport.current;
+    pendingViewport.current = null;
+    lastEmittedRef.current = next;
+    onViewportChange?.(next, { userInteraction });
+  }, [onViewportChange]);
+
+  const handleCameraChanged = useCallback(
+    (event: Parameters<typeof normalizeRegionChangeEvent>[0]) => {
+      const { viewport: next, userInteraction } = normalizeRegionChangeEvent(event as never);
+      isGestureActiveRef.current = userInteraction;
+      if (viewportEquals(next, lastAppliedRef.current) || viewportEquals(next, lastEmittedRef.current)) return;
+
+      pendingViewport.current = { viewport: next, userInteraction };
+      if (throttleTimer.current) return;
+      throttleTimer.current = setTimeout(() => {
+        throttleTimer.current = null;
+        flushViewportChange();
+      }, viewportChangeThrottle);
+    },
+    [flushViewportChange, viewportChangeThrottle],
+  );
+
+  const handleMapIdleRegion = useCallback(
+    (event: Parameters<typeof normalizeRegionChangeEvent>[0]) => {
+      const { viewport: next, userInteraction } = normalizeRegionChangeEvent(event as never);
+      isGestureActiveRef.current = false;
+      if (throttleTimer.current) {
+        clearTimeout(throttleTimer.current);
+        throttleTimer.current = null;
+      }
+      pendingViewport.current = null;
+      if (!viewportEquals(next, lastEmittedRef.current)) {
+        lastEmittedRef.current = next;
+        onViewportChange?.(next, { userInteraction });
+      }
+      onViewportChangeEnd?.(next, { userInteraction });
+    },
+    [onViewportChange, onViewportChangeEnd],
+  );
+
+  useEffect(() => {
+    if (!isControlled || !isLoaded || isGestureActiveRef.current) return;
+    if (viewportEquals(lastEmittedRef.current, viewport as PartialViewport)) return;
+    lastAppliedRef.current = { ...lastAppliedRef.current, ...viewport };
+    cameraController.setViewport(viewport as PartialViewport, { duration: 300, easing: "ease" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewport, isControlled, isLoaded]);
+
+  const handleDidFinishLoadingMap = useCallback(() => {
+    setIsLoaded(true);
+    onLoad?.();
+  }, [onLoad]);
 
   return (
-    <MapContext.Provider
-      value={{ mapRef, cameraRef, isLoaded, theme, registerOverlay, unregisterOverlay }}
-    >
-      <View className={cn("flex-1 relative", className)}>
-        <Mapbox.MapView
-          ref={mapRef}
-          style={{ flex: 1 }}
-          styleURL={mapStyle as string}
-          onDidFinishLoadingMap={handleMapIdle}
-          compassEnabled={false}
-          logoEnabled={false}
-          attributionEnabled={false}
-        >
-          <Mapbox.Camera
-            ref={internalCameraRef}
-            zoomLevel={zoom}
-            centerCoordinate={center}
-            animationMode="flyTo"
-            animationDuration={1000}
-          />
-          {children}
-        </Mapbox.MapView>
-        {showLoader && !isLoaded && <DefaultLoader />}
-        {Object.entries(overlays).map(([id, element]) => (
-          <React.Fragment key={id}>{element}</React.Fragment>
-        ))}
-      </View>
-    </MapContext.Provider>
+    <MapContext value={instance}>
+      <OverlayContext value={overlayContextValue}>
+        <View className={cn("flex-1 relative", className)} style={containerStyle}>
+          <MapboxMapView
+            ref={mapRef}
+            style={{ flex: 1 }}
+            styleURL={typeof mapStyle === "string" ? mapStyle : undefined}
+            styleJSON={typeof mapStyle === "object" ? JSON.stringify(mapStyle) : undefined}
+            onDidFinishLoadingMap={handleDidFinishLoadingMap}
+            onCameraChanged={handleCameraChanged}
+            onMapIdle={handleMapIdleRegion}
+            onPress={onPress ? ((feature: unknown) => onPress(normalizePress(feature))) : undefined}
+            onLongPress={onLongPress ? ((feature: unknown) => onLongPress(normalizePress(feature))) : undefined}
+            compassEnabled={compass !== false}
+            logoEnabled={logo !== false}
+            attributionEnabled={attribution !== false}
+            scaleBarEnabled={scaleBar !== false}
+            scrollEnabled={interactive && gestures?.pan !== false}
+            zoomEnabled={interactive && gestures?.zoom !== false}
+            rotateEnabled={interactive && gestures?.rotate !== false}
+            pitchEnabled={interactive && gestures?.pitch !== false}
+            contentInset={padding ? [padding.top ?? 0, padding.right ?? 0, padding.bottom ?? 0, padding.left ?? 0] : undefined}
+          >
+            <Mapbox.Camera
+              ref={cameraRef}
+              defaultSettings={{
+                centerCoordinate: initialViewport.center,
+                zoomLevel: initialViewport.zoom,
+                heading: initialViewport.bearing,
+                pitch: initialViewport.pitch,
+                ...(bounds
+                  ? { bounds: { ne: [bounds[2], bounds[3]], sw: [bounds[0], bounds[1]] } }
+                  : {}),
+              }}
+              minZoomLevel={minZoom}
+              maxZoomLevel={maxZoom}
+              maxBounds={maxBounds ? { ne: [maxBounds[2], maxBounds[3]], sw: [maxBounds[0], maxBounds[1]] } : undefined}
+            />
+            {children}
+          </MapboxMapView>
+          {loader !== false && !isLoaded && (loader ?? <DefaultLoader />)}
+          {Object.entries(overlays).map(([id, element]) => (
+            <React.Fragment key={id}>{element}</React.Fragment>
+          ))}
+        </View>
+      </OverlayContext>
+    </MapContext>
   );
+}
+
+Map.displayName = "Map";
+
+ 
+function normalizePress(feature: any) {
+  return {
+    coordinate: feature.geometry.coordinates as [number, number],
+    point: { x: 0, y: 0 },
+    features: [feature],
+  };
 }
 
 type MarkerContextValue = {
@@ -279,9 +405,9 @@ type MarkerPopupProps = {
 
 function MarkerPopup({ children, className, title }: MarkerPopupProps) {
   return (
-    <Mapbox.Callout title={title ?? ""} className={className}>
+    <MapboxCallout title={title ?? ""} className={className}>
       <View className="p-3 min-w-[100px] max-w-[300px]">{children}</View>
-    </Mapbox.Callout>
+    </MapboxCallout>
   );
 }
 
@@ -333,36 +459,19 @@ function MapControls({
   className,
   onLocate,
 }: MapControlsProps) {
-  const { cameraRef, mapRef, isLoaded, registerOverlay, unregisterOverlay } = useMap();
+  const map = useMap();
+  const { registerOverlay, unregisterOverlay } = useOverlay();
+  const { isLoaded } = map;
   const [waitingForLocation, setWaitingForLocation] = useState(false);
-  const [currentZoom, setCurrentZoom] = useState(10);
   const overlayId = useId();
 
-  const handleZoomIn = useCallback(async () => {
-    if (cameraRef.current && mapRef.current) {
-      const center = await mapRef.current.getCenter();
-      const newZoom = Math.min(currentZoom + 1, 20);
-      setCurrentZoom(newZoom);
-      cameraRef.current.easeTo({
-        center: center as [number, number],
-        zoom: newZoom,
-        duration: 300,
-      });
-    }
-  }, [cameraRef, mapRef, currentZoom]);
+  const handleZoomIn = useCallback(() => {
+    map.zoomBy(1, { duration: 300 });
+  }, [map]);
 
-  const handleZoomOut = useCallback(async () => {
-    if (cameraRef.current && mapRef.current) {
-      const center = await mapRef.current.getCenter();
-      const newZoom = Math.max(currentZoom - 1, 0);
-      setCurrentZoom(newZoom);
-      cameraRef.current.easeTo({
-        center: center as [number, number],
-        zoom: newZoom,
-        duration: 300,
-      });
-    }
-  }, [cameraRef, mapRef, currentZoom]);
+  const handleZoomOut = useCallback(() => {
+    map.zoomBy(-1, { duration: 300 });
+  }, [map]);
 
   const handleLocate = useCallback(async () => {
     setWaitingForLocation(true);
@@ -373,23 +482,14 @@ function MapControls({
         latitude: location.coords.latitude,
       };
 
-      if (cameraRef.current) {
-        cameraRef.current.flyTo({
-          center: [coords.longitude, coords.latitude],
-          zoom: 14,
-          duration: 1500,
-        });
-      }
-
-      if (onLocate) {
-        onLocate(coords);
-      }
+      map.flyTo([coords.longitude, coords.latitude], { zoom: 14, duration: 1500 });
+      onLocate?.(coords);
     } catch (error) {
       console.error("Error getting location:", error);
     } finally {
       setWaitingForLocation(false);
     }
-  }, [cameraRef, onLocate]);
+  }, [map, onLocate]);
 
   const positionStyle = useMemo(
     () =>
@@ -522,8 +622,8 @@ function MapRoute({
   };
 
   return (
-    <Mapbox.ShapeSource id={sourceId} shape={shape}>
-      <Mapbox.LineLayer
+    <MapboxShapeSource id={sourceId} shape={shape}>
+      <MapboxLineLayer
         id={layerId}
         style={{
           lineColor: color,
@@ -534,7 +634,7 @@ function MapRoute({
           lineCap: "round",
         }}
       />
-    </Mapbox.ShapeSource>
+    </MapboxShapeSource>
   );
 }
 

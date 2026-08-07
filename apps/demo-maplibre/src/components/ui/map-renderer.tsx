@@ -69,7 +69,7 @@ export function normalizeRegionChangeEvent(
 interface RawPressEvent {
   lngLat: Coordinate;
   point: [number, number];
-  features?: unknown[];
+  features?: Array<unknown>;
 }
 
 export function normalizeFeaturePress(event: NativeSyntheticEvent<RawPressEvent>): MapFeaturePressEvent {
@@ -77,8 +77,8 @@ export function normalizeFeaturePress(event: NativeSyntheticEvent<RawPressEvent>
   return {
     coordinate: lngLat,
     point: { x: point[0], y: point[1] },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    features: (features as any[] | undefined) ?? [],
+     
+    features: (features as Array<any> | undefined) ?? [],
   };
 }
 

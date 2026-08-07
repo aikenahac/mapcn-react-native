@@ -3,6 +3,7 @@
  * See apps/demo-maplibre/src/components/ui/map-renderer.tsx for the sibling
  * implementation and the rationale for what does/doesn't live here.
  */
+import type { ComponentType } from "react";
 import Mapbox, {
   type Camera as MapboxCameraRef,
   type MapView as MapboxMapViewRef,
@@ -22,6 +23,24 @@ import { bboxOf } from "@/lib/mapcn/geo";
 export { Mapbox };
 export type { MapboxCameraRef, MapboxMapViewRef };
 
+/**
+ * @rnmapbox/maps@10.3.5's class components that extend the internal
+ * `NativeBridgeComponent` mixin (MapView, Callout, ShapeSource, and every
+ * *Layer) are not structurally assignable to React 19.2's `Component` type
+ * under TS 6 (confirmed during Phase 0: MarkerView and Camera, which don't
+ * use that mixin, typecheck fine as JSX). This is an upstream typing gap,
+ * not a bug in this codebase -- every file that needs to render one of
+ * these imports the pre-cast version from here instead of re-deriving the
+ * same `as unknown as ComponentType<any>` workaround at each call site.
+ */
+export const MapboxMapView = Mapbox.MapView as unknown as ComponentType<any>;
+export const MapboxCallout = Mapbox.Callout as unknown as ComponentType<any>;
+export const MapboxShapeSource = Mapbox.ShapeSource as unknown as ComponentType<any>;
+export const MapboxLineLayer = Mapbox.LineLayer as unknown as ComponentType<any>;
+export const MapboxFillLayer = Mapbox.FillLayer as unknown as ComponentType<any>;
+export const MapboxCircleLayer = Mapbox.CircleLayer as unknown as ComponentType<any>;
+export const MapboxSymbolLayer = Mapbox.SymbolLayer as unknown as ComponentType<any>;
+
 export const RENDERER: MapRenderer = "mapbox";
 
 export const CAPABILITIES: RendererCapabilities = {
@@ -37,7 +56,7 @@ interface RegionPayload {
   zoomLevel: number;
   heading: number;
   pitch: number;
-  visibleBounds: number[][];
+  visibleBounds: Array<Array<number>>;
   isUserInteraction: boolean;
 }
 
@@ -61,8 +80,8 @@ export function normalizeRegionChangeEvent(feature: {
 export function normalizeFeaturePress(feature: {
   geometry: { coordinates: Coordinate };
   properties?: { screenPointX?: number; screenPointY?: number };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  features?: any[];
+   
+  features?: Array<any>;
 }): MapFeaturePressEvent {
   return {
     coordinate: feature.geometry.coordinates,

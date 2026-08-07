@@ -57,7 +57,7 @@ export default function AdvancedUsageExample() {
           </View>
 
           <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map zoom={12} center={[-122.4194, 37.7749]}>
+            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
               {showRoute && <MapRoute coordinates={route} color="#3b82f6" width={4} />}
               {showMarkers &&
                 markers.map((marker, idx) => (

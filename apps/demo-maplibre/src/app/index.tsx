@@ -192,36 +192,6 @@ export default function HomeScreen() {
             })}
           </View>
 
-          <View className="gap-4">
-            <Text className="text-2xl font-bold text-foreground">
-              Maptiler Examples
-            </Text>
-
-            <Link href={"/maptiler"} asChild>
-              <Pressable className="active:opacity-70">
-                <Card className="px-4">
-                  <View className="flex-row items-start gap-4">
-                    <View
-                      className={`w-12 h-12 rounded-lg bg-muted items-center justify-center`}
-                    >
-                      <MapPin size={24} className={"text-blue-500"} />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-lg font-semibold text-foreground mb-1">
-                        {"Maptiler Examples"}
-                      </Text>
-                      <Text className="text-sm text-muted-foreground">
-                        {
-                          "Same examples using Maptiler, for cheaper commercial usage."
-                        }
-                      </Text>
-                    </View>
-                  </View>
-                </Card>
-              </Pressable>
-            </Link>
-          </View>
-
           <View className="p-6 bg-muted/30 rounded-lg border border-border mt-4">
             <Text className="text-sm font-semibold text-foreground mb-2">
               Companion App

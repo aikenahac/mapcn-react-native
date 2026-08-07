@@ -109,15 +109,15 @@ export interface MapInstance {
   queryFeatures(options?: {
     point?: { x: number; y: number };
     bounds?: Bounds;
-    layers?: string[];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    filter?: any[];
-  }): Promise<Feature[]>;
+    layers?: Array<string>;
+     
+    filter?: Array<any>;
+  }): Promise<Array<Feature>>;
 
   /** Raw renderer refs. Types differ per renderer -- branch on `renderer`. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   mapRef: { current: any };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   cameraRef: { current: any };
 }
 

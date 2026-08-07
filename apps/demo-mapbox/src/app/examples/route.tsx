@@ -37,7 +37,7 @@ export default function RouteExample() {
           </View>
 
           <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map zoom={12} center={[-122.4194, 37.7849]}>
+            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7849] }}>
               <MapRoute coordinates={routeCoordinates} color="#3b82f6" width={4} />
               <MapMarker coordinate={routeCoordinates[0]}>
                 <View className="w-8 h-8 bg-green-500 rounded-full border-2 border-background items-center justify-center">

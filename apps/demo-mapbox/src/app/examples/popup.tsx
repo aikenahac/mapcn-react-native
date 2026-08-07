@@ -48,7 +48,7 @@ export default function PopupExample() {
           </View>
 
           <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map zoom={12} center={[-122.4194, 37.7749]}>
+            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
               {locations.map((loc, idx) => (
                 <MapMarker key={idx} coordinate={loc.coordinate}>
                   <Pressable onPress={() => setSelectedMarker(idx)}>

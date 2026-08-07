@@ -75,7 +75,7 @@ export default function CustomLayerExample() {
             onScrollEnabledChange={setScrollEnabled}
             className="h-[500px] rounded-xl overflow-hidden border border-border relative"
           >
-            <Map zoom={12} center={[-122.4394, 37.7649]}>
+            <Map defaultViewport={{ zoom: 12, center: [-122.4394, 37.7649] }}>
               <GeoJSONSource id="custom-layer-source" data={geojson}>
                 <Layer
                   id="custom-layer-fill"

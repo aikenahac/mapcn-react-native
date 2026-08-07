@@ -3,23 +3,23 @@ import type { Expression, MapLegendData } from "./types";
 import { sampleRamp } from "./colors";
 
 export type ChoroplethScale =
-  | { type: "quantize"; steps?: number; colors?: string[]; domain?: [number, number] }
-  | { type: "quantile"; steps?: number; colors?: string[] }
-  | { type: "threshold"; breaks: number[]; colors: string[] }
-  | { type: "linear"; colors: string[]; domain?: [number, number] };
+  | { type: "quantize"; steps?: number; colors?: Array<string>; domain?: [number, number] }
+  | { type: "quantile"; steps?: number; colors?: Array<string> }
+  | { type: "threshold"; breaks: Array<number>; colors: Array<string> }
+  | { type: "linear"; colors: Array<string>; domain?: [number, number] };
 
 const DEFAULT_COLORS = ["#eff3ff", "#bdd7e7", "#6baed6", "#3182bd", "#08519c"];
 
-function extractValues(data: FeatureCollection, property: string): number[] {
-  const values: number[] = [];
-  for (const feature of data.features as Feature<Geometry>[]) {
+function extractValues(data: FeatureCollection, property: string): Array<number> {
+  const values: Array<number> = [];
+  for (const feature of data.features as Array<Feature<Geometry>>) {
     const raw = feature.properties?.[property];
     if (typeof raw === "number" && Number.isFinite(raw)) values.push(raw);
   }
   return values;
 }
 
-function domainOf(values: number[]): [number, number] {
+function domainOf(values: Array<number>): [number, number] {
   if (values.length === 0) return [0, 1];
   let min = Infinity;
   let max = -Infinity;
@@ -30,8 +30,8 @@ function domainOf(values: number[]): [number, number] {
   return [min, max];
 }
 
-function quantiles(sorted: number[], steps: number): number[] {
-  const breaks: number[] = [];
+function quantiles(sorted: Array<number>, steps: number): Array<number> {
+  const breaks: Array<number> = [];
   for (let i = 1; i < steps; i++) {
     const pos = (i / steps) * (sorted.length - 1);
     const lower = Math.floor(pos);
@@ -48,8 +48,8 @@ function quantiles(sorted: number[], steps: number): number[] {
 
 export interface ComputedScale {
   /** Ascending break points, excluding the domain min/max. */
-  breaks: number[];
-  colors: string[];
+  breaks: Array<number>;
+  colors: Array<string>;
   domain: [number, number];
 }
 
@@ -69,7 +69,7 @@ export function computeScale(scale: ChoroplethScale, data: FeatureCollection, pr
       const domain = scale.domain ?? domainOf(extractValues(data, property));
       const [min, max] = domain;
       const span = max - min;
-      const breaks: number[] = [];
+      const breaks: Array<number> = [];
       for (let i = 1; i < steps; i++) breaks.push(min + (span * i) / steps);
       return { breaks, colors: scale.colors ?? sampleRamp(DEFAULT_COLORS, steps), domain };
     }
@@ -117,7 +117,7 @@ export function buildStepExpression(
 /** Compiles a continuous (linear) scale into an `["interpolate", ["linear"], ...]` expression. */
 export function buildInterpolateExpression(
   property: string,
-  colors: string[],
+  colors: Array<string>,
   domain: [number, number],
   missingColor = "rgba(0,0,0,0)",
 ): Expression {
@@ -164,7 +164,7 @@ export function buildChoroplethLegend(
 }
 
 export function buildHeatmapLegend(
-  colors: string[],
+  colors: Array<string>,
   domain: [number, number],
   options?: { unit?: string },
 ): MapLegendData {

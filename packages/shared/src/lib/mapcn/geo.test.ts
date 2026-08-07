@@ -7,8 +7,9 @@ import {
   distance,
   precomputeValues,
   stepsForRadius,
+  viewportEquals,
 } from "./geo";
-import type { Coordinate } from "./types";
+import type { Coordinate, MapViewport } from "./types";
 
 describe("distance", () => {
   it("returns ~0 for identical points", () => {
@@ -106,6 +107,27 @@ describe("bboxOf", () => {
 
   it("throws on empty input", () => {
     expect(() => bboxOf({ type: "FeatureCollection", features: [] })).toThrow();
+  });
+});
+
+describe("viewportEquals", () => {
+  const base: MapViewport = { center: [-122.4194, 37.7749], zoom: 12, bearing: 0, pitch: 0 };
+
+  it("treats fields absent from the partial as equal", () => {
+    expect(viewportEquals(base, { zoom: 12 })).toBe(true);
+    expect(viewportEquals(base, {})).toBe(true);
+  });
+
+  it("detects a real center change", () => {
+    expect(viewportEquals(base, { center: [0, 0] })).toBe(false);
+  });
+
+  it("detects a real zoom change", () => {
+    expect(viewportEquals(base, { zoom: 13 })).toBe(false);
+  });
+
+  it("tolerates float noise from the native bridge round-trip", () => {
+    expect(viewportEquals(base, { center: [-122.41940000001, 37.77489999999], zoom: 12.0000001 })).toBe(true);
   });
 });
 

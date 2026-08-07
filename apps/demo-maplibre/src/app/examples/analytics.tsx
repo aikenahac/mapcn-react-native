@@ -33,7 +33,7 @@ export default function AnalyticsExample() {
           </View>
 
           <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map zoom={12} center={[-122.4194, 37.7749]}>
+            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
               <MapMarker coordinate={[-122.4194, 37.7749]}>
                 <View className="w-4 h-4 bg-emerald-500 rounded-full">
                   <View className="w-4 h-4 bg-emerald-500 rounded-full opacity-50 absolute animate-ping" />

@@ -39,7 +39,7 @@ export default function DeliveryExample() {
           </View>
 
           <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map zoom={12} center={[-122.4194, 37.7749]}>
+            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
               <MapRoute coordinates={deliveryRoute} color="#3b82f6" width={4} />
               {deliveryRoute.map((coord, idx) => (
                 <MapMarker key={idx} coordinate={coord}>

@@ -1,5 +1,5 @@
 import type { Feature, FeatureCollection, Geometry, GeoJsonProperties, Polygon } from "geojson";
-import type { Bounds, Coordinate, GeoJSONInput } from "./types";
+import type { Bounds, Coordinate, GeoJSONInput, MapViewport, PartialViewport } from "./types";
 
 /** Mean Earth radius in meters (same constant Turf.js uses). */
 const EARTH_RADIUS_METERS = 6_371_008.8;
@@ -77,6 +77,24 @@ export function coordinateEquals(a: Coordinate, b: Coordinate, epsilon = 1e-9): 
   return Math.abs(a[0] - b[0]) < epsilon && Math.abs(a[1] - b[1]) < epsilon;
 }
 
+const COORDINATE_EPSILON = 1e-7;
+const DEGREE_EPSILON = 1e-3;
+
+/**
+ * Compares a full viewport against a (possibly partial) one within the
+ * tolerances `Map` uses to suppress camera echo -- see plan §7.1 ("loop
+ * prevention"). Fields absent from `partial` are treated as equal (a
+ * `{ zoom: 12 }` update should not be considered "different" just because
+ * `center` wasn't specified).
+ */
+export function viewportEquals(a: MapViewport, partial: PartialViewport, epsilon = COORDINATE_EPSILON): boolean {
+  if (partial.center && !coordinateEquals(a.center, partial.center, epsilon)) return false;
+  if (partial.zoom !== undefined && Math.abs(a.zoom - partial.zoom) >= DEGREE_EPSILON) return false;
+  if (partial.bearing !== undefined && Math.abs(a.bearing - partial.bearing) >= DEGREE_EPSILON) return false;
+  if (partial.pitch !== undefined && Math.abs(a.pitch - partial.pitch) >= DEGREE_EPSILON) return false;
+  return true;
+}
+
 /**
  * Picks a polygon resolution that stays visually smooth regardless of
  * radius: small circles don't need many points, very large ones need more
@@ -105,7 +123,7 @@ export function circlePolygon(
   properties: GeoJsonProperties = {},
 ): Feature<Polygon> {
   const resolvedSteps = stepsForRadius(radiusMeters, steps);
-  const ring: Coordinate[] = [];
+  const ring: Array<Coordinate> = [];
 
   for (let i = 0; i < resolvedSteps; i++) {
     const bearing = (i * 360) / resolvedSteps;

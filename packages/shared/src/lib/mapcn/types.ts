@@ -39,7 +39,7 @@ export interface ScreenPoint {
 export interface MapFeaturePressEvent {
   coordinate: Coordinate;
   point: ScreenPoint;
-  features: Feature[];
+  features: Array<Feature>;
 }
 
 export type GeoJSONInput = Feature | FeatureCollection | Geometry | string;
@@ -50,8 +50,8 @@ export type GeoJSONInput = Feature | FeatureCollection | Geometry | string;
  * (see plan §1.2), so we don't attempt to model it more strictly than the
  * upstream style specs already do.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Expression = any[];
+ 
+export type Expression = Array<any>;
 
 export type StyleValue<T> = T | Expression;
 
@@ -68,7 +68,7 @@ export interface LineStyle {
   color?: StyleValue<string>;
   width?: StyleValue<number>;
   opacity?: StyleValue<number>;
-  dashArray?: number[];
+  dashArray?: Array<number>;
   cap?: "butt" | "round" | "square";
   join?: "bevel" | "round" | "miter";
 }
@@ -84,7 +84,7 @@ export interface TextStyle {
   size?: StyleValue<number>;
   haloColor?: string;
   haloWidth?: number;
-  font?: string[];
+  font?: Array<string>;
 }
 
 export type ColorScheme = "light" | "dark";

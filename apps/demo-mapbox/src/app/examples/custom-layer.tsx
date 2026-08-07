@@ -2,7 +2,7 @@ import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
 import { Map } from "@/components/ui/map";
 import { ArrowLeftIcon } from "@/lib/icons";
-import Mapbox from "@rnmapbox/maps";
+import { MapboxFillLayer, MapboxShapeSource } from "@/components/ui/map-renderer";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
@@ -68,9 +68,9 @@ export default function CustomLayerExample() {
           </View>
 
           <View className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map zoom={12} center={[-122.4394, 37.7649]}>
-              <Mapbox.ShapeSource id="custom-layer-source" shape={geojson}>
-                <Mapbox.FillLayer
+            <Map defaultViewport={{ zoom: 12, center: [-122.4394, 37.7649] }}>
+              <MapboxShapeSource id="custom-layer-source" shape={geojson}>
+                <MapboxFillLayer
                   id="custom-layer-fill"
                   style={{
                     fillColor: "#3b82f6",
@@ -78,7 +78,7 @@ export default function CustomLayerExample() {
                     fillOutlineColor: "#1d4ed8",
                   }}
                 />
-              </Mapbox.ShapeSource>
+              </MapboxShapeSource>
             </Map>
 
             <View className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-border shadow-lg">

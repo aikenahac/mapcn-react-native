@@ -35,7 +35,7 @@ export default function MarkersExample() {
           </View>
 
           <View className="h-[500px] rounded-xl overflow-hidden border border-border">
-            <Map zoom={12} center={[-122.4194, 37.7749]}>
+            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
               {locations.map((loc, idx) => (
                 <MapMarker key={idx} coordinate={loc.coordinate} label={loc.label}>
                   <View className="w-6 h-6 bg-blue-500 rounded-full border-2 border-background" />

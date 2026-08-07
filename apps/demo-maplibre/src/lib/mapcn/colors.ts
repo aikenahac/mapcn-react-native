@@ -1,5 +1,5 @@
 /** Built-in sequential and diverging color ramps for choropleths/heatmaps. */
-export const SEQUENTIAL_RAMPS: Record<string, string[]> = {
+export const SEQUENTIAL_RAMPS: Record<string, Array<string>> = {
   blues: ["#f7fbff", "#c6dbef", "#6baed6", "#2171b5", "#08306b"],
   greens: ["#f7fcf5", "#c7e9c0", "#74c476", "#238b45", "#00441b"],
   oranges: ["#fff5eb", "#fdd0a2", "#fd8d3c", "#d94801", "#7f2704"],
@@ -7,7 +7,7 @@ export const SEQUENTIAL_RAMPS: Record<string, string[]> = {
   purples: ["#fcfbfd", "#dadaeb", "#9e9ac8", "#6a51a3", "#3f007d"],
 };
 
-export const DIVERGING_RAMPS: Record<string, string[]> = {
+export const DIVERGING_RAMPS: Record<string, Array<string>> = {
   redBlue: ["#67001f", "#d6604d", "#f7f7f7", "#4393c3", "#053061"],
   redGreen: ["#a50026", "#f46d43", "#ffffbf", "#66bd63", "#006837"],
 };
@@ -30,11 +30,11 @@ export function hexToRgba(hex: string, alpha = 1): string {
 }
 
 /** Evenly spreads `count` colors across a ramp via linear interpolation between stops. */
-export function sampleRamp(ramp: string[], count: number): string[] {
+export function sampleRamp(ramp: Array<string>, count: number): Array<string> {
   if (count <= 1) return [ramp[0] as string];
   if (ramp.length === count) return [...ramp];
 
-  const result: string[] = [];
+  const result: Array<string> = [];
   for (let i = 0; i < count; i++) {
     const t = i / (count - 1);
     const scaledIndex = t * (ramp.length - 1);
