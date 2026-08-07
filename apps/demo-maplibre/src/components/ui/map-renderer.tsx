@@ -78,10 +78,11 @@ export interface MapSourceProps {
   clusterMinPoints?: number;
   clusterProperties?: Record<string, unknown>;
   onPress?: (event: NativeSyntheticEvent<unknown>) => void;
+  hitbox?: { width: number; height: number };
 }
 
 /** A GeoJSON data source, normalized across renderers -- the foundation MapRoute/MapGeoJSON/MapClusterLayer build on. */
-export function MapSource({ id, data, children, cluster, clusterRadius, clusterMaxZoom, clusterMinPoints, clusterProperties, onPress }: MapSourceProps) {
+export function MapSource({ id, data, children, cluster, clusterRadius, clusterMaxZoom, clusterMinPoints, clusterProperties, onPress, hitbox }: MapSourceProps) {
   return (
     <GeoJSONSource
       id={id}
@@ -92,6 +93,10 @@ export function MapSource({ id, data, children, cluster, clusterRadius, clusterM
       clusterMinPoints={clusterMinPoints}
       clusterProperties={clusterProperties as never}
       onPress={onPress as never}
+      // MapLibre's hitbox is edge padding; Mapbox's is a width/height box.
+      // The shared contract uses Mapbox's simpler shape (plan §2 D3) and
+      // this adapter converts it to symmetric padding.
+      hitbox={hitbox ? { top: hitbox.height / 2, bottom: hitbox.height / 2, left: hitbox.width / 2, right: hitbox.width / 2 } : undefined}
     >
       {children}
     </GeoJSONSource>
@@ -106,10 +111,22 @@ export interface MapLayerProps {
   style?: Record<string, unknown>;
   filter?: Expression;
   beforeId?: string;
+  minZoom?: number;
+  maxZoom?: number;
 }
 
-export function MapLayer({ id, type, style, filter, beforeId }: MapLayerProps) {
-  return <Layer id={id} type={type} style={style as never} filter={filter as never} beforeId={beforeId} />;
+export function MapLayer({ id, type, style, filter, beforeId, minZoom, maxZoom }: MapLayerProps) {
+  return (
+    <Layer
+      id={id}
+      type={type}
+      style={style as never}
+      filter={filter as never}
+      beforeId={beforeId}
+      minzoom={minZoom}
+      maxzoom={maxZoom}
+    />
+  );
 }
 
 export const RENDERER: MapRenderer = "maplibre";

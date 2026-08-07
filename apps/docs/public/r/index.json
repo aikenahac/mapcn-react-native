@@ -2,7 +2,7 @@
   "components": [
     {
       "category": "core",
-      "contentHash": "sha256-c5090a66b22ac702",
+      "contentHash": "sha256-1aa7aeb2e51e93ee",
       "description": "Renderer-independent types, geo/scale/color utilities, and the provider registry that every other mapcn component depends on.",
       "docsSlug": "core",
       "env": [],
@@ -24,7 +24,7 @@
         }
       },
       "category": "core",
-      "contentHash": "sha256-71b1352d84ada1ef",
+      "contentHash": "sha256-4df0a2f7a7327f15",
       "description": "The core map container: controlled/uncontrolled viewport, provider-based styling, and the useMap() imperative camera API.",
       "docsSlug": "map",
       "env": [],
@@ -142,6 +142,68 @@
       "renderers": "any",
       "source": "shared",
       "title": "Route"
+    },
+    {
+      "category": "data",
+      "contentHash": "sha256-8a16d7ce12bc5417",
+      "description": "The foundational GeoJSON rendering primitive: one native source, up to three geometry-filtered layers (fill/line/point), selection highlighting, and feature press events.",
+      "docsSlug": "geojson",
+      "env": [],
+      "expoPlugins": [],
+      "name": "geojson",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core",
+        "map"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "GeoJSON"
+    },
+    {
+      "category": "data",
+      "contentHash": "sha256-183b280cc312abe9",
+      "description": "An intent-based circle/radius primitive (search radius, delivery zone, geofence preview) using real-world units and a geodesically-accurate polygon, not a pixel-radius circle layer.",
+      "docsSlug": "circles",
+      "env": [],
+      "expoPlugins": [],
+      "name": "circle",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core",
+        "map",
+        "geojson"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Circle"
+    },
+    {
+      "category": "data",
+      "contentHash": "sha256-bc54a89f7dac184b",
+      "description": "An intent-level polygon primitive accepting raw rings or GeoJSON geometry, supporting holes and MultiPolygons via the underlying native source.",
+      "docsSlug": "polygons",
+      "env": [],
+      "expoPlugins": [],
+      "name": "polygon",
+      "permissions": {
+        "android": [],
+        "ios": []
+      },
+      "registryDependencies": [
+        "core",
+        "map",
+        "geojson"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Polygon"
     }
   ],
   "schemaVersion": 2,

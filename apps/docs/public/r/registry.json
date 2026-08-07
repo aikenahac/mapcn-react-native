@@ -25,6 +25,18 @@
     {
       "name": "route",
       "type": "registry:ui"
+    },
+    {
+      "name": "geojson",
+      "type": "registry:ui"
+    },
+    {
+      "name": "circle",
+      "type": "registry:ui"
+    },
+    {
+      "name": "polygon",
+      "type": "registry:ui"
     }
   ],
   "name": "mapcn-rn"

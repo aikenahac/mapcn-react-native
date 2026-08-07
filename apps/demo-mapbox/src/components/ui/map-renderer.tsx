@@ -77,10 +77,11 @@ export interface MapSourceProps {
   clusterMinPoints?: number;
   clusterProperties?: Record<string, unknown>;
   onPress?: (event: NativeSyntheticEvent<unknown>) => void;
+  hitbox?: { width: number; height: number };
 }
 
 /** A GeoJSON data source, normalized across renderers -- the foundation MapRoute/MapGeoJSON/MapClusterLayer build on. */
-export function MapSource({ id, data, children, cluster, clusterRadius, clusterMaxZoom, clusterProperties, onPress }: MapSourceProps) {
+export function MapSource({ id, data, children, cluster, clusterRadius, clusterMaxZoom, clusterProperties, onPress, hitbox }: MapSourceProps) {
   return (
     <MapboxShapeSource
       id={id}
@@ -90,6 +91,7 @@ export function MapSource({ id, data, children, cluster, clusterRadius, clusterM
       clusterMaxZoomLevel={clusterMaxZoom}
       clusterProperties={clusterProperties}
       onPress={onPress}
+      hitbox={hitbox}
     >
       {children}
     </MapboxShapeSource>
@@ -104,6 +106,8 @@ export interface MapLayerProps {
   style?: Record<string, unknown>;
   filter?: Expression;
   beforeId?: string;
+  minZoom?: number;
+  maxZoom?: number;
 }
 
 const LAYER_BY_TYPE: Record<MapLayerType, ComponentType<any>> = {
@@ -114,9 +118,9 @@ const LAYER_BY_TYPE: Record<MapLayerType, ComponentType<any>> = {
   heatmap: Mapbox.HeatmapLayer as unknown as ComponentType<any>,
 };
 
-export function MapLayer({ id, type, style, filter, beforeId }: MapLayerProps) {
+export function MapLayer({ id, type, style, filter, beforeId, minZoom, maxZoom }: MapLayerProps) {
   const LayerComponent = LAYER_BY_TYPE[type];
-  return <LayerComponent id={id} style={style} filter={filter} aboveLayerID={beforeId} />;
+  return <LayerComponent id={id} style={style} filter={filter} aboveLayerID={beforeId} minZoomLevel={minZoom} maxZoomLevel={maxZoom} />;
 }
 
 export const RENDERER: MapRenderer = "mapbox";
