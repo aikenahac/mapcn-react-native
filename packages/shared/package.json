@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.16",
     "typescript": "~5.9.2",
     "vitest": "^3.0.0"
   }

@@ -399,6 +399,9 @@ importers:
 
   packages/shared:
     devDependencies:
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
       typescript:
         specifier: ~5.9.2
         version: 5.9.3
