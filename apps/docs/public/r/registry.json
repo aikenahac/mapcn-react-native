@@ -53,6 +53,14 @@
     {
       "name": "legend",
       "type": "registry:ui"
+    },
+    {
+      "name": "location",
+      "type": "registry:ui"
+    },
+    {
+      "name": "location-puck",
+      "type": "registry:ui"
     }
   ],
   "name": "mapcn-rn"

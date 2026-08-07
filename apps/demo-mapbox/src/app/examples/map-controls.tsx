@@ -1,6 +1,7 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { Map, MapUserLocation, useMap } from "@/components/ui/map";
+import { Map, useMap } from "@/components/ui/map";
+import { MapUserLocation } from "@/components/ui/map-location-puck";
 import { MapMarker } from "@/components/ui/map-marker";
 import { MapControls } from "@/components/ui/map-controls";
 import { ArrowLeftIcon } from "@/lib/icons";

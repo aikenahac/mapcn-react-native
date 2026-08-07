@@ -1,7 +1,8 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map, MapUserLocation, useMap } from "@/components/ui/map";
+import { Map, useMap } from "@/components/ui/map";
+import { MapUserLocation } from "@/components/ui/map-location-puck";
 import { MapControls } from "@/components/ui/map-controls";
 import { ArrowLeftIcon } from "@/lib/icons";
 import * as Location from "expo-location";

@@ -24,7 +24,7 @@
         }
       },
       "category": "core",
-      "contentHash": "sha256-358ff2bdae7e018f",
+      "contentHash": "sha256-af688be7192fceba",
       "description": "The core map container: controlled/uncontrolled viewport, provider-based styling, and the useMap() imperative camera API.",
       "docsSlug": "map",
       "env": [],
@@ -290,6 +290,67 @@
       "renderers": "any",
       "source": "shared",
       "title": "Legend"
+    },
+    {
+      "category": "location",
+      "contentHash": "sha256-07531baad247f6af",
+      "description": "useLocationTracking/useCurrentPosition/useLocationPermission, built on expo-location for both renderers -- closes the v1 gap where useCurrentPosition only existed on the MapLibre side. Foreground-only; mode is reserved for future background support.",
+      "docsSlug": "location-tracking",
+      "env": [],
+      "expoPlugins": [],
+      "name": "location",
+      "permissions": {
+        "android": [
+          "ACCESS_FINE_LOCATION",
+          "ACCESS_COARSE_LOCATION"
+        ],
+        "ios": [
+          "NSLocationWhenInUseUsageDescription"
+        ]
+      },
+      "registryDependencies": [
+        "core"
+      ],
+      "renderers": "any",
+      "source": "shared",
+      "title": "Location tracking"
+    },
+    {
+      "capabilities": {
+        "mapbox": {
+          "note": "pulsing/scale/images have no MapLibre equivalent."
+        },
+        "maplibre": {
+          "note": "onPress and custom JS-rendered children have no Mapbox equivalent."
+        }
+      },
+      "category": "location",
+      "contentHash": "sha256-1a060f9b39bd7619",
+      "description": "Replaces MapUserLocation (kept as a deprecated alias). Capability-gated: pulsing/scale/images are Mapbox-only, onPress/custom children are MapLibre-only -- documented, not faked.",
+      "docsSlug": "location-puck",
+      "env": [],
+      "expoPlugins": {},
+      "name": "location-puck",
+      "permissions": {
+        "android": [
+          "ACCESS_FINE_LOCATION",
+          "ACCESS_COARSE_LOCATION"
+        ],
+        "ios": [
+          "NSLocationWhenInUseUsageDescription"
+        ]
+      },
+      "registryDependencies": [
+        "core",
+        "map",
+        "location"
+      ],
+      "renderers": [
+        "maplibre",
+        "mapbox"
+      ],
+      "source": "per-renderer",
+      "title": "Location puck"
     }
   ],
   "schemaVersion": 2,

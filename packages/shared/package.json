@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/geojson": "^7946.0.16",
     "@types/react": "~19.2.10",
+    "expo-location": "~57.0.8",
     "react": "19.2.3",
     "react-native": "0.86.2",
     "typescript": "~5.9.2",

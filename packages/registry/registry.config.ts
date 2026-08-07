@@ -197,5 +197,43 @@ export default defineRegistry({
       registryDependencies: ["core", "map"],
       files: [{ from: "components/ui/map-legend.tsx", to: "@ui/map-legend.tsx" }],
     }),
+    defineComponent({
+      name: "location",
+      title: "Location tracking",
+      description: "useLocationTracking/useCurrentPosition/useLocationPermission, built on expo-location for both renderers -- closes the v1 gap where useCurrentPosition only existed on the MapLibre side. Foreground-only; mode is reserved for future background support.",
+      category: "location",
+      docsSlug: "location-tracking",
+      source: "shared",
+      registryDependencies: ["core"],
+      files: [{ from: "hooks/use-location-tracking.ts", to: "@hooks/use-location-tracking.ts" }],
+      dependencies: ["expo-location"],
+      permissions: {
+        ios: ["NSLocationWhenInUseUsageDescription"],
+        android: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      },
+    }),
+    defineComponent({
+      name: "location-puck",
+      title: "Location puck",
+      description: "Replaces MapUserLocation (kept as a deprecated alias). Capability-gated: pulsing/scale/images are Mapbox-only, onPress/custom children are MapLibre-only -- documented, not faked.",
+      category: "location",
+      docsSlug: "location-puck",
+      source: "per-renderer",
+      renderers: ["maplibre", "mapbox"],
+      registryDependencies: ["core", "map", "location"],
+      filesByRenderer: {
+        maplibre: [{ path: "components/ui/map-location-puck.tsx" }],
+        mapbox: [{ path: "components/ui/map-location-puck.tsx" }],
+      },
+      dependencies: ["expo-location"],
+      permissions: {
+        ios: ["NSLocationWhenInUseUsageDescription"],
+        android: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      },
+      capabilities: {
+        mapbox: { note: "pulsing/scale/images have no MapLibre equivalent." },
+        maplibre: { note: "onPress and custom JS-rendered children have no Mapbox equivalent." },
+      },
+    }),
   ],
 });

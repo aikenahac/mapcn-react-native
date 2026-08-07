@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import Mapbox from "@rnmapbox/maps";
-import * as Location from "expo-location";
 import React, {
   createContext,
   use,
@@ -316,80 +315,5 @@ function normalizePress(feature: any) {
   };
 }
 
-type MapUserLocationProps = {
-  /** Show user location on the map */
-  visible?: boolean;
-  /** Show accuracy circle around user location */
-  showAccuracy?: boolean;
-  /** Show heading arrow indicating device direction */
-  showHeading?: boolean;
-  /** Whether the location marker is animated between updates */
-  animated?: boolean;
-  /** Minimum delta in meters for location updates */
-  minDisplacement?: number;
-  /** Callback when user location is pressed */
-  onPress?: () => void;
-  /** Auto-request location permissions if not granted */
-  autoRequestPermission?: boolean;
-};
-
-function MapUserLocation({
-  visible = true,
-  showAccuracy = true,
-  showHeading = false,
-  animated = true,
-  minDisplacement,
-  onPress,
-  autoRequestPermission = true,
-}: MapUserLocationProps) {
-  const [hasPermission, setHasPermission] = useState(false);
-  const [permissionChecked, setPermissionChecked] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const checkAndRequestPermissions = async () => {
-      try {
-        if (autoRequestPermission) {
-          const { status } = await Location.requestForegroundPermissionsAsync();
-          if (mounted) {
-            setHasPermission(status === "granted");
-            setPermissionChecked(true);
-          }
-        } else {
-          if (mounted) {
-            setPermissionChecked(true);
-          }
-        }
-      } catch (error) {
-        console.error("Error requesting location permissions:", error);
-        if (mounted) {
-          setHasPermission(false);
-          setPermissionChecked(true);
-        }
-      }
-    };
-
-    if (visible) {
-      checkAndRequestPermissions();
-    }
-
-    return () => {
-      mounted = false;
-    };
-  }, [visible, autoRequestPermission]);
-
-  if (!visible || !permissionChecked || !hasPermission) {
-    return null;
-  }
-
-  return (
-    <Mapbox.LocationPuck
-      puckBearingEnabled={showHeading}
-      pulsing={{ isEnabled: animated }}
-    />
-  );
-}
-
-export { Map, MapUserLocation, useMap, useOverlay };
+export { Map, useMap, useOverlay };
 
