@@ -1,0 +1,118 @@
+import { Map, useMap } from "@/registry/map-mapbox";
+import Mapbox from "@rnmapbox/maps";
+import { useRef } from "react";
+import { Linking, View } from "react-native";
+
+const places = {
+  type: "FeatureCollection" as const,
+  features: [
+    {
+      type: "Feature" as const,
+      properties: {
+        slug: "mission-district",
+        title: "Mission District",
+      },
+      geometry: {
+        type: "Point" as const,
+        coordinates: [-122.4194, 37.7599] as [number, number],
+      },
+    },
+    {
+      type: "Feature" as const,
+      properties: {
+        slug: "downtown",
+        title: "Downtown",
+      },
+      geometry: {
+        type: "Point" as const,
+        coordinates: [-122.4058, 37.7897] as [number, number],
+      },
+    },
+    {
+      type: "Feature" as const,
+      properties: {
+        slug: "north-beach",
+        title: "North Beach",
+      },
+      geometry: {
+        type: "Point" as const,
+        coordinates: [-122.4101, 37.8061] as [number, number],
+      },
+    },
+  ],
+};
+
+function TappableShapeSource() {
+  const { cameraRef } = useMap();
+  const sourceRef = useRef<any>(null);
+
+  return (
+    <Mapbox.ShapeSource
+      id="places"
+      shape={places}
+      ref={sourceRef}
+      cluster
+      clusterRadius={50}
+      onPress={async (event) => {
+        const feature = event.features?.[0];
+        if (!feature) return;
+
+        if (feature.properties?.cluster && sourceRef.current && cameraRef.current) {
+          const expansionZoom = await sourceRef.current.getClusterExpansionZoom(feature);
+
+          cameraRef.current.flyTo({
+            center: feature.geometry.coordinates as [number, number],
+            zoom: expansionZoom,
+            duration: 500,
+          });
+          return;
+        }
+
+        const slug = feature.properties?.slug;
+        if (slug) {
+          Linking.openURL(`myapp://places/${slug}`);
+        }
+      }}
+    >
+      <Mapbox.CircleLayer
+        id="place-clusters"
+        filter={["has", "point_count"]}
+        style={{
+          circleColor: "#2563eb",
+          circleRadius: 22,
+          circleOpacity: 0.85,
+          circleStrokeColor: "#ffffff",
+          circleStrokeWidth: 2,
+        }}
+      />
+      <Mapbox.CircleLayer
+        id="place-points"
+        filter={["!", ["has", "point_count"]]}
+        style={{
+          circleColor: "#f97316",
+          circleRadius: 10,
+          circleStrokeColor: "#ffffff",
+          circleStrokeWidth: 2,
+        }}
+      />
+      <Mapbox.SymbolLayer
+        id="place-labels"
+        style={{
+          textField: ["get", "title"],
+          textSize: 12,
+          textOffset: [0, 1.8],
+        }}
+      />
+    </Mapbox.ShapeSource>
+  );
+}
+
+export default function GeoJSONTapMapboxExample() {
+  return (
+    <View className="h-[360px] overflow-hidden rounded-xl border border-border">
+      <Map zoom={11} center={[-122.4194, 37.7749]}>
+        <TappableShapeSource />
+      </Map>
+    </View>
+  );
+}

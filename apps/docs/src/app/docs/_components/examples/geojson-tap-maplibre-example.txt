@@ -1,0 +1,150 @@
+import { Map, useMap } from "@/registry/map";
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
+import { useRef, useState } from "react";
+import { Pressable, Text, View } from "react-native";
+
+type PlaceFeature = {
+  type: "Feature";
+  properties: {
+    id: string;
+    title: string;
+    description: string;
+  };
+  geometry: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+};
+
+const places = {
+  type: "FeatureCollection" as const,
+  features: [
+    {
+      type: "Feature" as const,
+      properties: {
+        id: "mission",
+        title: "Mission District",
+        description: "Tap a point to open a local detail sheet.",
+      },
+      geometry: {
+        type: "Point" as const,
+        coordinates: [-122.4194, 37.7599] as [number, number],
+      },
+    },
+    {
+      type: "Feature" as const,
+      properties: {
+        id: "downtown",
+        title: "Downtown",
+        description: "Use feature properties to drive app UI.",
+      },
+      geometry: {
+        type: "Point" as const,
+        coordinates: [-122.4058, 37.7897] as [number, number],
+      },
+    },
+    {
+      type: "Feature" as const,
+      properties: {
+        id: "north-beach",
+        title: "North Beach",
+        description: "Clusters and single-point actions can share one source.",
+      },
+      geometry: {
+        type: "Point" as const,
+        coordinates: [-122.4101, 37.8061] as [number, number],
+      },
+    },
+  ],
+};
+
+type TappableGeoJSONLayerProps = {
+  onSelectPlace: (place: PlaceFeature["properties"]) => void;
+};
+
+function TappableGeoJSONLayer({ onSelectPlace }: TappableGeoJSONLayerProps) {
+  const { cameraRef } = useMap();
+  const sourceRef = useRef<any>(null);
+
+  return (
+    <>
+      <GeoJSONSource
+        id="places"
+        data={places}
+        ref={sourceRef}
+        cluster
+        clusterRadius={50}
+        onPress={async (event) => {
+          const feature = event.features?.[0];
+          if (!feature) return;
+
+          if (feature.properties?.cluster && cameraRef.current && sourceRef.current) {
+            const expansionZoom = await sourceRef.current.getClusterExpansionZoom(feature);
+
+            cameraRef.current.flyTo({
+              center: feature.geometry.coordinates as [number, number],
+              zoom: expansionZoom,
+              duration: 500,
+            });
+            return;
+          }
+
+          onSelectPlace(feature.properties as PlaceFeature["properties"]);
+        }}
+      >
+        <Layer
+          id="place-clusters"
+          type="circle"
+          filter={["has", "point_count"]}
+          style={{
+            circleColor: "#2563eb",
+            circleRadius: 22,
+            circleOpacity: 0.85,
+            circleStrokeColor: "#ffffff",
+            circleStrokeWidth: 2,
+          }}
+        />
+        <Layer
+          id="place-points"
+          type="circle"
+          filter={["!", ["has", "point_count"]]}
+          style={{
+            circleColor: "#f97316",
+            circleRadius: 10,
+            circleStrokeColor: "#ffffff",
+            circleStrokeWidth: 2,
+          }}
+        />
+      </GeoJSONSource>
+    </>
+  );
+}
+
+export default function GeoJSONTapMapLibreExample() {
+  const [selectedPlace, setSelectedPlace] = useState<PlaceFeature["properties"] | null>(null);
+
+  return (
+    <View className="h-[420px] overflow-hidden rounded-xl border border-border relative">
+      <Map zoom={11} center={[-122.4194, 37.7749]}>
+        <TappableGeoJSONLayer onSelectPlace={setSelectedPlace} />
+      </Map>
+
+      {selectedPlace && (
+        <View className="absolute left-4 right-4 bottom-4 rounded-xl border border-border bg-background/95 p-4 shadow-lg">
+          <Text className="text-base font-semibold text-foreground">
+            {selectedPlace.title}
+          </Text>
+          <Text className="mt-2 text-sm text-muted-foreground">
+            {selectedPlace.description}
+          </Text>
+          <Pressable
+            onPress={() => setSelectedPlace(null)}
+            className="mt-4 rounded-lg bg-muted px-3 py-2 items-center"
+          >
+            <Text className="font-medium text-foreground">Close</Text>
+          </Pressable>
+        </View>
+      )}
+    </View>
+  );
+}

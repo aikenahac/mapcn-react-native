@@ -1,0 +1,52 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "mapcn-react-native",
+  "homepage": "https://github.com/aikenahac/mapcn-react-native",
+  "items": [
+    {
+      "name": "map",
+      "type": "registry:ui",
+      "title": "Map (React Native)",
+      "description": "A MapLibre-powered map component for React Native with markers, popups, labels, routes, and controls.",
+      "dependencies": ["@maplibre/maplibre-react-native@11.2.1", "expo-location@^19.0.8"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/map.txt",
+          "type": "registry:ui",
+          "target": "components/ui/map.tsx"
+        }
+      ]
+    },
+    {
+      "name": "map-maptiler",
+      "type": "registry:ui",
+      "title": "Map (React Native) [Maptiler]",
+      "description": "A MapLibre-powered map component for React Native with markers, popups, labels, routes, and controls. Using maptiler for cheaper commercial use.",
+      "dependencies": ["@maplibre/maplibre-react-native@11.2.1", "expo-location@^19.0.8"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/map-maptiler.txt",
+          "type": "registry:ui",
+          "target": "components/ui/map.tsx"
+        }
+      ]
+    },
+    {
+      "name": "map-mapbox",
+      "type": "registry:ui",
+      "title": "Map (React Native) [Mapbox]",
+      "description": "A Mapbox-powered map component for React Native with markers, popups, labels, routes, and controls. Using maptiler for cheaper commercial use.",
+      "dependencies": ["@rnmapbox/maps@^10.2.10", "expo-location@^19.0.8"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/registry/map-mapbox.txt",
+          "type": "registry:ui",
+          "target": "components/ui/map.tsx"
+        }
+      ]
+    }
+  ]
+}

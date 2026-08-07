@@ -1,0 +1,10 @@
+import { Map } from "@/components/ui/map";
+import { View } from "react-native";
+
+export default function BasicMapExample() {
+  return (
+    <View className="h-[500px] rounded-xl overflow-hidden border border-border">
+      <Map zoom={12} center={[-122.4194, 37.7749]} />
+    </View>
+  );
+}

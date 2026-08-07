@@ -1,0 +1,58 @@
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
+import { Map } from "@/components/ui/map";
+
+export default function CustomLayerExample() {
+  const geojson = {
+    type: "FeatureCollection" as const,
+    features: [
+      {
+        type: "Feature" as const,
+        properties: { name: "Golden Gate Park" },
+        geometry: {
+          type: "Polygon" as const,
+          coordinates: [
+            [
+              [-122.511, 37.7694],
+              [-122.454, 37.7694],
+              [-122.454, 37.7744],
+              [-122.511, 37.7744],
+              [-122.511, 37.7694],
+            ],
+          ],
+        },
+      },
+      {
+        type: "Feature" as const,
+        properties: { name: "Mission District" },
+        geometry: {
+          type: "Polygon" as const,
+          coordinates: [
+            [
+              [-122.4294, 37.7549],
+              [-122.4094, 37.7549],
+              [-122.4094, 37.7649],
+              [-122.4294, 37.7649],
+              [-122.4294, 37.7549],
+            ],
+          ],
+        },
+      },
+    ],
+  };
+
+  return (
+    <Map zoom={12} center={[-122.4394, 37.7649]}>
+      <GeoJSONSource id="custom-layer-source" data={geojson}>
+        <Layer
+          id="custom-layer-fill"
+          type="fill"
+          style={{
+            fillColor: "#3b82f6",
+            fillOpacity: 0.3,
+            fillOutlineColor: "#1d4ed8",
+          }}
+        />
+      </GeoJSONSource>
+    </Map>
+  );
+}
