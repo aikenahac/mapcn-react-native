@@ -93,9 +93,14 @@ export function installComponentFiles(
   return { name: item.name, results };
 }
 
-export function toInstalledComponent(item: RegistryItem, results: Array<FileWriteResult>): InstalledComponent {
+/** `version` is the registry manifest's version -- what this component was installed from. */
+export function toInstalledComponent(
+  item: RegistryItem,
+  results: Array<FileWriteResult>,
+  version: string,
+): InstalledComponent {
   return {
-    version: "2.0.0-alpha.0",
+    version,
     files: item.files.map((file, i) => ({ path: file.target, hash: results[i]!.hash })),
   };
 }

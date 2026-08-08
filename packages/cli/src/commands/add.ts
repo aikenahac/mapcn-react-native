@@ -86,7 +86,7 @@ export async function runAddCommand(options: AddOptions): Promise<void> {
       }
     }
 
-    config.components[entry.name] = toInstalledComponent(item, results);
+    config.components[entry.name] = toInstalledComponent(item, results, manifest.version);
     item.dependencies.forEach((d) => npmDeps.add(d));
   }
 

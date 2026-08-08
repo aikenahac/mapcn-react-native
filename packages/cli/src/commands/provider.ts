@@ -153,7 +153,7 @@ export async function runProviderCommand(options: ProviderOptions): Promise<void
             overwrite: true,
             timestamp,
           });
-          config.components[componentName] = toInstalledComponent(item, results.results);
+          config.components[componentName] = toInstalledComponent(item, results.results, manifest.version);
         }
       }
     }
