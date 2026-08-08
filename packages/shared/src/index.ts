@@ -15,5 +15,5 @@ export * from "./lib/mapcn/colors";
 export * from "./lib/mapcn/scale";
 export * from "./lib/mapcn/style";
 export * from "./lib/mapcn/provider";
-export * from "./components/ui/map-types";
+export * from "./components/ui/mapcn/map-types";
 export * from "./hooks/use-location-tracking";

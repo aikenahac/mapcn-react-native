@@ -1,8 +1,6 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { Map } from "@/components/ui/map";
-import { MapChoropleth } from "@/components/ui/map-choropleth";
-import { MapLegend } from "@/components/ui/map-legend";
+import { Map, MapChoropleth, MapLegend } from "@/components/ui/mapcn";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";

@@ -8,7 +8,7 @@ description: A choropleth abstraction built on native step/interpolate expressio
 <PackageManagerCodeBlock command="npx mapcn-rn add choropleth" />
 
 ```ts
-import { MapChoropleth } from "@/components/ui/map-choropleth";
+import { MapChoropleth } from "@/components/ui/mapcn";
 ```
 
 ## Overview
@@ -60,9 +60,9 @@ type ChoroplethScale =
 
 ```tsx
 import { useState } from "react";
-import { Map } from "@/components/ui/map";
-import { MapChoropleth } from "@/components/ui/map-choropleth";
-import { MapLegend } from "@/components/ui/map-legend";
+import { Map } from "@/components/ui/mapcn";
+import { MapChoropleth } from "@/components/ui/mapcn";
+import { MapLegend } from "@/components/ui/mapcn";
 import type { MapLegendData } from "@/lib/mapcn/types";
 
 export function ChoroplethExample({ regions }: { regions: GeoJSON.FeatureCollection }) {

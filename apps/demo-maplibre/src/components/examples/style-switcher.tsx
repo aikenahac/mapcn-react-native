@@ -1,6 +1,5 @@
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapStyleSwitcher } from "@/components/ui/map-style-switcher";
+import { Map, MapStyleSwitcher } from "@/components/ui/mapcn";
 
 interface StyleSwitcherDemoProps {
   onScrollEnabledChange: (enabled: boolean) => void;

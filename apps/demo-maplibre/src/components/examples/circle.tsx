@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Text, View } from "react-native";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
 import { Button } from "@/components/ui/button";
-import { Map } from "@/components/ui/map";
-import { MapCircle } from "@/components/ui/map-circle";
+import { Map, MapCircle } from "@/components/ui/mapcn";
 
 interface CircleDemoProps {
   onScrollEnabledChange: (enabled: boolean) => void;

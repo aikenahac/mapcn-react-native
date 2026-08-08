@@ -8,7 +8,7 @@ description: A high-level heatmap primitive -- 5 concepts instead of raw heatmap
 <PackageManagerCodeBlock command="npx mapcn-rn add heatmap" />
 
 ```ts
-import { MapHeatmap } from "@/components/ui/map-heatmap";
+import { MapHeatmap } from "@/components/ui/mapcn";
 ```
 
 ## Overview
@@ -34,8 +34,8 @@ import { MapHeatmap } from "@/components/ui/map-heatmap";
 ## Example
 
 ```tsx
-import { Map } from "@/components/ui/map";
-import { MapHeatmap } from "@/components/ui/map-heatmap";
+import { Map } from "@/components/ui/mapcn";
+import { MapHeatmap } from "@/components/ui/mapcn";
 
 export function HeatmapExample({ incidents }: { incidents: GeoJSON.FeatureCollection }) {
   return (

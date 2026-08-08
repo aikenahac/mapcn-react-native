@@ -1,3 +1,4 @@
+import path from "node:path";
 import { cancel, confirm, intro, isCancel, log, outro } from "@clack/prompts";
 import { detectPackageManager, installCommand } from "../core/detect-package-manager.js";
 import { detectProject } from "../core/detect-project.js";
@@ -6,6 +7,7 @@ import { fetchComponentItem, fetchManifest } from "../core/registry-client.js";
 import { resolveTransitive } from "../core/resolve.js";
 import { allComponentNames } from "../core/component-selection.js";
 import { installComponentFiles, toInstalledComponent } from "../core/file-writer.js";
+import { BARREL_TARGET, writeBarrel } from "../core/barrel.js";
 import {
   ensureAndroidPermissions,
   ensureInfoPlistEntries,
@@ -91,6 +93,10 @@ export async function runAddCommand(options: AddOptions): Promise<void> {
   }
 
   writeMapcnConfig(projectRoot, config);
+
+  if (writeBarrel(projectRoot, srcDir, manifest, Object.keys(config.components))) {
+    log.success(`  ${path.join(srcDir, BARREL_TARGET)}`);
+  }
 
   applyAppJsonRequirements(projectRoot, resolved, renderer);
 

@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { Map } from "@/components/ui/map";
-import { MapHeatmap } from "@/components/ui/map-heatmap";
+import { Map, MapHeatmap } from "@/components/ui/mapcn";
 import { SEQUENTIAL_RAMPS } from "@/lib/mapcn/colors";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";

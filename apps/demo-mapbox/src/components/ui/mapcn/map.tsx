@@ -27,7 +27,7 @@ import { PROVIDERS, resolveStyleUrl } from "@/lib/mapcn/provider";
 import { viewportEquals } from "@/lib/mapcn/geo";
 import type { MapViewport, PartialViewport } from "@/lib/mapcn/types";
 
-export type { MapProps };
+export type { MapInstance, MapProps };
 export { CAPABILITIES as MAP_CAPABILITIES };
 
 const MapContext = createContext<MapInstance | null>(null);

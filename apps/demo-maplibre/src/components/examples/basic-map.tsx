@@ -1,5 +1,5 @@
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
+import { Map } from "@/components/ui/mapcn";
 
 interface BasicMapDemoProps {
   onScrollEnabledChange: (enabled: boolean) => void;

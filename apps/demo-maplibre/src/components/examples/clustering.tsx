@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapClusterLayer } from "@/components/ui/map-cluster-layer";
+import { Map, MapClusterLayer } from "@/components/ui/mapcn";
 import type { FeatureCollection } from "geojson";
 
 function mulberry32(seed: number) {

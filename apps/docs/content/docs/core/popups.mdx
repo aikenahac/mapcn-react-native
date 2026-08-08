@@ -8,7 +8,7 @@ description: MapPopup anchors to any coordinate via the renderer's native marker
 <PackageManagerCodeBlock command="npx mapcn-rn add popup" />
 
 ```ts
-import { MapPopup, MarkerPopup } from "@/components/ui/map-popup";
+import { MapPopup, MarkerPopup } from "@/components/ui/mapcn";
 ```
 
 ## Overview
@@ -47,9 +47,9 @@ Same as `MapPopup` except `coordinate` is optional (falls back to the enclosing 
 
 ```tsx
 import { useState } from "react";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
-import { MapPopup, MarkerPopup } from "@/components/ui/map-popup";
+import { Map } from "@/components/ui/mapcn";
+import { MapMarker } from "@/components/ui/mapcn";
+import { MapPopup, MarkerPopup } from "@/components/ui/mapcn";
 
 export function PopupsExample() {
   const [selected, setSelected] = useState<string | null>(null);

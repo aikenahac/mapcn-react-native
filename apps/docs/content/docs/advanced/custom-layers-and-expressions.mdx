@@ -29,7 +29,7 @@ Both MapLibre and Mapbox React Native bindings use the same camelCased paint/lay
 Use `MapSource`/`MapLayer` directly (the same primitives `MapGeoJSON`/`MapRoute`/`MapClusterLayer` are built on) for anything mapcn's higher-level components don't cover:
 
 ```tsx
-import { MapLayer, MapSource } from "@/components/ui/map-renderer";
+import { MapLayer, MapSource } from "@/components/ui/mapcn/map-renderer";
 
 <MapSource id="custom" data={geojson}>
   <MapLayer id="custom-fill" type="fill" style={{ fillColor: ["get", "color"], fillOpacity: 0.4 }} />

@@ -1,7 +1,6 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { Map } from "@/components/ui/map";
-import { MapCircle } from "@/components/ui/map-circle";
+import { Map, MapCircle } from "@/components/ui/mapcn";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";

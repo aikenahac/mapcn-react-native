@@ -3,7 +3,7 @@ title: Types & API index
 description: Where every shared type and utility function lives, at a glance.
 ---
 
-All of the following ship as part of the `core` registry component (`lib/mapcn/*.ts` and `components/ui/map-types.ts`).
+All of the following ship as part of the `core` registry component (`lib/mapcn/*.ts` and `components/ui/mapcn/map-types.ts`).
 
 ## `lib/mapcn/types.ts`
 
@@ -29,7 +29,7 @@ Color ramp sampling utilities (`sampleRamp` and friends) used internally by the 
 
 `MapProviderId`, `MapProviderDefinition`, `MapStyleDefinition`, `PROVIDERS` (the full catalogue), `providersForRenderer(renderer)`, `resolveStyleUrl(provider, styleId, apiKey?)`.
 
-## `components/ui/map-types.ts`
+## `components/ui/mapcn/map-types.ts`
 
 `MapProps`, `MapInstance`, `MapInstanceMethods`, `RendererCapabilities`, `MapStyleSource`. This is the single file both renderers' `Map` implementations import their prop and instance types from -- API parity between renderers is enforced by the type system, not just convention.
 

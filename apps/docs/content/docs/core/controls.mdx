@@ -8,7 +8,7 @@ description: MapControls -- zoom and locate-me buttons rendered through Map's ov
 <PackageManagerCodeBlock command="npx mapcn-rn add controls" />
 
 ```ts
-import { MapControls } from "@/components/ui/map-controls";
+import { MapControls } from "@/components/ui/mapcn";
 ```
 
 ## Overview
@@ -30,8 +30,8 @@ Zoom buttons call `useMap().zoomBy(...)`, so displayed zoom never drifts from th
 ## Example
 
 ```tsx
-import { Map } from "@/components/ui/map";
-import { MapControls } from "@/components/ui/map-controls";
+import { Map } from "@/components/ui/mapcn";
+import { MapControls } from "@/components/ui/mapcn";
 
 export function MapWithControls() {
   return (

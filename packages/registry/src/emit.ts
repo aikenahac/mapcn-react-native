@@ -3,6 +3,7 @@ import type { ComponentDefinition, RegistryManifest, Renderer } from "./manifest
 import { APP_SRC, DOCS_REGISTRY_OUT, REPO_ROOT, resolveAliasPath, SHARED_SRC } from "./paths";
 import { contentHash, readFileNormalized, stableStringify, writeFileIfChanged } from "./fs-utils";
 import { topologicalSort } from "./graph";
+import { barrelModulesFor } from "./materialize";
 
 interface RegistryItemFile {
   path: string;
@@ -73,6 +74,8 @@ interface ManifestEntry {
   permissions: { ios: Array<string>; android: Array<string> };
   expoPlugins: Array<string> | Partial<Record<Renderer, Array<string>>>;
   capabilities?: Record<string, unknown>;
+  /** Import specifiers this component contributes to the components/ui/mapcn barrel. */
+  barrelModules: Array<string>;
   contentHash: string;
 }
 
@@ -95,6 +98,7 @@ function manifestEntryFor(component: ComponentDefinition): ManifestEntry {
     permissions: { ios: component.permissions?.ios ?? [], android: component.permissions?.android ?? [] },
     expoPlugins: component.source === "per-renderer" ? component.expoPluginsByRenderer ?? {} : [],
     capabilities: component.capabilities,
+    barrelModules: barrelModulesFor(component),
     contentHash: contentHash(files.join("\0")),
   };
 }

@@ -22,7 +22,7 @@ import type {
   MapViewport,
   ScreenPoint,
 } from "@/lib/mapcn/types";
-import type { MapInstanceMethods, RendererCapabilities } from "@/components/ui/map-types";
+import type { MapInstanceMethods, RendererCapabilities } from "./map-types";
 import { bboxOf } from "@/lib/mapcn/geo";
 
 export { Mapbox };

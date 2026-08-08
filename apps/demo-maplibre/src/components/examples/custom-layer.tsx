@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
+import { Map } from "@/components/ui/mapcn";
 import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
 
 interface CustomLayerDemoProps {

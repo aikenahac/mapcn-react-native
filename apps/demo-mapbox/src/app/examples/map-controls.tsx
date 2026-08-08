@@ -1,9 +1,6 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { Map, useMap } from "@/components/ui/map";
-import { MapLocationPuck } from "@/components/ui/map-location-puck";
-import { MapMarker } from "@/components/ui/map-marker";
-import { MapControls } from "@/components/ui/map-controls";
+import { Map, useMap, MapLocationPuck, MapMarker, MapControls } from "@/components/ui/mapcn";
 import { ArrowLeftIcon } from "@/lib/icons";
 import * as Location from "expo-location";
 import { Link } from "expo-router";

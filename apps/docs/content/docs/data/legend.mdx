@@ -8,7 +8,7 @@ description: A reusable legend driven entirely by plain MapLegendData -- categor
 <PackageManagerCodeBlock command="npx mapcn-rn add legend" />
 
 ```ts
-import { MapLegend } from "@/components/ui/map-legend";
+import { MapLegend } from "@/components/ui/mapcn";
 import type { MapLegendData } from "@/lib/mapcn/types";
 ```
 
@@ -42,7 +42,7 @@ type MapLegendData =
 ## Example
 
 ```tsx
-import { MapLegend } from "@/components/ui/map-legend";
+import { MapLegend } from "@/components/ui/mapcn";
 import { buildCategoricalLegend } from "@/lib/mapcn/scale";
 
 const legend = buildCategoricalLegend([

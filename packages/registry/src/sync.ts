@@ -1,5 +1,5 @@
 import manifest from "../registry.config";
-import { materializeSharedComponents } from "./materialize";
+import { materializeBarrel, materializeSharedComponents } from "./materialize";
 import { emitRegistry } from "./emit";
 import { validateRegistry } from "./validate";
 
@@ -9,6 +9,7 @@ function main() {
   if (!isCheck) {
     const materialized = materializeSharedComponents(manifest);
     materialized.forEach((f) => console.log(`  wrote ${f}`));
+    materializeBarrel(manifest).forEach((f) => console.log(`  wrote ${f}`));
   }
 
   const issues = validateRegistry(manifest);

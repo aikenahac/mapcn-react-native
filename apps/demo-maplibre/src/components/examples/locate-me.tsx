@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map, useMap } from "@/components/ui/map";
-import { MapControls } from "@/components/ui/map-controls";
-import { MapLocationPuck } from "@/components/ui/map-location-puck";
+import { Map, useMap, MapControls, MapLocationPuck } from "@/components/ui/mapcn";
 import * as Location from "expo-location";
 
 function MapContent({ hasPermission }: { hasPermission: boolean }) {

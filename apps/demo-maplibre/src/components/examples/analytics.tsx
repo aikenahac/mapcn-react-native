@@ -1,7 +1,6 @@
 import { Text, View } from "react-native";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
+import { Map, MapMarker } from "@/components/ui/mapcn";
 
 interface AnalyticsDemoProps {
   onScrollEnabledChange: (enabled: boolean) => void;

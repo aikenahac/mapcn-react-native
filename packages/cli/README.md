@@ -66,6 +66,13 @@ Switch later with `mapcn-rn provider mapbox`.
 
 ## Files it manages
 
+Components install into `components/ui/mapcn/` next to a generated `index.ts`,
+so the library sits in one folder and imports from one path:
+
+```tsx
+import { Map, MapMarker, MapClusterLayer } from "@/components/ui/mapcn";
+```
+
 `mapcn.json` in your project root records the renderer, provider, styling
 system, aliases, and a hash per installed file. Installing a component also
 writes its declared Expo config plugins and native permissions into `app.json`,

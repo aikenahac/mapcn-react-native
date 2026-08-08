@@ -41,16 +41,28 @@ pnpm --filter mapcn-rn dev   # CLI, package name "mapcn-rn"
 ```
 
 `pnpm lint` / `pnpm typecheck` / `pnpm test` run across every workspace
-package. `pnpm registry:sync` / `pnpm registry:check` are not implemented yet.
+package. `pnpm registry:sync` materializes `packages/shared` into both demo
+apps and regenerates the registry under `apps/docs/public/r`;
+`pnpm registry:check` fails if either is stale.
 
-## Basemap options (current, pre-2.0 API)
+## Component layout
 
-- **MapLibre + CARTO** (default) — `@/components/ui/map` in `apps/demo-maplibre`
-- **MapLibre + MapTiler** — `@/components/ui/map-maptiler` in `apps/demo-maplibre`
-- **Mapbox** — `@/components/ui/map` in `apps/demo-mapbox`
+Components live at `components/ui/mapcn/` — in `packages/shared`, in both demo
+apps, and in a consumer's project — so relative imports resolve identically
+everywhere. A generated `index.ts` re-exports the installed set, making
+`@/components/ui/mapcn` the single import path.
 
-2.0 replaces the per-provider file fork with a single `Map` component
-configured by a renderer + basemap-provider choice at `init` time.
+## Basemap options
+
+One `Map` component, configured by a renderer + basemap-provider choice at
+`init` time:
+
+- **MapLibre + CARTO** (default) — no API key
+- **MapLibre + MapTiler** — `EXPO_PUBLIC_MAPTILER_API_KEY`
+- **MapLibre + custom** — your own style URL or style object
+- **Mapbox** — `EXPO_PUBLIC_MAPBOX_TOKEN` + `MAPBOX_DOWNLOADS_TOKEN`
+
+Switch later with `mapcn-rn provider <target>`.
 
 ## Contributing
 

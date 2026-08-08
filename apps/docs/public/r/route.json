@@ -6,8 +6,8 @@
   "files": [
     {
       "content": "import { useId } from \"react\";\nimport { MapLayer, MapSource } from \"./map-renderer\";\n\nexport type MapRouteProps = {\n  coordinates: Array<[number, number]>;\n  color?: string;\n  width?: number;\n  opacity?: number;\n  dashArray?: [number, number];\n  beforeId?: string;\n};\n\n/** Renders a static polyline through `coordinates` as a native line layer. */\nexport function MapRoute({ coordinates, color = \"#4285F4\", width = 3, opacity = 0.8, dashArray, beforeId }: MapRouteProps) {\n  const id = useId();\n  const sourceId = `route-source-${id}`;\n  const layerId = `route-layer-${id}`;\n\n  if (coordinates.length < 2) return null;\n\n  const shape = {\n    type: \"Feature\" as const,\n    properties: {},\n    geometry: { type: \"LineString\" as const, coordinates },\n  };\n\n  return (\n    <MapSource id={sourceId} data={shape}>\n      <MapLayer\n        id={layerId}\n        type=\"line\"\n        beforeId={beforeId}\n        style={{\n          lineColor: color,\n          lineWidth: width,\n          lineOpacity: opacity,\n          ...(dashArray && { lineDasharray: dashArray }),\n          lineJoin: \"round\",\n          lineCap: \"round\",\n        }}\n      />\n    </MapSource>\n  );\n}\n",
-      "path": "packages/shared/src/components/ui/map-route.tsx",
-      "target": "components/ui/map-route.tsx",
+      "path": "packages/shared/src/components/ui/mapcn/map-route.tsx",
+      "target": "components/ui/mapcn/map-route.tsx",
       "type": "registry:ui"
     }
   ],

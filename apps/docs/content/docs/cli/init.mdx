@@ -19,7 +19,7 @@ npx mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom
 6. Installs the renderer's npm package with the detected package manager.
 7. Adds the renderer's Expo config plugin to `app.json`, if readable, and warns if both `@maplibre/maplibre-react-native` and `@rnmapbox/maps` end up listed (they cannot coexist in one Expo app).
 8. Scaffolds a placeholder for the provider's required public env key in `.env.example`, if the provider needs one.
-9. Installs the selected components and their transitive dependencies via the same logic as `add`, including their native permissions.
+9. Installs the selected components and their transitive dependencies via the same logic as `add`, including their native permissions and the generated `components/ui/mapcn/index.ts` barrel.
 
 ## Choosing components
 

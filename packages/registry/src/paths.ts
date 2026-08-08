@@ -13,7 +13,7 @@ export const APP_SRC: Record<"maplibre" | "mapbox", string> = {
 };
 
 const ALIAS_PREFIXES: Array<[string, string]> = [
-  ["@ui/", "components/ui/"],
+  ["@ui/", "components/ui/mapcn/"],
   ["@hooks/", "hooks/"],
   ["@lib/", "lib/"],
   ["@components/", "components/"],

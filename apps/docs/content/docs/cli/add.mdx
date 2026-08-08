@@ -18,7 +18,32 @@ npx mapcn-rn add --all
    - **Locally modified (or an untracked file already at that path):** never overwritten. The new version is written to a `<name>.new.tsx` sidecar instead, and the CLI prints a `diff` command to review it -- unless `--overwrite` is passed, in which case the original is snapshotted to `.mapcn-backup/<timestamp>/` first, then replaced.
 4. Installs any newly-required npm dependencies with the detected package manager.
 5. Writes the components' declared Expo config plugins and native permissions into `app.json` — see [Permissions](/docs/location/permissions).
-6. Updates `mapcn.json` with the installed component versions and file hashes.
+6. Regenerates `components/ui/mapcn/index.ts`, the barrel that re-exports everything installed.
+7. Updates `mapcn.json` with the installed component versions and file hashes.
+
+## Where files land
+
+Components are installed into `components/ui/mapcn/`, alongside a generated `index.ts`, so the whole library sits in one folder next to (not mixed into) your own `components/ui` files:
+
+```text
+src/
+  components/ui/mapcn/
+    index.ts              generated barrel -- rewritten on every add
+    map.tsx
+    map-marker.tsx
+    ...
+  lib/mapcn/              shared utilities
+  hooks/
+    use-location-tracking.ts
+```
+
+Import anything you have installed from a single path:
+
+```tsx
+import { Map, MapMarker, MapClusterLayer, useLocationTracking } from "@/components/ui/mapcn";
+```
+
+The barrel is generated, so edits to `index.ts` are overwritten on the next `add`. Everything else in the folder is yours to change. Renderer-internal adapters (`map-renderer.tsx`) are deliberately left out of the barrel, since their exports differ per renderer — import those directly when you need [raw renderer access](/docs/advanced/raw-renderer-access).
 
 ## Install everything
 

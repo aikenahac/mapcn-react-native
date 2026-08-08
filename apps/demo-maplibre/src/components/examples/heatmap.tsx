@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapHeatmap } from "@/components/ui/map-heatmap";
+import { Map, MapHeatmap } from "@/components/ui/mapcn";
 import type { FeatureCollection } from "geojson";
 
 function mulberry32(seed: number) {

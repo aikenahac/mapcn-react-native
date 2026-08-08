@@ -8,7 +8,7 @@ description: The foundational GeoJSON rendering primitive -- one native source, 
 <PackageManagerCodeBlock command="npx mapcn-rn add geojson" />
 
 ```ts
-import { MapGeoJSON } from "@/components/ui/map-geojson";
+import { MapGeoJSON } from "@/components/ui/mapcn";
 ```
 
 ## Overview
@@ -42,8 +42,8 @@ Selection is implemented via a compiled filter expression (`["==", ["get", idPro
 ## Example
 
 ```tsx
-import { Map } from "@/components/ui/map";
-import { MapGeoJSON } from "@/components/ui/map-geojson";
+import { Map } from "@/components/ui/mapcn";
+import { MapGeoJSON } from "@/components/ui/mapcn";
 
 const parks: GeoJSON.FeatureCollection = {
   type: "FeatureCollection",

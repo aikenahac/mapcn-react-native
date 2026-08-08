@@ -27,7 +27,7 @@ export default defineRegistry({
         { from: "lib/mapcn/scale.ts", to: "@lib/mapcn/scale.ts" },
         { from: "lib/mapcn/provider.ts", to: "@lib/mapcn/provider.ts" },
         { from: "lib/mapcn/style.ts", to: "@lib/mapcn/style.ts" },
-        { from: "components/ui/map-types.ts", to: "@ui/map-types.ts" },
+        { from: "components/ui/mapcn/map-types.ts", to: "@ui/map-types.ts" },
       ],
       devDependencies: ["@types/geojson@^7946.0.0"],
     }),
@@ -42,12 +42,12 @@ export default defineRegistry({
       registryDependencies: ["core"],
       filesByRenderer: {
         maplibre: [
-          { path: "components/ui/map.tsx" },
-          { path: "components/ui/map-renderer.tsx", internal: true },
+          { path: "components/ui/mapcn/map.tsx" },
+          { path: "components/ui/mapcn/map-renderer.tsx", internal: true },
         ],
         mapbox: [
-          { path: "components/ui/map.tsx" },
-          { path: "components/ui/map-renderer.tsx", internal: true },
+          { path: "components/ui/mapcn/map.tsx" },
+          { path: "components/ui/mapcn/map-renderer.tsx", internal: true },
         ],
       },
       dependenciesByRenderer: {
@@ -82,8 +82,8 @@ export default defineRegistry({
       renderers: ["maplibre", "mapbox"],
       registryDependencies: ["map"],
       filesByRenderer: {
-        maplibre: [{ path: "components/ui/map-marker.tsx" }],
-        mapbox: [{ path: "components/ui/map-marker.tsx" }],
+        maplibre: [{ path: "components/ui/mapcn/map-marker.tsx" }],
+        mapbox: [{ path: "components/ui/mapcn/map-marker.tsx" }],
       },
       capabilities: {
         maplibre: { note: "allowOverlap has no MapLibre equivalent; accepted but a no-op." },
@@ -97,7 +97,7 @@ export default defineRegistry({
       docsSlug: "popups",
       source: "shared",
       registryDependencies: ["core", "map", "marker"],
-      files: [{ from: "components/ui/map-popup.tsx", to: "@ui/map-popup.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-popup.tsx", to: "@ui/map-popup.tsx" }],
     }),
     defineComponent({
       name: "controls",
@@ -107,7 +107,7 @@ export default defineRegistry({
       docsSlug: "controls",
       source: "shared",
       registryDependencies: ["core", "map"],
-      files: [{ from: "components/ui/map-controls.tsx", to: "@ui/map-controls.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-controls.tsx", to: "@ui/map-controls.tsx" }],
       dependencies: ["expo-location"],
       permissions: {
         ios: ["NSLocationWhenInUseUsageDescription"],
@@ -122,7 +122,7 @@ export default defineRegistry({
       docsSlug: "routes",
       source: "shared",
       registryDependencies: ["map"],
-      files: [{ from: "components/ui/map-route.tsx", to: "@ui/map-route.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-route.tsx", to: "@ui/map-route.tsx" }],
     }),
     defineComponent({
       name: "geojson",
@@ -132,7 +132,7 @@ export default defineRegistry({
       docsSlug: "geojson",
       source: "shared",
       registryDependencies: ["core", "map"],
-      files: [{ from: "components/ui/map-geojson.tsx", to: "@ui/map-geojson.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-geojson.tsx", to: "@ui/map-geojson.tsx" }],
     }),
     defineComponent({
       name: "circle",
@@ -142,7 +142,7 @@ export default defineRegistry({
       docsSlug: "circles",
       source: "shared",
       registryDependencies: ["core", "map", "geojson"],
-      files: [{ from: "components/ui/map-circle.tsx", to: "@ui/map-circle.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-circle.tsx", to: "@ui/map-circle.tsx" }],
     }),
     defineComponent({
       name: "polygon",
@@ -152,7 +152,7 @@ export default defineRegistry({
       docsSlug: "polygons",
       source: "shared",
       registryDependencies: ["core", "map", "geojson"],
-      files: [{ from: "components/ui/map-polygon.tsx", to: "@ui/map-polygon.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-polygon.tsx", to: "@ui/map-polygon.tsx" }],
     }),
     defineComponent({
       name: "cluster",
@@ -162,7 +162,7 @@ export default defineRegistry({
       docsSlug: "clustering",
       source: "shared",
       registryDependencies: ["core", "map"],
-      files: [{ from: "components/ui/map-cluster-layer.tsx", to: "@ui/map-cluster-layer.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-cluster-layer.tsx", to: "@ui/map-cluster-layer.tsx" }],
       capabilities: {
         mapbox: { note: "minPoints has no equivalent on Mapbox's ShapeSource; accepted but ignored." },
       },
@@ -175,7 +175,7 @@ export default defineRegistry({
       docsSlug: "heatmaps",
       source: "shared",
       registryDependencies: ["core", "map"],
-      files: [{ from: "components/ui/map-heatmap.tsx", to: "@ui/map-heatmap.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-heatmap.tsx", to: "@ui/map-heatmap.tsx" }],
     }),
     defineComponent({
       name: "choropleth",
@@ -185,7 +185,7 @@ export default defineRegistry({
       docsSlug: "choropleths",
       source: "shared",
       registryDependencies: ["core", "map", "geojson"],
-      files: [{ from: "components/ui/map-choropleth.tsx", to: "@ui/map-choropleth.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-choropleth.tsx", to: "@ui/map-choropleth.tsx" }],
     }),
     defineComponent({
       name: "legend",
@@ -195,7 +195,7 @@ export default defineRegistry({
       docsSlug: "legend",
       source: "shared",
       registryDependencies: ["core", "map"],
-      files: [{ from: "components/ui/map-legend.tsx", to: "@ui/map-legend.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-legend.tsx", to: "@ui/map-legend.tsx" }],
     }),
     defineComponent({
       name: "location",
@@ -222,8 +222,8 @@ export default defineRegistry({
       renderers: ["maplibre", "mapbox"],
       registryDependencies: ["core", "map", "location"],
       filesByRenderer: {
-        maplibre: [{ path: "components/ui/map-location-puck.tsx" }],
-        mapbox: [{ path: "components/ui/map-location-puck.tsx" }],
+        maplibre: [{ path: "components/ui/mapcn/map-location-puck.tsx" }],
+        mapbox: [{ path: "components/ui/mapcn/map-location-puck.tsx" }],
       },
       dependencies: ["expo-location"],
       permissions: {
@@ -243,7 +243,7 @@ export default defineRegistry({
       docsSlug: "style-switcher",
       source: "shared",
       registryDependencies: ["core", "map"],
-      files: [{ from: "components/ui/map-style-switcher.tsx", to: "@ui/map-style-switcher.tsx" }],
+      files: [{ from: "components/ui/mapcn/map-style-switcher.tsx", to: "@ui/map-style-switcher.tsx" }],
     }),
   ],
 });

@@ -41,7 +41,7 @@ import type {
   MapRenderer,
   MapViewport,
 } from "@/lib/mapcn/types";
-import type { MapInstanceMethods, RendererCapabilities } from "@/components/ui/map-types";
+import type { MapInstanceMethods, RendererCapabilities } from "./map-types";
 import { bboxOf } from "@/lib/mapcn/geo";
 
 export { Map as NativeMap, Camera as NativeCamera };

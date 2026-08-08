@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapChoropleth } from "@/components/ui/map-choropleth";
-import { MapLegend } from "@/components/ui/map-legend";
+import { Map, MapChoropleth, MapLegend } from "@/components/ui/mapcn";
 import type { FeatureCollection } from "geojson";
 import type { MapLegendData } from "@/lib/mapcn/types";
 

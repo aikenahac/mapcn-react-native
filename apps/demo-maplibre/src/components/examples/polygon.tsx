@@ -1,6 +1,5 @@
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapPolygon } from "@/components/ui/map-polygon";
+import { Map, MapPolygon } from "@/components/ui/mapcn";
 import type { Position } from "geojson";
 
 // Irregular geofence boundary around SF (not a rectangle)

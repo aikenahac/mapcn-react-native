@@ -1,8 +1,8 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { Map } from "@/components/ui/map";
+import { Map } from "@/components/ui/mapcn";
+import { MapboxFillLayer, MapboxShapeSource } from "@/components/ui/mapcn/map-renderer";
 import { ArrowLeftIcon } from "@/lib/icons";
-import { MapboxFillLayer, MapboxShapeSource } from "@/components/ui/map-renderer";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 

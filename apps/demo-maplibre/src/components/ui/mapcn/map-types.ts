@@ -12,8 +12,8 @@ import type {
   MapViewport,
   OrnamentPosition,
   PartialViewport,
-} from "../../lib/mapcn/types";
-import type { MapProviderId } from "../../lib/mapcn/provider";
+} from "../../../lib/mapcn/types";
+import type { MapProviderId } from "../../../lib/mapcn/provider";
 
 /**
  * All public prop interfaces for mapcn components live here, in one

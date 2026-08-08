@@ -8,7 +8,7 @@ description: The core map container -- controlled/uncontrolled viewport, provide
 <PackageManagerCodeBlock command="npx mapcn-rn add map" />
 
 ```ts
-import { Map, useMap } from "@/components/ui/map";
+import { Map, useMap } from "@/components/ui/mapcn";
 ```
 
 ## Overview
@@ -85,7 +85,7 @@ interface MapInstance {
 
 ```tsx
 import { useState } from "react";
-import { Map, MapMarker } from "@/components/ui/map";
+import { Map, MapMarker } from "@/components/ui/mapcn";
 
 export function BasicMap() {
   const [viewport, setViewport] = useState({ center: [-122.4194, 37.7749], zoom: 12 });

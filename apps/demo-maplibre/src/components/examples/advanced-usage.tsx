@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
-import { MapRoute } from "@/components/ui/map-route";
+import { Map, MapMarker, MapRoute } from "@/components/ui/mapcn";
 import { TrendingUp, Zap } from "@/lib/icons";
 
 interface AdvancedUsageDemoProps {

@@ -8,7 +8,7 @@ description: An intent-level polygon primitive accepting raw rings or GeoJSON ge
 <PackageManagerCodeBlock command="npx mapcn-rn add polygon" />
 
 ```ts
-import { MapPolygon } from "@/components/ui/map-polygon";
+import { MapPolygon } from "@/components/ui/mapcn";
 ```
 
 ## Overview
@@ -35,8 +35,8 @@ One of `coordinates` or `geometry` is required; passing neither throws.
 ## Example
 
 ```tsx
-import { Map } from "@/components/ui/map";
-import { MapPolygon } from "@/components/ui/map-polygon";
+import { Map } from "@/components/ui/mapcn";
+import { MapPolygon } from "@/components/ui/mapcn";
 
 export function ServiceArea() {
   return (

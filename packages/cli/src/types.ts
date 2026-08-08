@@ -50,6 +50,8 @@ export interface RegistryManifestEntry {
   permissions: { ios: Array<string>; android: Array<string> };
   expoPlugins: Array<string> | Partial<Record<Renderer, Array<string>>>;
   capabilities?: Record<string, unknown>;
+  /** Import specifiers this component contributes to the components/ui/mapcn barrel. */
+  barrelModules?: Array<string>;
   contentHash: string;
 }
 

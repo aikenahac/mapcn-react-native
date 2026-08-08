@@ -95,6 +95,14 @@ Or install everything the renderer supports:
 
 Run `npx mapcn-rn list` to see every component and which are already installed.
 
+Everything lands in `components/ui/mapcn/` with a generated `index.ts`, so your own `components/ui` files stay untouched and the whole library imports from one path:
+
+```tsx
+import { Map, MapMarker, MapClusterLayer } from "@/components/ui/mapcn";
+```
+
+See [add](/docs/cli/add) for the full layout.
+
 ## Verify the setup
 
 <PackageManagerCodeBlock command="npx mapcn-rn doctor" />
