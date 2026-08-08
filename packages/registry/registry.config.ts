@@ -9,7 +9,7 @@ import { defineComponent, defineRegistry } from "./src/manifest";
  * (registry:check's "missing source files" validator enforces that).
  */
 export default defineRegistry({
-  version: "2.0.0-alpha.1",
+  version: "2.0.0",
   schemaVersion: 2,
   homepage: "https://mapcn-rn.dev",
   components: [
