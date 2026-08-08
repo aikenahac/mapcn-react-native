@@ -1,55 +1,67 @@
-# Multi-stage build for Next.js app
+# Multi-stage build for the docs site (mapcn-rn.dev).
+#
+# The build context is the REPO ROOT, not apps/docs -- the pnpm workspace
+# lockfile and the sibling package manifests have to be visible to install.
+# Dokploy settings that match this file:
+#
+#   Build Path         /
+#   Docker File        ./apps/docs/Dockerfile
+#   Docker Context     .
+#   Docker Build Stage <empty>
+#
 FROM node:22-alpine AS base
-
-# Install pnpm
 RUN corepack enable && corepack prepare pnpm@11.2.2 --activate
+WORKDIR /app
 
-# Install dependencies only when needed
+# ---- deps -------------------------------------------------------------
+# Manifests only, so the install layer stays cached across source edits.
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
-WORKDIR /app
 
-# Copy package files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY apps/docs/package.json apps/docs/
+COPY apps/demo-maplibre/package.json apps/demo-maplibre/
+COPY apps/demo-mapbox/package.json apps/demo-mapbox/
+COPY packages/cli/package.json packages/cli/
+COPY packages/registry/package.json packages/registry/
+COPY packages/shared/package.json packages/shared/
 
-# Rebuild the source code only when needed
+# Installs the docs app and its workspace dependencies only -- the two Expo
+# demo apps carry the React Native toolchain and are not needed to build docs.
+RUN pnpm install --frozen-lockfile --filter docs...
+
+# ---- builder ----------------------------------------------------------
 FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+COPY --from=deps /app ./
 COPY . .
 
-# Set environment variables for build
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
+# No registry generation step: apps/docs/public/r (the v2 component registry
+# the CLI reads) and apps/docs/public/maps (the frozen v1 shadcn registry) are
+# both committed. `pnpm registry:check` in CI guards them against drift.
+RUN pnpm --filter docs run build
 
-# Build Next.js app and registry
-RUN pnpm run registry:build
-RUN pnpm run build
-
-# Production image, copy all the files and run next
+# ---- runner -----------------------------------------------------------
 FROM base AS runner
-WORKDIR /app
-
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs
 
-# Copy built assets
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-# Set correct permissions
-RUN chown -R nextjs:nodejs /app
+# Next's standalone output for a workspace app mirrors the repo layout: the
+# server entrypoint lands at apps/docs/server.js and the traced node_modules
+# at the image root.
+COPY --from=builder --chown=nextjs:nodejs /app/apps/docs/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/docs/.next/static ./apps/docs/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/docs/public ./apps/docs/public
 
 USER nextjs
 
 EXPOSE 3000
-
 ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+ENV HOSTNAME=0.0.0.0
 
-CMD ["node", "server.js"]
+CMD ["node", "apps/docs/server.js"]

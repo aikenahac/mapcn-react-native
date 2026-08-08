@@ -44,3 +44,7 @@ app-example
 /android
 
 builds/
+# expo-env.d.ts is committed on purpose: it is listed in tsconfig "include",
+# and `tsc --noEmit` on a fresh clone needs expo/types to resolve the
+# global.css side-effect import.
+!expo-env.d.ts

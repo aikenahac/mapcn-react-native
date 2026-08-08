@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://mapcn-rn.dev/schema/mapcn.json",
+  "title": "mapcn.json",
+  "description": "Configuration written by `mapcn-rn init` and maintained by the mapcn-rn CLI. Records the renderer, basemap provider, styling system, import aliases, and the components installed into this project.",
+  "type": "object",
+  "required": ["schemaVersion", "renderer", "provider", "styling", "aliases", "components"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "URL of this schema."
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "description": "Version of the mapcn.json format. The CLI refuses to read a config written by a newer version than it supports.",
+      "const": 2
+    },
+    "renderer": {
+      "type": "string",
+      "description": "Native map renderer the installed components target.",
+      "enum": ["maplibre", "mapbox"]
+    },
+    "provider": {
+      "type": "object",
+      "description": "Basemap provider supplying tile styles for the chosen renderer.",
+      "required": ["id", "envKey"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Provider identifier. `carto` requires no API key; `maptiler` and `mapbox` do; `custom` means you supply your own style URLs.",
+          "enum": ["carto", "maptiler", "mapbox", "custom"]
+        },
+        "envKey": {
+          "type": ["string", "null"],
+          "description": "Name of the public runtime env var holding the provider API key, or null when the provider needs no key.",
+          "examples": ["EXPO_PUBLIC_MAPTILER_API_KEY", "EXPO_PUBLIC_MAPBOX_TOKEN", null]
+        }
+      }
+    },
+    "styling": {
+      "type": "string",
+      "description": "Styling system detected in the project. Determines whether installed components use className or StyleSheet.",
+      "enum": ["uniwind", "nativewind", "none"]
+    },
+    "aliases": {
+      "type": "object",
+      "description": "Import aliases the CLI resolves component file targets against, derived from tsconfig paths.",
+      "required": ["ui", "lib", "hooks", "components"],
+      "additionalProperties": false,
+      "properties": {
+        "ui": {
+          "type": "string",
+          "description": "Alias for map components.",
+          "examples": ["@/components/ui"]
+        },
+        "lib": {
+          "type": "string",
+          "description": "Alias for shared utilities.",
+          "examples": ["@/lib"]
+        },
+        "hooks": {
+          "type": "string",
+          "description": "Alias for hooks.",
+          "examples": ["@/hooks"]
+        },
+        "components": {
+          "type": "string",
+          "description": "Alias for the components root.",
+          "examples": ["@/components"]
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "description": "Components installed by the CLI, keyed by registry name. Managed by `add`, `diff`, and `migrate` -- edit by hand only if you know what you are doing.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["version", "files"],
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Registry version this component was installed from."
+          },
+          "files": {
+            "type": "array",
+            "description": "Files written for this component, with the content hash recorded at install time. `mapcn-rn diff` compares against these to detect local edits.",
+            "items": {
+              "type": "object",
+              "required": ["path", "hash"],
+              "additionalProperties": false,
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Project-relative path of the installed file."
+                },
+                "hash": {
+                  "type": "string",
+                  "description": "Content hash of the file as installed."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
