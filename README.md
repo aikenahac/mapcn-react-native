@@ -12,13 +12,6 @@
 
 ---
 
-> **Status: 2.0.0 is in active development on this branch.** This repository
-> is the monorepo for mapcn-rn 2.0 — it now hosts the MapLibre app, the
-> Mapbox app, the CLI, and the docs site that used to live in four separate
-> repos. If you're looking for the current stable release (1.x), see the
-> [`master`](https://github.com/aikenahac/mapcn-react-native/tree/master)
-> branch or the published `mapcn-rn` CLI.
-
 ## Layout
 
 ```
