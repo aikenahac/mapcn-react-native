@@ -2,8 +2,34 @@
   "name": "mapcn-rn",
   "version": "2.0.0-alpha.0",
   "description": "CLI for installing and managing mapcn-rn map components -- init, add, list, diff, doctor, provider, and migrate.",
-  "repository": "https://github.com/aikenahac/mapcn-react-native",
+  "keywords": [
+    "mapcn",
+    "react-native",
+    "expo",
+    "maps",
+    "maplibre",
+    "mapbox",
+    "maptiler",
+    "cli",
+    "shadcn",
+    "registry"
+  ],
+  "homepage": "https://mapcn-rn.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aikenahac/mapcn-react-native.git",
+    "directory": "packages/cli"
+  },
+  "bugs": "https://github.com/aikenahac/mapcn-react-native/issues",
+  "author": "Aiken Tine Ahac",
+  "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "mapcn-rn": "./dist/cli.js"
   },
@@ -11,7 +37,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "dev": "node --import tsx src/cli.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
