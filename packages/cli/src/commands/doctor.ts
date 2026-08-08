@@ -11,6 +11,7 @@ export interface DoctorOptions {
   verbose: boolean;
 }
 
+/** Diagnoses the current project's mapcn installation and configuration. */
 export async function runDoctorCommand(options: DoctorOptions): Promise<void> {
   const { projectRoot, registry, json, verbose } = options;
 

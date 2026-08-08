@@ -2,7 +2,7 @@
   "components": [
     {
       "category": "core",
-      "contentHash": "sha256-d7f707d43facfdb4",
+      "contentHash": "sha256-c38dbfdf07a36651",
       "description": "Renderer-independent types, geo/scale/color utilities, and the provider registry that every other mapcn component depends on.",
       "docsSlug": "core",
       "env": [],
@@ -24,7 +24,7 @@
         }
       },
       "category": "core",
-      "contentHash": "sha256-9ab858de415af79b",
+      "contentHash": "sha256-0aaa960dff08598e",
       "description": "The core map container: controlled/uncontrolled viewport, provider-based styling, and the useMap() imperative camera API.",
       "docsSlug": "map",
       "env": [],
@@ -58,7 +58,7 @@
         }
       },
       "category": "core",
-      "contentHash": "sha256-399a83d0a6b7332c",
+      "contentHash": "sha256-266521081bca7fe0",
       "description": "MapMarker, MarkerContent and MarkerLabel -- native-anchored markers with custom content and text labels.",
       "docsSlug": "markers",
       "env": [],
@@ -80,7 +80,7 @@
     },
     {
       "category": "core",
-      "contentHash": "sha256-4833340153ac3d9f",
+      "contentHash": "sha256-d7d829f44e35b497",
       "description": "MapPopup anchors to any coordinate via the renderer's native marker mechanism; MarkerPopup is a convenience wrapper for the common per-marker case.",
       "docsSlug": "popups",
       "env": [],
@@ -126,7 +126,7 @@
     },
     {
       "category": "data",
-      "contentHash": "sha256-6f70d712943d3457",
+      "contentHash": "sha256-8df05155acaa7249",
       "description": "Renders a LineString as a styled route/path, built on the same MapSource/MapLayer primitives MapGeoJSON uses.",
       "docsSlug": "routes",
       "env": [],
@@ -273,7 +273,7 @@
     },
     {
       "category": "data",
-      "contentHash": "sha256-751e2d6c2017f3f9",
+      "contentHash": "sha256-bb477784add5c044",
       "description": "A reusable legend driven entirely by plain MapLegendData -- categorical, discrete-steps, or continuous-gradient -- never coupled to a specific rendering component.",
       "docsSlug": "legend",
       "env": [],
@@ -293,8 +293,8 @@
     },
     {
       "category": "location",
-      "contentHash": "sha256-07531baad247f6af",
-      "description": "useLocationTracking/useCurrentPosition/useLocationPermission, built on expo-location for both renderers -- closes the v1 gap where useCurrentPosition only existed on the MapLibre side. Foreground-only; mode is reserved for future background support.",
+      "contentHash": "sha256-ec06266e9f53b919",
+      "description": "useLocationTracking/useCurrentPosition/useLocationPermission, built on expo-location for both renderers. Foreground-only; mode is reserved for future background support.",
       "docsSlug": "location-tracking",
       "env": [],
       "expoPlugins": [],
@@ -325,8 +325,8 @@
         }
       },
       "category": "location",
-      "contentHash": "sha256-1a060f9b39bd7619",
-      "description": "Replaces MapUserLocation (kept as a deprecated alias). Capability-gated: pulsing/scale/images are Mapbox-only, onPress/custom children are MapLibre-only -- documented, not faked.",
+      "contentHash": "sha256-3fcf6be0108e41c9",
+      "description": "The location puck shown on the map. Capability-gated: pulsing/scale/images are Mapbox-only, onPress/custom children are MapLibre-only -- documented, not faked.",
       "docsSlug": "location-puck",
       "env": [],
       "expoPlugins": {},
@@ -354,7 +354,7 @@
     },
     {
       "category": "styling",
-      "contentHash": "sha256-912bbba38b1bbd00",
+      "contentHash": "sha256-2a09c7b6bca08600",
       "description": "MapStyleSwitcher reads its style list from the configured basemap provider -- works standalone or nested inside MapControls via position=\"none\".",
       "docsSlug": "style-switcher",
       "env": [],

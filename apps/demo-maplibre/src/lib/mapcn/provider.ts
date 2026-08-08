@@ -127,10 +127,12 @@ export const PROVIDERS: Record<MapProviderId, MapProviderDefinition> = {
   },
 };
 
+/** All provider definitions available for a given renderer. */
 export function providersForRenderer(renderer: MapRenderer): Array<MapProviderDefinition> {
   return Object.values(PROVIDERS).filter((p) => p.renderer === renderer);
 }
 
+/** Resolves a provider's named style to its URL, throwing if the style id is unknown. */
 export function resolveStyleUrl(
   provider: MapProviderDefinition,
   styleId: string,

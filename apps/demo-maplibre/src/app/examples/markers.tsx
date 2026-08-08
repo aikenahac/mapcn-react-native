@@ -1,21 +1,13 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
+import { MarkersDemo } from "@/components/examples/markers";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function MarkersExample() {
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
-  const locations = [
-    { coordinate: [-122.4194, 37.7749] as [number, number], label: "San Francisco" },
-    { coordinate: [-122.4083, 37.7849] as [number, number], label: "North Beach" },
-    { coordinate: [-122.4294, 37.7649] as [number, number], label: "Mission District" },
-  ];
 
   return (
     <ScreenContainer className="flex-1 bg-background">
@@ -39,21 +31,12 @@ export default function MarkersExample() {
             </Text>
           </View>
 
-          <ScrollViewMapWrapper
-            onScrollEnabledChange={setScrollEnabled}
-            className="h-[500px] rounded-xl overflow-hidden border border-border"
-          >
-            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
-              {locations.map((loc, idx) => (
-                <MapMarker key={idx} coordinate={loc.coordinate} label={loc.label}>
-                  <View className="w-6 h-6 bg-blue-500 rounded-full border-2 border-background" />
-                </MapMarker>
-              ))}
-            </Map>
-          </ScrollViewMapWrapper>
+          <MarkersDemo onScrollEnabledChange={setScrollEnabled} />
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Features</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Features
+            </Text>
             <View className="p-4 bg-card border border-border rounded-lg">
               <Text className="text-base font-medium text-foreground mb-1">
                 Custom Marker Content

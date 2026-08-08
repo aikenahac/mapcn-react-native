@@ -1,7 +1,7 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
 import { Map, useMap } from "@/components/ui/map";
-import { MapUserLocation } from "@/components/ui/map-location-puck";
+import { MapLocationPuck } from "@/components/ui/map-location-puck";
 import { MapMarker } from "@/components/ui/map-marker";
 import { MapControls } from "@/components/ui/map-controls";
 import { ArrowLeftIcon } from "@/lib/icons";
@@ -11,17 +11,14 @@ import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 function MapContent({ hasPermission }: { hasPermission: boolean }) {
-  const { cameraRef } = useMap();
+  const { flyTo } = useMap();
 
   const handleLocate = async () => {
-    if (cameraRef.current) {
-      const location = await Location.getCurrentPositionAsync({});
-      cameraRef.current.flyTo({
-        center: [location.coords.longitude, location.coords.latitude],
-        zoom: 15,
-        duration: 1500,
-      });
-    }
+    const location = await Location.getCurrentPositionAsync({});
+    flyTo([location.coords.longitude, location.coords.latitude], {
+      zoom: 15,
+      duration: 1500,
+    });
   };
 
   return (
@@ -29,7 +26,7 @@ function MapContent({ hasPermission }: { hasPermission: boolean }) {
       <MapMarker coordinate={[-122.4194, 37.7749]} label="Downtown">
         <View className="w-6 h-6 bg-purple-500 rounded-full border-2 border-background" />
       </MapMarker>
-      {hasPermission && <MapUserLocation />}
+      {hasPermission && <MapLocationPuck />}
       <MapControls showLocate={hasPermission} onLocate={handleLocate} />
     </>
   );

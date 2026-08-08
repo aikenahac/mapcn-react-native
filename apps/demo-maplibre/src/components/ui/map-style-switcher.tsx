@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useId, useMemo, useState, type ReactNode } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { useMap, useOverlay } from "./map";
 import { PROVIDERS, type MapStyleDefinition } from "@/lib/mapcn/provider";
 
@@ -24,11 +24,13 @@ export interface MapStyleSwitcherProps {
 }
 
 const POSITION_STYLE = {
-  "top-left": { top: 8, left: 8, zIndex: 1000 },
-  "top-right": { top: 8, right: 8, zIndex: 1000 },
-  "bottom-left": { bottom: 8, left: 8, zIndex: 1000 },
-  "bottom-right": { bottom: 8, right: 8, zIndex: 1000 },
+  "top-left": { position: "absolute", top: 8, left: 8, zIndex: 1000 },
+  "top-right": { position: "absolute", top: 8, right: 8, zIndex: 1000 },
+  "bottom-left": { position: "absolute", bottom: 8, left: 8, zIndex: 1000 },
+  "bottom-right": { position: "absolute", bottom: 8, right: 8, zIndex: 1000 },
 } as const;
+
+const MAX_LIST_HEIGHT = 240;
 
 function resolveStyles(provider: (typeof PROVIDERS)[keyof typeof PROVIDERS], styles?: Array<string> | Array<MapStyleDefinition>): Array<MapStyleDefinition> {
   if (!styles) return Object.values(provider.styles);
@@ -74,8 +76,8 @@ export function MapStyleSwitcher({
     [isControlled, map, onValueChange],
   );
 
-  const list = (
-    <View className={cn(layout === "grid" ? "flex-row flex-wrap gap-1.5" : "gap-1", layout === "menu" && "bg-card border border-border rounded-lg shadow-sm p-1.5 mt-1")}>
+  const items = (
+    <View className={cn(layout === "grid" ? "flex-row flex-wrap gap-1.5" : "gap-0.5")}>
       {available.map((style) => {
         const selected = style.id === current?.id;
         return renderItem ? (
@@ -87,8 +89,19 @@ export function MapStyleSwitcher({
     </View>
   );
 
+  const list =
+    layout === "menu" ? (
+      <View className="absolute left-0 right-0 top-full mt-1.5 bg-popover border border-border rounded-lg shadow-lg overflow-hidden" style={{ elevation: 6 }}>
+        <ScrollView style={{ maxHeight: MAX_LIST_HEIGHT }} className="p-1" showsVerticalScrollIndicator={false} bounces={false}>
+          {items}
+        </ScrollView>
+      </View>
+    ) : (
+      items
+    );
+
   const content = (
-    <View className="gap-1">
+    <View className={cn(layout === "menu" && "relative")}>
       {layout === "menu" ? (
         <>
           {renderTrigger ? renderTrigger({ current, open, setOpen }) : <SwitcherTrigger current={current} open={open} onPress={() => setOpen((o) => !o)} />}
@@ -100,27 +113,47 @@ export function MapStyleSwitcher({
     </View>
   );
 
-  const wrapped = (
-    <View className={cn("gap-1.5", className)} style={position === "none" ? undefined : POSITION_STYLE[position]} accessibilityRole="menu">
+  const positioned = (
+    <View className={cn("items-start", className)} style={position === "none" ? undefined : POSITION_STYLE[position]} accessibilityRole="menu">
       {content}
     </View>
   );
 
-  if (position === "none") return wrapped;
-  return <SwitcherOverlayHost>{wrapped}</SwitcherOverlayHost>;
+  if (position === "none") return positioned;
+
+  const backdrop = open && layout === "menu" && (
+    <Pressable
+      onPress={() => setOpen(false)}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}
+    />
+  );
+
+  return (
+    <SwitcherOverlayHost>
+      <>
+        {backdrop}
+        {positioned}
+      </>
+    </SwitcherOverlayHost>
+  );
 }
 
 function SwitcherTrigger({ current, open, onPress }: { current: MapStyleDefinition; open: boolean; onPress: () => void }) {
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center gap-1.5 rounded border border-border bg-card px-2.5 py-1.5 shadow-sm"
-      style={{ elevation: 2 }}
+      className="flex-row items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 shadow-sm min-w-[9rem]"
+      style={{ elevation: 3 }}
       accessibilityRole="button"
       accessibilityLabel="Map style"
       accessibilityState={{ expanded: open }}
     >
-      <Text className="text-xs font-medium text-foreground">{current?.label ?? "Style"}</Text>
+      <Text className="text-xs font-medium text-foreground flex-1" numberOfLines={1}>
+        {current?.label ?? "Style"}
+      </Text>
+      <Text className={cn("text-muted-foreground text-[10px]", open && "rotate-180")}>▾</Text>
     </Pressable>
   );
 }
@@ -129,12 +162,13 @@ function StyleItem({ style, selected, showLabel, onPress }: { style: MapStyleDef
   return (
     <Pressable
       onPress={onPress}
-      className={cn("rounded px-2.5 py-1.5 flex-row items-center gap-1.5", selected ? "bg-accent" : "active:bg-muted")}
+      className={cn("rounded-md px-2.5 py-2 flex-row items-center justify-between gap-2", selected ? "bg-accent" : "active:bg-muted")}
       accessibilityRole="menuitem"
       accessibilityLabel={style.label}
       accessibilityState={{ selected }}
     >
-      {showLabel && <Text className={cn("text-xs", selected ? "font-semibold text-accent-foreground" : "text-foreground")}>{style.label}</Text>}
+      {showLabel && <Text className={cn("text-xs flex-1", selected ? "font-semibold text-accent-foreground" : "text-foreground")}>{style.label}</Text>}
+      {selected && <Text className="text-accent-foreground text-xs font-semibold">✓</Text>}
     </Pressable>
   );
 }

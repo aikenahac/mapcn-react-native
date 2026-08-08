@@ -17,6 +17,7 @@ export interface AddOptions {
   yes: boolean;
 }
 
+/** Resolves and installs the requested components plus their transitive registry dependencies. */
 export async function runAddCommand(options: AddOptions): Promise<void> {
   intro(`mapcn-rn add ${options.components.join(" ")}`);
 

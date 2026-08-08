@@ -33,8 +33,7 @@ export interface MapLocationPuckProps {
 export { CAPABILITIES as MAP_LOCATION_PUCK_CAPABILITIES };
 
 /**
- * Replaces MapUserLocation (kept below as a deprecated alias for v1
- * compatibility). `follow` is implemented as camera recentering on every
+ * The location puck shown on the map. `follow` is implemented as camera recentering on every
  * location update rather than wiring into Camera's native
  * trackUserLocation/followUserLocation prop -- that prop is declarative
  * and owned by Map's own <Camera> element, not reachable from here without
@@ -110,45 +109,5 @@ export function MapLocationPuck({
     <UserLocation heading={bearing === "heading" || bearing === "course"} accuracy={accuracyRing} animated minDisplacement={minDisplacement} onPress={onPress}>
       {children}
     </UserLocation>
-  );
-}
-
-/** @deprecated Use MapLocationPuck. Kept for v1 compatibility; maps v1 prop names onto MapLocationPuck's. */
-export interface MapUserLocationProps {
-  visible?: boolean;
-  showAccuracy?: boolean;
-  showHeading?: boolean;
-  animated?: boolean;
-  minDisplacement?: number;
-  onPress?: () => void;
-  autoRequestPermission?: boolean;
-}
-
-let warnedAboutMapUserLocation = false;
-
-/** @deprecated Use MapLocationPuck. */
-export function MapUserLocation({
-  visible,
-  showAccuracy,
-  showHeading,
-  minDisplacement,
-  onPress,
-  autoRequestPermission,
-}: MapUserLocationProps) {
-  useEffect(() => {
-    if (__DEV__ && !warnedAboutMapUserLocation) {
-      warnedAboutMapUserLocation = true;
-      console.warn("[mapcn] MapUserLocation is deprecated -- use MapLocationPuck instead. See the v1 -> v2 upgrade guide.");
-    }
-  }, []);
-  return (
-    <MapLocationPuck
-      visible={visible}
-      bearing={showHeading ? "heading" : "none"}
-      accuracyRing={showAccuracy}
-      minDisplacement={minDisplacement}
-      onPress={onPress}
-      requestPermission={autoRequestPermission}
-    />
   );
 }

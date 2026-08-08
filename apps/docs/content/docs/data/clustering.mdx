@@ -64,6 +64,10 @@ export function ClusteringExample({ points }: { points: GeoJSON.FeatureCollectio
 }
 ```
 
+### Live example
+
+<ExamplePreview slug="clustering" />
+
 ## Renderer support
 
 `minPoints` (MapLibre's `clusterMinPoints`) has no Mapbox `ShapeSource` equivalent. It's accepted on both renderers for a uniform prop type but has no effect on Mapbox -- a tracked, documented capability gap, not a silent drop. `getClusterExpansionZoom`/`getClusterLeaves` are normalized across both renderers' native method signatures (MapLibre extracts `cluster_id` from feature properties internally; Mapbox passes the feature directly) so `onClusterPress`'s `leaves()` and `expandOnPress` behave identically either way.

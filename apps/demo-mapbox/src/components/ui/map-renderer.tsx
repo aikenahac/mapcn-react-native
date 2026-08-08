@@ -144,6 +144,14 @@ export interface MapLayerProps {
   beforeId?: string;
   minZoom?: number;
   maxZoom?: number;
+  /**
+   * Injected by MapSource/ShapeSource's automatic sourceID cloning
+   * (`cloneReactChildrenWithProps` in @rnmapbox/maps' ShapeSource) -- it
+   * targets MapLayer directly since that's the actual JSX child, so this
+   * must be declared and forwarded or every layer silently falls back to
+   * the base style's default source and renders nothing.
+   */
+  sourceID?: string;
 }
 
 const LAYER_BY_TYPE: Record<MapLayerType, ComponentType<any>> = {
@@ -154,9 +162,19 @@ const LAYER_BY_TYPE: Record<MapLayerType, ComponentType<any>> = {
   heatmap: Mapbox.HeatmapLayer as unknown as ComponentType<any>,
 };
 
-export function MapLayer({ id, type, style, filter, beforeId, minZoom, maxZoom }: MapLayerProps) {
+export function MapLayer({ id, type, style, filter, beforeId, minZoom, maxZoom, sourceID }: MapLayerProps) {
   const LayerComponent = LAYER_BY_TYPE[type];
-  return <LayerComponent id={id} style={style} filter={filter} aboveLayerID={beforeId} minZoomLevel={minZoom} maxZoomLevel={maxZoom} />;
+  return (
+    <LayerComponent
+      id={id}
+      sourceID={sourceID}
+      style={style}
+      filter={filter}
+      aboveLayerID={beforeId}
+      minZoomLevel={minZoom}
+      maxZoomLevel={maxZoom}
+    />
+  );
 }
 
 export const RENDERER: MapRenderer = "mapbox";
@@ -170,28 +188,20 @@ export const CAPABILITIES: RendererCapabilities = {
   locationPuckCustomChildren: false,
 };
 
-interface RegionPayload {
-  zoomLevel: number;
-  heading: number;
-  pitch: number;
-  visibleBounds: Array<Array<number>>;
-  isUserInteraction: boolean;
-}
-
 /**
- * MapView's region-change callbacks hand back a GeoJSON Feature<Point,
- * RegionPayload> rather than a plain object (see plan §1.2 upstream
- * research) -- this pulls the fields `Map`/`useMap` actually need out of it.
+ * MapView's `onCameraChanged`/`onMapIdle` callbacks hand back a `MapState`
+ * object (properties.center/zoom/heading/pitch + gestures.isGestureActive),
+ * not a GeoJSON feature -- this pulls the fields `Map`/`useMap` actually
+ * need out of it.
  */
-export function normalizeRegionChangeEvent(feature: {
-  geometry: { coordinates: Coordinate };
-  properties: RegionPayload;
+export function normalizeRegionChangeEvent(state: {
+  properties: { center: Coordinate; zoom: number; heading: number; pitch: number };
+  gestures: { isGestureActive: boolean };
 }): { viewport: MapViewport; userInteraction: boolean } {
-  const { coordinates } = feature.geometry;
-  const { zoomLevel, heading, pitch, isUserInteraction } = feature.properties;
+  const { center, zoom, heading, pitch } = state.properties;
   return {
-    viewport: { center: coordinates, zoom: zoomLevel, bearing: heading, pitch },
-    userInteraction: isUserInteraction,
+    viewport: { center, zoom, bearing: heading, pitch },
+    userInteraction: state.gestures.isGestureActive,
   };
 }
 

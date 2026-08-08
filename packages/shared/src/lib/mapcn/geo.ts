@@ -13,6 +13,7 @@ const UNIT_TO_METERS: Record<DistanceUnit, number> = {
   feet: 0.3048,
 };
 
+/** Converts a distance in `unit` to meters. */
 export function toMeters(distance: number, unit: DistanceUnit = "meters"): number {
   return distance * UNIT_TO_METERS[unit];
 }
@@ -73,6 +74,7 @@ export function distance(a: Coordinate, b: Coordinate): number {
   return 2 * EARTH_RADIUS_METERS * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
+/** Whether two coordinates are equal within `epsilon` degrees. */
 export function coordinateEquals(a: Coordinate, b: Coordinate, epsilon = 1e-9): boolean {
   return Math.abs(a[0] - b[0]) < epsilon && Math.abs(a[1] - b[1]) < epsilon;
 }

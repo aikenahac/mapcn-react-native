@@ -68,13 +68,10 @@ export interface UseLocationTrackingResult {
 }
 
 /**
- * A proper ongoing location tracking abstraction (plan §7.12), built on
- * expo-location for both renderers -- this is what closes the real v1
- * parity gap where useCurrentPosition only existed on the MapLibre side
- * (it re-exported MapLibre's own hook rather than being renderer-
- * independent). No background tracking or geofencing in 2.0 on purpose;
- * `mode` reserves the extension point so adding "background" later
- * doesn't need a breaking redesign.
+ * Ongoing location tracking built on expo-location, shared by both renderers.
+ * No background tracking or geofencing in 2.0 -- `mode` reserves the
+ * extension point so adding "background" later doesn't need a breaking
+ * redesign.
  */
 export function useLocationTracking(options: UseLocationTrackingOptions = {}): UseLocationTrackingResult {
   const { autoStart = false, requestPermission: shouldRequestPermission = true, accuracy = "balanced", distanceInterval, timeInterval, onUpdate, onError } = options;

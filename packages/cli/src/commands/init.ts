@@ -20,6 +20,7 @@ export interface InitOptions {
   projectRoot: string;
 }
 
+/** Sets up renderer, provider, config, and the base `map` component for a fresh project. */
 export async function runInitCommand(options: InitOptions): Promise<void> {
   intro("mapcn-rn init");
 

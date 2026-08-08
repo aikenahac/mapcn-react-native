@@ -96,27 +96,43 @@ export function Examples() {
           screenshot="delivery.png"
         />
         <ExampleCard
-          label="Trending"
-          description="Make changing location data instantly legible."
-          href="/docs/markers"
-          index="03 / Data"
+          label="Heatmap"
+          description="Density visualization over incident data."
+          href="/docs/heatmaps"
+          index="03 / Density"
           className="lg:col-span-4 lg:row-span-2"
-          screenshot="trending.png"
+          screenshot="heatmap.png"
+        />
+        <ExampleCard
+          label="Point Clustering"
+          description="Cluster thousands of points with native performance."
+          href="/docs/clustering"
+          index="04 / Scale"
+          className="lg:col-span-4 lg:row-span-2"
+          screenshot="clustering.png"
+        />
+        <ExampleCard
+          label="Service Area"
+          description="Static geofence polygon with fill and stroke."
+          href="/docs/polygons"
+          index="05 / Geometry"
+          className="lg:col-span-4 lg:row-span-2"
+          screenshot="polygon.png"
         />
         <ExampleCard
           label="EV Charging"
           description="Turn nearby places into clear, tappable choices."
           href="/docs/popups"
-          index="04 / Places"
-          className="lg:col-span-4 lg:row-span-2"
+          index="06 / Places"
+          className="lg:col-span-6 lg:row-span-2"
           screenshot="ev-charging.png"
         />
         <ExampleCard
           label="Locate Me"
           description="User location and camera controls that feel native."
           href="/docs/controls"
-          index="05 / Location"
-          className="lg:col-span-4 lg:row-span-2"
+          index="07 / Location"
+          className="lg:col-span-6 lg:row-span-2"
           screenshot="locate-me.png"
         />
       </div>

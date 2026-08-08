@@ -1,52 +1,13 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map, useMap } from "@/components/ui/map";
-import { MapUserLocation } from "@/components/ui/map-location-puck";
-import { MapControls } from "@/components/ui/map-controls";
+import { LocateMeDemo } from "@/components/examples/locate-me";
 import { ArrowLeftIcon } from "@/lib/icons";
-import * as Location from "expo-location";
 import { Link } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
-
-function MapContent({ hasPermission }: { hasPermission: boolean }) {
-  const { cameraRef } = useMap();
-
-  const handleLocate = useCallback(async () => {
-    if (cameraRef.current) {
-      const location = await Location.getCurrentPositionAsync({});
-      cameraRef.current.flyTo({
-        center: [location.coords.longitude, location.coords.latitude],
-        zoom: 15,
-        duration: 1500,
-      });
-    }
-  }, [cameraRef])
-
-  useEffect(() => {
-    handleLocate();
-  }, [handleLocate])
-
-  return (
-    <>
-      <MapUserLocation />
-      <MapControls showLocate={hasPermission} onLocate={handleLocate} />
-    </>
-  );
-}
 
 export default function LocateMeExample() {
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
-  const [hasPermission, setHasPermission] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
 
   return (
     <ScreenContainer className="flex-1 bg-background">
@@ -71,22 +32,7 @@ export default function LocateMeExample() {
             </Text>
           </View>
 
-          {!hasPermission && (
-            <View className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-              <Text className="text-sm font-medium text-amber-600 dark:text-amber-400 mb-1">
-                Location Permission Required
-              </Text>
-              <Text className="text-sm text-muted-foreground">
-                Please grant location permission to see this example in action.
-              </Text>
-            </View>
-          )}
-
-          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border">
-            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
-              {hasPermission && <MapContent hasPermission={hasPermission} />}
-            </Map>
-          </ScrollViewMapWrapper>
+          <LocateMeDemo onScrollEnabledChange={setScrollEnabled} />
 
           <View className="gap-4">
             <Text className="text-xl font-semibold text-foreground">

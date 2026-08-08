@@ -23,6 +23,7 @@ export type MapMarkerProps = {
   | { longitude: number; latitude: number; coordinate?: never }
 );
 
+/** A native marker view pinned to a coordinate. Prefer `MapGeoJSON`/`MapClusterLayer` above ~100 markers. */
 export function MapMarker({
   children,
   label,

@@ -36,6 +36,7 @@ function uninstallCommand(manager: string, pkg: string): string[] {
   }
 }
 
+/** Switches renderer or basemap provider, rewriting only the renderer-specific adapter files. */
 export async function runProviderCommand(options: ProviderOptions): Promise<void> {
   intro("mapcn-rn provider");
 

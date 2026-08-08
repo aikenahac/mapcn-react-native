@@ -42,6 +42,7 @@ async function promptProvider(renderer: Renderer): Promise<ProviderId> {
   return value as ProviderId;
 }
 
+/** Assists a v1 -> v2 upgrade: preserves the v1 file, installs the equivalent v2 components, and reports manual review items. */
 export async function runMigrateCommand(options: MigrateOptions): Promise<void> {
   intro("mapcn-rn migrate");
 

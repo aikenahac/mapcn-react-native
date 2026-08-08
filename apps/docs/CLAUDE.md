@@ -29,19 +29,21 @@ The component is designed to be installed via shadcn CLI and distributed through
 
 ### Documentation Structure
 
-- `src/app/docs/` - All documentation pages follow Next.js App Router conventions
-- `src/app/docs/_components/examples/` - Example code snippets (NOT rendered, only displayed as code)
-- `public/screenshots/` - Static screenshots of examples captured from React Native simulator
-- `src/lib/get-example-source.ts` - Server-side utility that reads example files and transforms import paths from `@/registry/map` to `@/components/ui/map` for display
+- `content/docs/**/*.mdx` - Topic-based documentation pages, rendered through Fumadocs
+- `src/mdx-components.tsx` - Registers custom MDX components (`PackageManagerCodeBlock`, `ExamplePreview`)
+- No local example-source directory: example code is read live from `apps/demo-maplibre/src/app/examples/<slug>.tsx` at build time
 
-### Preview System (Screenshot-Based)
+### Preview System (CDN-Hosted Screenshots + QR Codes)
 
 **Critical Difference from Web Version:** Uses static images instead of live interactive maps.
 
-- `ComponentPreview` (server component) - Fetches and highlights code server-side
-- `ComponentPreviewClient` (client component) - Shows screenshot in Preview tab, code in Code tab
-- Screenshots are stored in `public/screenshots/` directory
-- Format: PNG files at ~800x400px for examples, ~1200x800px for home widgets
+- `src/components/mdx/example-preview.tsx` (server component) - Reads the example's source straight from `apps/demo-maplibre/src/app/examples/<slug>.tsx` and highlights it with `highlightCode`
+- `src/components/mdx/example-preview-client.tsx` (client component) - Preview / Code / App Preview (QR) tabs
+- Screenshots and QR codes are hosted on the Bunny CDN (`NEXT_PUBLIC_BUNNY_CDN_URL`), not committed to the repo:
+  - `${cdnUrl}/screenshots/<slug>.png` - docs-page screenshot, ~800x400px
+  - `${cdnUrl}/screenshots/home/<slug>.png` - home-page widget screenshot, ~1200x800px
+  - `${cdnUrl}/qr/<slug>.png` - QR code encoding `mapcn-rn://examples/<slug>`, a deep link into the `demo-maplibre` companion app
+- Used in MDX as `<ExamplePreview slug="basic-map" />`
 
 ### Code Highlighting
 
@@ -90,27 +92,22 @@ The map component is for React Native and provides:
 
 ## Important Conventions
 
-- Example files in `src/app/docs/_components/examples/` should import from `@/registry/map` (not `@/components/ui/map`)
-- The get-example-source utility automatically transforms these imports for documentation display
+- Example code lives in `apps/demo-maplibre/src/app/examples/<slug>.tsx` (the demo app is the single source of truth; `ExamplePreview` reads it directly, nothing is duplicated into the docs repo)
 - All map-related components are for React Native only
 - Use date-fns for any date formatting needs (per global instructions)
-- Screenshots must be added to `public/screenshots/` when adding new examples
+- Screenshots and QR codes for a new example must be uploaded to the CDN under `/screenshots/<slug>.png` and `/qr/<slug>.png` before `<ExamplePreview slug="<slug>" />` will render real content
 
-## Screenshot Workflow
+## Screenshot & QR Workflow
 
-When adding new examples:
+When adding a new example:
 
-1. Create example code in `src/app/docs/_components/examples/`
-2. Run the mapcn-react-native app on iOS/Android simulator
-3. Navigate to the example and capture screenshot (Cmd+S on iOS simulator)
-4. Optimize and crop to ~800x400px
-5. Save to `public/screenshots/{example-name}.png`
-6. Reference in documentation page:
-   ```tsx
-   <ComponentPreview
-     code={exampleSource}
-     screenshotName="example-name.png"
-   />
+1. Add the example route in `apps/demo-maplibre/src/app/examples/<slug>.tsx` (and `apps/demo-mapbox` if applicable).
+2. Generate a QR code encoding `mapcn-rn://examples/<slug>` (e.g. `npx --yes qrcode "mapcn-rn://examples/<slug>" -o <slug>.png`) and upload it to the CDN at `/qr/<slug>.png`.
+3. Run `demo-maplibre` on an iOS/Android simulator, navigate to `/examples/<slug>`, and capture a screenshot.
+4. Optimize and crop to ~800x400px, upload to the CDN at `/screenshots/<slug>.png`. If the example is also featured on the docs home page, capture a second, wider crop (~1200x800px) and upload it to `/screenshots/home/<slug>.png`.
+5. Reference it in the relevant MDX page:
+   ```mdx
+   <ExamplePreview slug="<slug>" />
    ```
 
 ## API Differences Reference

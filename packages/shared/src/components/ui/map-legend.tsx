@@ -35,7 +35,7 @@ const defaultFormat = (value: number) => (Math.abs(value) >= 1000 ? value.toFixe
 export function MapLegend({ data, title, position = "bottom-left", orientation = "vertical", formatValue = defaultFormat, onItemPress, className, style, children }: MapLegendProps) {
   const content = (
     <View
-      className={cn("bg-card border border-border rounded-lg shadow-sm p-3 gap-1.5", className)}
+      className={cn("absolute bg-card border border-border rounded-lg shadow-sm p-3 gap-1.5", className)}
       style={position === "none" ? style : [POSITION_STYLE[position], style]}
       accessibilityRole="list"
     >

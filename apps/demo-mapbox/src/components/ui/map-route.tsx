@@ -10,6 +10,7 @@ export type MapRouteProps = {
   beforeId?: string;
 };
 
+/** Renders a static polyline through `coordinates` as a native line layer. */
 export function MapRoute({ coordinates, color = "#4285F4", width = 3, opacity = 0.8, dashArray, beforeId }: MapRouteProps) {
   const id = useId();
   const sourceId = `route-source-${id}`;

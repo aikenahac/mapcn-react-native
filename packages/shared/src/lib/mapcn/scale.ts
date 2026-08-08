@@ -131,6 +131,7 @@ export function buildInterpolateExpression(
   return ["case", ["!", ["has", property]], missingColor, stops];
 }
 
+/** Builds `MapLegendData` for a computed choropleth scale, for `<MapLegend>`. */
 export function buildChoroplethLegend(
   scale: ChoroplethScale,
   computed: ComputedScale,
@@ -163,6 +164,7 @@ export function buildChoroplethLegend(
   };
 }
 
+/** Builds `MapLegendData` for a heatmap's color ramp, for `<MapLegend>`. */
 export function buildHeatmapLegend(
   colors: Array<string>,
   domain: [number, number],
@@ -181,6 +183,7 @@ export function buildHeatmapLegend(
   };
 }
 
+/** Builds `MapLegendData` from an explicit label/color list, for `<MapLegend>`. */
 export function buildCategoricalLegend(
   entries: Array<{ label: string; color: string; value?: string | number }>,
 ): MapLegendData {

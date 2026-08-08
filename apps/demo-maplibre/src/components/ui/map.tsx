@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { LocationManager, useCurrentPosition } from "@maplibre/maplibre-react-native";
+import { LocationManager } from "@maplibre/maplibre-react-native";
 import {
   createContext,
   Fragment,
@@ -34,6 +34,7 @@ export { CAPABILITIES as MAP_CAPABILITIES };
 
 const MapContext = createContext<MapInstance | null>(null);
 
+/** Accesses the enclosing `Map`'s instance. Throws outside a `Map`. */
 function useMap(): MapInstance {
   const context = use(MapContext);
   if (!context) {
@@ -56,6 +57,7 @@ const OverlayContext = createContext<{
   unregisterOverlay: (id: string) => void;
 } | null>(null);
 
+/** Registers/unregisters an RN overlay element rendered on top of the map. Throws outside a `Map`. */
 function useOverlay() {
   const context = use(OverlayContext);
   if (!context) {
@@ -101,6 +103,7 @@ const DefaultLoader = () => (
   </View>
 );
 
+/** The map container. Renders the native map view, camera, and overlay host. */
 function Map({
   children,
   style,
@@ -334,7 +337,7 @@ function normalizePress(event: any) {
   };
 }
 
-// Re-export LocationManager for permission handling
+/** Raw MapLibre permission API -- an escape hatch for cases `useLocationTracking` doesn't cover. */
 export { LocationManager };
 
-export { Map, useCurrentPosition, useMap, useOverlay };
+export { Map, useMap, useOverlay };

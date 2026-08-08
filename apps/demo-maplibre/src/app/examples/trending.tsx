@@ -1,21 +1,13 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
-import { ArrowLeftIcon, TrendingUp } from "@/lib/icons";
+import { TrendingDemo } from "@/components/examples/trending";
+import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function TrendingExample() {
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
-  const trendingLocations: Array<{ coordinate: [number, number]; count: number }> = [
-    { coordinate: [-122.4194, 37.7749], count: 1240 },
-    { coordinate: [-122.4083, 37.7849], count: 980 },
-    { coordinate: [-122.4294, 37.7649], count: 756 },
-  ];
 
   return (
     <ScreenContainer className="flex-1 bg-background">
@@ -39,26 +31,12 @@ export default function TrendingExample() {
             </Text>
           </View>
 
-          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border">
-            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
-              {trendingLocations.map((loc, idx) => (
-                <MapMarker
-                  key={idx}
-                  coordinate={loc.coordinate}
-                  label={`${loc.count} visits`}
-                >
-                  <View className="items-center gap-1">
-                    <View className="w-10 h-10 bg-orange-500 rounded-full items-center justify-center">
-                      <TrendingUp size={20} className="text-white" />
-                    </View>
-                  </View>
-                </MapMarker>
-              ))}
-            </Map>
-          </ScrollViewMapWrapper>
+          <TrendingDemo onScrollEnabledChange={setScrollEnabled} />
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Features</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Features
+            </Text>
             <View className="p-4 bg-card border border-border rounded-lg">
               <Text className="text-base font-medium text-foreground mb-1">
                 Marker Labels

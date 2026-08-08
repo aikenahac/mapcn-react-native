@@ -6,6 +6,7 @@ export interface ListOptions {
   registry: string;
 }
 
+/** Lists installed and available components. */
 export async function runListCommand(options: ListOptions): Promise<void> {
   const config = readMapcnConfig(options.projectRoot);
   const manifest = await fetchManifest(options.registry);

@@ -1,46 +1,13 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
-import { MapRoute } from "@/components/ui/map-route";
+import { OsrmRouteDemo } from "@/components/examples/osrm-route";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function OSRMRouteExample() {
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
-  const [loading, setLoading] = useState(false);
-  const [route, setRoute] = useState<Array<[number, number]> | null>(null);
-  const [distance, setDistance] = useState<number | null>(null);
-  const [duration, setDuration] = useState<number | null>(null);
-
-  const start: [number, number] = [-122.4194, 37.7749];
-  const end: [number, number] = [-122.4083, 37.7849];
-
-  const fetchRoute = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `https://router.project-osrm.org/route/v1/driving/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`
-      );
-      const data = await response.json();
-      if (data.routes && data.routes[0]) {
-        const coords = data.routes[0].geometry.coordinates.map(
-          (coord: Array<number>) => [coord[0], coord[1]] as [number, number]
-        );
-        setRoute(coords);
-        setDistance(data.routes[0].distance / 1000);
-        setDuration(data.routes[0].duration / 60);
-      }
-    } catch (error) {
-      console.error("Failed to fetch route:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <ScreenContainer className="flex-1 bg-background">
@@ -56,75 +23,21 @@ export default function OSRMRouteExample() {
       <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
-            <Text className="text-3xl font-bold text-foreground mb-2">OSRM Routing</Text>
+            <Text className="text-3xl font-bold text-foreground mb-2">
+              OSRM Routing
+            </Text>
             <Text className="text-lg text-muted-foreground">
-              Fetch real driving routes from the OSRM API with turn-by-turn navigation
+              Fetch real driving routes from the OSRM API with turn-by-turn
+              navigation
             </Text>
           </View>
 
-          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map defaultViewport={{ zoom: 13, center: [-122.4139, 37.7799] }}>
-              {route && <MapRoute coordinates={route} color="#8b5cf6" width={4} />}
-              <MapMarker coordinate={start}>
-                <View className="w-8 h-8 bg-green-500 rounded-full border-2 border-background items-center justify-center">
-                  <Text className="text-white text-xs font-bold">A</Text>
-                </View>
-              </MapMarker>
-              <MapMarker coordinate={end}>
-                <View className="w-8 h-8 bg-red-500 rounded-full border-2 border-background items-center justify-center">
-                  <Text className="text-white text-xs font-bold">B</Text>
-                </View>
-              </MapMarker>
-            </Map>
-
-            {!route && (
-              <View className="absolute bottom-4 left-4 right-4">
-                <Pressable
-                  onPress={fetchRoute}
-                  disabled={loading}
-                  className="bg-purple-500 rounded-lg p-4 items-center active:opacity-70"
-                >
-                  {loading ? (
-                    <ActivityIndicator color="white" />
-                  ) : (
-                    <Text className="text-white font-semibold">Calculate Route</Text>
-                  )}
-                </Pressable>
-              </View>
-            )}
-
-            {route && distance && duration && (
-              <View className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-border shadow-lg">
-                <View className="flex-row justify-between mb-3">
-                  <View>
-                    <Text className="text-xs text-muted-foreground mb-1">Distance</Text>
-                    <Text className="text-base font-semibold text-foreground">
-                      {distance.toFixed(2)} km
-                    </Text>
-                  </View>
-                  <View>
-                    <Text className="text-xs text-muted-foreground mb-1">Duration</Text>
-                    <Text className="text-base font-semibold text-foreground">
-                      {Math.round(duration)} min
-                    </Text>
-                  </View>
-                </View>
-                <Pressable
-                  onPress={() => {
-                    setRoute(null);
-                    setDistance(null);
-                    setDuration(null);
-                  }}
-                  className="bg-muted rounded-lg p-2 items-center active:opacity-70"
-                >
-                  <Text className="text-foreground text-sm font-medium">Clear Route</Text>
-                </Pressable>
-              </View>
-            )}
-          </ScrollViewMapWrapper>
+          <OsrmRouteDemo onScrollEnabledChange={setScrollEnabled} />
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Features</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Features
+            </Text>
             <View className="p-4 bg-card border border-border rounded-lg">
               <Text className="text-base font-medium text-foreground mb-1">
                 Real Routing Data

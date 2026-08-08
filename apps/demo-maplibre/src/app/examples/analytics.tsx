@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
+import { AnalyticsDemo } from "@/components/examples/analytics";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
@@ -29,37 +27,17 @@ export default function AnalyticsExample() {
               Real-time Activity Map
             </Text>
             <Text className="text-lg text-muted-foreground">
-              Visualize active users with animated markers and overlaid statistics
+              Visualize active users with animated markers and overlaid
+              statistics
             </Text>
           </View>
 
-          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
-              <MapMarker coordinate={[-122.4194, 37.7749]}>
-                <View className="w-4 h-4 bg-emerald-500 rounded-full">
-                  <View className="w-4 h-4 bg-emerald-500 rounded-full opacity-50 absolute animate-ping" />
-                </View>
-              </MapMarker>
-              <MapMarker coordinate={[-122.4083, 37.7849]}>
-                <View className="w-4 h-4 bg-emerald-500 rounded-full">
-                  <View className="w-4 h-4 bg-emerald-500 rounded-full opacity-50 absolute animate-ping" />
-                </View>
-              </MapMarker>
-              <MapMarker coordinate={[-122.4294, 37.7649]}>
-                <View className="w-4 h-4 bg-emerald-500 rounded-full">
-                  <View className="w-4 h-4 bg-emerald-500 rounded-full opacity-50 absolute animate-ping" />
-                </View>
-              </MapMarker>
-            </Map>
-
-            <View className="absolute top-4 left-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-border shadow-lg">
-              <Text className="text-xs text-muted-foreground mb-1">Active Users</Text>
-              <Text className="text-3xl font-bold text-emerald-500">2,547</Text>
-            </View>
-          </ScrollViewMapWrapper>
+          <AnalyticsDemo onScrollEnabledChange={setScrollEnabled} />
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Features</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Features
+            </Text>
             <View className="p-4 bg-card border border-border rounded-lg">
               <Text className="text-base font-medium text-foreground mb-1">
                 Animated Markers

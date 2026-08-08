@@ -26,6 +26,7 @@ export interface MapPopupProps {
   children: ReactNode;
 }
 
+/** A popup overlay anchored to a map coordinate. */
 export function MapPopup({
   coordinate,
   visible = true,
@@ -79,6 +80,7 @@ export interface MarkerPopupProps extends Omit<MapPopupProps, "coordinate"> {
   title?: string;
 }
 
+/** A `MapPopup` that defaults its coordinate to the enclosing `MapMarker`'s. */
 export function MarkerPopup({ coordinate, title, children, ...props }: MarkerPopupProps) {
   const marker = use(MarkerContext);
   const resolvedCoordinate = coordinate ?? marker?.coordinate;

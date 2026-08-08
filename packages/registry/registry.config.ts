@@ -200,7 +200,7 @@ export default defineRegistry({
     defineComponent({
       name: "location",
       title: "Location tracking",
-      description: "useLocationTracking/useCurrentPosition/useLocationPermission, built on expo-location for both renderers -- closes the v1 gap where useCurrentPosition only existed on the MapLibre side. Foreground-only; mode is reserved for future background support.",
+      description: "useLocationTracking/useCurrentPosition/useLocationPermission, built on expo-location for both renderers. Foreground-only; mode is reserved for future background support.",
       category: "location",
       docsSlug: "location-tracking",
       source: "shared",
@@ -215,7 +215,7 @@ export default defineRegistry({
     defineComponent({
       name: "location-puck",
       title: "Location puck",
-      description: "Replaces MapUserLocation (kept as a deprecated alias). Capability-gated: pulsing/scale/images are Mapbox-only, onPress/custom children are MapLibre-only -- documented, not faked.",
+      description: "The location puck shown on the map. Capability-gated: pulsing/scale/images are Mapbox-only, onPress/custom children are MapLibre-only -- documented, not faked.",
       category: "location",
       docsSlug: "location-puck",
       source: "per-renderer",

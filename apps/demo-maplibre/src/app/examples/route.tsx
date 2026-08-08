@@ -1,24 +1,13 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
-import { MapRoute } from "@/components/ui/map-route";
+import { RouteDemo } from "@/components/examples/route";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function RouteExample() {
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
-  const routeCoordinates: Array<[number, number]> = [
-    [-122.4194, 37.7749],
-    [-122.4183, 37.7799],
-    [-122.4083, 37.7849],
-    [-122.4094, 37.7899],
-    [-122.4294, 37.7949],
-  ];
 
   return (
     <ScreenContainer className="flex-1 bg-background">
@@ -42,43 +31,12 @@ export default function RouteExample() {
             </Text>
           </View>
 
-          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border relative">
-            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7849] }}>
-              <MapRoute coordinates={routeCoordinates} color="#3b82f6" width={4} />
-              <MapMarker coordinate={routeCoordinates[0]}>
-                <View className="w-8 h-8 bg-green-500 rounded-full border-2 border-background items-center justify-center">
-                  <Text className="text-white text-xs font-bold">A</Text>
-                </View>
-              </MapMarker>
-              <MapMarker coordinate={routeCoordinates[routeCoordinates.length - 1]}>
-                <View className="w-8 h-8 bg-red-500 rounded-full border-2 border-background items-center justify-center">
-                  <Text className="text-white text-xs font-bold">B</Text>
-                </View>
-              </MapMarker>
-            </Map>
-
-            <View className="absolute bottom-4 left-4 right-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-border shadow-lg">
-              <View className="flex-row justify-between">
-                <View>
-                  <Text className="text-xs text-muted-foreground mb-1">Distance</Text>
-                  <Text className="text-base font-semibold text-foreground">3.2 km</Text>
-                </View>
-                <View>
-                  <Text className="text-xs text-muted-foreground mb-1">Duration</Text>
-                  <Text className="text-base font-semibold text-foreground">12 min</Text>
-                </View>
-                <View>
-                  <Text className="text-xs text-muted-foreground mb-1">Points</Text>
-                  <Text className="text-base font-semibold text-foreground">
-                    {routeCoordinates.length}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </ScrollViewMapWrapper>
+          <RouteDemo onScrollEnabledChange={setScrollEnabled} />
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Features</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Features
+            </Text>
             <View className="p-4 bg-card border border-border rounded-lg">
               <Text className="text-base font-medium text-foreground mb-1">
                 Custom Line Styling

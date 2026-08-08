@@ -1,7 +1,7 @@
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
 import { Map, useMap } from "@/components/ui/map";
-import { MapUserLocation } from "@/components/ui/map-location-puck";
+import { MapLocationPuck } from "@/components/ui/map-location-puck";
 import { MapControls } from "@/components/ui/map-controls";
 import { ArrowLeftIcon } from "@/lib/icons";
 import * as Location from "expo-location";
@@ -10,18 +10,15 @@ import { useCallback, useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 function MapContent({ hasPermission }: { hasPermission: boolean }) {
-  const { cameraRef } = useMap();
+  const { flyTo } = useMap();
 
   const handleLocate = useCallback(async () => {
-    if (cameraRef.current) {
-      const location = await Location.getCurrentPositionAsync({});
-      cameraRef.current.flyTo({
-        center: [location.coords.longitude, location.coords.latitude],
-        zoom: 15,
-        duration: 1500,
-      });
-    }
-  }, [cameraRef]);
+    const location = await Location.getCurrentPositionAsync({});
+    flyTo([location.coords.longitude, location.coords.latitude], {
+      zoom: 15,
+      duration: 1500,
+    });
+  }, [flyTo]);
 
   useEffect(() => {
     handleLocate();
@@ -29,7 +26,7 @@ function MapContent({ hasPermission }: { hasPermission: boolean }) {
 
   return (
     <>
-      <MapUserLocation />
+      <MapLocationPuck />
       <MapControls showLocate={hasPermission} onLocate={handleLocate} />
     </>
   );

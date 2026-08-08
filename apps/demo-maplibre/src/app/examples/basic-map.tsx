@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
+import { BasicMapDemo } from "@/components/examples/basic-map";
 import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
@@ -24,21 +23,20 @@ export default function BasicMapExample() {
       <ScrollView className="flex-1" scrollEnabled={scrollEnabled}>
         <View className="px-6 py-8 w-full gap-6">
           <View>
-            <Text className="text-3xl font-bold text-foreground mb-2">Basic Map</Text>
+            <Text className="text-3xl font-bold text-foreground mb-2">
+              Basic Map
+            </Text>
             <Text className="text-lg text-muted-foreground">
               Simple map with center and zoom configuration
             </Text>
           </View>
 
-          <ScrollViewMapWrapper
-            onScrollEnabledChange={setScrollEnabled}
-            className="h-[500px] rounded-xl overflow-hidden border border-border"
-          >
-            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }} />
-          </ScrollViewMapWrapper>
+          <BasicMapDemo onScrollEnabledChange={setScrollEnabled} />
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Features</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Features
+            </Text>
             <View className="p-4 bg-card border border-border rounded-lg">
               <Text className="text-base font-medium text-foreground mb-1">
                 Simple Setup

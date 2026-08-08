@@ -43,6 +43,13 @@ app-example
 **/ios
 **/android
 
+# demo-maplibre commits its native ios/android folders (bare/generic
+# workflow, not CNG) — un-ignore them, otherwise EAS's local build archiving
+# silently drops them from the project tarball even though they're tracked,
+# leaving `apps/demo-maplibre/ios` missing in the build sandbox.
+!apps/demo-maplibre/ios
+!apps/demo-maplibre/android
+
 builds/
 
 # monorepo build outputs

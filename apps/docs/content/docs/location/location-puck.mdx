@@ -1,6 +1,6 @@
 ---
 title: Location puck
-description: MapLocationPuck replaces MapUserLocation (kept as a deprecated alias). Capability-gated props are documented, not faked.
+description: The location puck shown on the map. Capability-gated props are documented, not faked.
 ---
 
 **Renderer support:** MapLibre ✓ (⚠ `pulsing`/`scale`/`images` are Mapbox-only) &nbsp;·&nbsp; Mapbox ✓ (⚠ `onPress`/custom `children` are MapLibre-only)
@@ -8,7 +8,7 @@ description: MapLocationPuck replaces MapUserLocation (kept as a deprecated alia
 <PackageManagerCodeBlock command="npx mapcn-rn add location-puck" />
 
 ```ts
-import { MapLocationPuck, MapUserLocation, MAP_LOCATION_PUCK_CAPABILITIES } from "@/components/ui/map-location-puck";
+import { MapLocationPuck, MAP_LOCATION_PUCK_CAPABILITIES } from "@/components/ui/map-location-puck";
 ```
 
 ## Overview
@@ -35,17 +35,6 @@ import { MapLocationPuck, MapUserLocation, MAP_LOCATION_PUCK_CAPABILITIES } from
 | `onPress` | `() => void` | — | **MapLibre only.** |
 | `children` | `ReactNode` | — | **MapLibre only.** Fully custom JS-rendered puck. |
 | `className` | `string` | — | |
-
-### Deprecated: `MapUserLocation`
-
-Kept as a v1-compatible alias that maps old prop names onto `MapLocationPuck`'s and prints a one-time `__DEV__` deprecation warning:
-
-| v1 prop | Maps to |
-| --- | --- |
-| `showHeading` | `bearing: "heading"` |
-| `showAccuracy` | `accuracyRing` |
-| `animated` | `pulsing` (Mapbox) / no-op (MapLibre) |
-| `autoRequestPermission` | `requestPermission` |
 
 ## Example
 

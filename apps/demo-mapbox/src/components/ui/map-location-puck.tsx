@@ -115,39 +115,3 @@ export function MapLocationPuck({
     />
   );
 }
-
-/** @deprecated Use MapLocationPuck. Kept for v1 compatibility; maps v1 prop names onto MapLocationPuck's. */
-export interface MapUserLocationProps {
-  visible?: boolean;
-  showAccuracy?: boolean;
-  showHeading?: boolean;
-  animated?: boolean;
-  minDisplacement?: number;
-  onPress?: () => void;
-  autoRequestPermission?: boolean;
-}
-
-let warnedAboutMapUserLocation = false;
-
-/** @deprecated Use MapLocationPuck. */
-export function MapUserLocation({
-  visible,
-  showHeading,
-  animated,
-  autoRequestPermission,
-}: MapUserLocationProps) {
-  useEffect(() => {
-    if (__DEV__ && !warnedAboutMapUserLocation) {
-      warnedAboutMapUserLocation = true;
-      console.warn("[mapcn] MapUserLocation is deprecated -- use MapLocationPuck instead. See the v1 -> v2 upgrade guide.");
-    }
-  }, []);
-  return (
-    <MapLocationPuck
-      visible={visible}
-      bearing={showHeading ? "heading" : "none"}
-      pulsing={animated}
-      requestPermission={autoRequestPermission}
-    />
-  );
-}

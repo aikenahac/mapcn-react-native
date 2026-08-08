@@ -12,6 +12,7 @@ export const DIVERGING_RAMPS: Record<string, Array<string>> = {
   redGreen: ["#a50026", "#f46d43", "#ffffbf", "#66bd63", "#006837"],
 };
 
+/** Converts a `#rgb`/`#rrggbb` hex color to an `rgba(...)` string with the given alpha. */
 export function hexToRgba(hex: string, alpha = 1): string {
   const normalized = hex.replace("#", "");
   const bigint = parseInt(

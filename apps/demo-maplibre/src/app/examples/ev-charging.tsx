@@ -1,34 +1,13 @@
 import { useState } from "react";
 import { Header } from "@/components/header";
 import { ScreenContainer } from "@/components/screen-container";
-import { ScrollViewMapWrapper } from "@/components/scroll-view-map-wrapper";
-import { Map } from "@/components/ui/map";
-import { MapMarker } from "@/components/ui/map-marker";
-import { ArrowLeftIcon, Zap } from "@/lib/icons";
+import { EvChargingDemo } from "@/components/examples/ev-charging";
+import { ArrowLeftIcon } from "@/lib/icons";
 import { Link } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function EVChargingExample() {
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
-  const chargingStations: Array<{ coordinate: [number, number]; status: string }> = [
-    { coordinate: [-122.4194, 37.7749], status: "available" },
-    { coordinate: [-122.4083, 37.7849], status: "in-use" },
-    { coordinate: [-122.4294, 37.7649], status: "offline" },
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "available":
-        return "bg-green-500";
-      case "in-use":
-        return "bg-amber-500";
-      case "offline":
-        return "bg-red-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
 
   return (
     <ScreenContainer className="flex-1 bg-background">
@@ -52,28 +31,12 @@ export default function EVChargingExample() {
             </Text>
           </View>
 
-          <ScrollViewMapWrapper onScrollEnabledChange={setScrollEnabled} className="h-[500px] rounded-xl overflow-hidden border border-border">
-            <Map defaultViewport={{ zoom: 12, center: [-122.4194, 37.7749] }}>
-              {chargingStations.map((station, idx) => (
-                <MapMarker
-                  key={idx}
-                  coordinate={station.coordinate}
-                  label={station.status}
-                >
-                  <View
-                    className={`w-10 h-10 rounded-full items-center justify-center ${getStatusColor(
-                      station.status
-                    )}`}
-                  >
-                    <Zap size={20} className="text-white" />
-                  </View>
-                </MapMarker>
-              ))}
-            </Map>
-          </ScrollViewMapWrapper>
+          <EvChargingDemo onScrollEnabledChange={setScrollEnabled} />
 
           <View className="gap-4">
-            <Text className="text-xl font-semibold text-foreground">Status Legend</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Status Legend
+            </Text>
             <View className="gap-3">
               <View className="flex-row items-center gap-3">
                 <View className="w-6 h-6 bg-green-500 rounded-full" />

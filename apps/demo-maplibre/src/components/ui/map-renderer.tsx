@@ -153,12 +153,25 @@ export interface MapLayerProps {
   beforeId?: string;
   minZoom?: number;
   maxZoom?: number;
+  /**
+   * Injected by GeoJSONSource's automatic source-id cloning
+   * (`cloneReactChildrenWithProps` in @maplibre/maplibre-react-native) --
+   * it targets MapLayer directly since that's the actual JSX child, so this
+   * must be declared and forwarded to `<Layer source={...} />`, or every
+   * layer falls back to the native `MLRNSource.insertReactSubview:`/
+   * `addToMap` fallback that infers `sourceID` from view-mount order --
+   * which races with `MLRNMapView`'s `didFinishLoadingStyle:` on first
+   * mount and throws "Cannot find source with id" until a JS reload masks
+   * it via a stale view being reused.
+   */
+  source?: string;
 }
 
-export function MapLayer({ id, type, style, filter, beforeId, minZoom, maxZoom }: MapLayerProps) {
+export function MapLayer({ id, type, style, filter, beforeId, minZoom, maxZoom, source }: MapLayerProps) {
   return (
     <Layer
       id={id}
+      source={source}
       type={type}
       style={style as never}
       filter={filter as never}

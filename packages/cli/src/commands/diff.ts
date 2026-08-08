@@ -9,6 +9,7 @@ export interface DiffOptions {
   component?: string;
 }
 
+/** Compares installed component files against their recorded hashes to report local modifications. */
 export async function runDiffCommand(options: DiffOptions): Promise<void> {
   const config = requireMapcnConfig(options.projectRoot);
   const { srcDir } = detectProject(options.projectRoot);

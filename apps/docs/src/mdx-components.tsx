@@ -1,6 +1,7 @@
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 
+import { ExamplePreview } from "@/components/mdx/example-preview";
 import { PackageManagerCodeBlockClient } from "@/components/mdx/package-manager-code-block-client";
 import {
   PACKAGE_MANAGERS,
@@ -59,6 +60,7 @@ export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
     PackageManagerCodeBlock,
+    ExamplePreview,
     ...components,
   } satisfies MDXComponents;
 }

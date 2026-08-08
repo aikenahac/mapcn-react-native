@@ -37,7 +37,7 @@ If component installation fails after the backup is created, the CLI reports the
 | `<Map styles={{ light, dark }}>` | `<Map style={{ light, dark }}>` | The prop is singular in v2 and also accepts a named provider style, URL, or style object. |
 | `<Map showLoader={false}>` | `<Map loader={false}>` | Omit `loader` for the default loader, pass `false` to hide it, or pass a React node to replace it. |
 | `cameraRef.current.flyTo(...)` / `moveTo(...)` | `const map = useMap(); map.flyTo(...)` / `map.moveTo(...)` | Camera operations are exposed on the renderer-independent map instance. Raw refs remain advanced escape hatches. |
-| `MapUserLocation` | `MapLocationPuck` | `MapUserLocation` remains only as a deprecated alias. |
+| `MapUserLocation` | `MapLocationPuck` | Rename the import and component; see the prop renames below. |
 | `showHeading` | `bearing` | Location-puck rename. |
 | `showAccuracy` | `accuracyRing` | Location-puck rename. |
 | `animated` | `pulsing` | Pulsing is a Mapbox-only capability. |
@@ -67,7 +67,7 @@ Useful commands during review:
 - [ ] Move local v1 customizations into the corresponding v2 component files.
 - [ ] Replace `center` and `zoom` with `defaultViewport`, or adopt controlled `viewport` state.
 - [ ] Move camera calls from `cameraRef.current` to the `useMap()` instance.
-- [ ] Rename `MapUserLocation` and its changed props.
+- [ ] Rename `MapUserLocation` to `MapLocationPuck` and its changed props.
 - [ ] Update location-hook result access and any `LocationManager` imports.
 - [ ] Rename `EXPO_PUBLIC_MAPBOX_API_KEY` to `EXPO_PUBLIC_MAPBOX_TOKEN` for Mapbox.
 - [ ] Verify the selected renderer package and Expo plugin; never keep both renderer plugins installed.

@@ -98,6 +98,10 @@ export function BasicMap() {
 }
 ```
 
+### Live example
+
+<ExamplePreview slug="basic-map" />
+
 ## Renderer support
 
 Mapbox's `MapView` cannot render arbitrary React Native views as children the way MapLibre's can, so `Map` runs an internal overlay-portal context on Mapbox to make `MapControls`, `MapPopup`, `MapLegend`, and `MapStyleSwitcher` behave identically on both renderers. This is transparent -- you never interact with the portal directly.
