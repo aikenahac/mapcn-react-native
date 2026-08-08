@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/aikenahac/mapcn-react-native-docs/blob/master/public/banner.png?raw=true" alt="mapcn banner" />
+  <img src="https://github.com/aikenahac/mapcn-react-native/blob/master/apps/docs/public/banner.png?raw=true" alt="mapcn banner" />
 
   <h1>mapcn-rn</h1>
   <p><strong>shadcn-style, copy-owned spatial UI primitives for React Native.</strong></p>
