@@ -11,13 +11,15 @@ mapcn-rn follows the shadcn model: the CLI copies component source into your app
 
 That ownership has a tradeoff. Upgrades are source updates, not opaque package bumps. `mapcn-rn diff` shows how an installed component differs from its registry version, and an overwrite creates a backup before replacing a locally changed file.
 
-## What v2 provides
+## What's in the box
 
-- One shared API across MapLibre and Mapbox, with explicit capability notes where the native SDKs differ.
-- Basemap providers selected separately from the renderer: CARTO, MapTiler, custom styles, or Mapbox.
-- Composable components for maps, markers, popups, controls, routes, GeoJSON, clustering, location, styling, and thematic maps.
-- A project-local `mapcn.json` that records the renderer, provider, styling system, aliases, installed versions, and file hashes.
-- CLI checks for native dependencies, Expo plugins, provider credentials, permissions, and local component changes.
+**Components.** [`Map`](/docs/core/map) with a controlled viewport, [markers](/docs/core/markers), [popups](/docs/core/popups), and [controls](/docs/core/controls) for the basics. [GeoJSON](/docs/data/geojson), [polygons](/docs/data/polygons), [circles](/docs/data/circles), and [routes](/docs/data/routes) for geometry. [Clustering](/docs/data/clustering), [heatmaps](/docs/data/heatmaps), [choropleths](/docs/data/choropleths), and [legends](/docs/data/legend) for data. [Location tracking](/docs/location/location-tracking), a [location puck](/docs/location/location-puck), and a [style switcher](/docs/styling/style-switcher) for the rest. See the [full index](/docs/reference/components-index).
+
+**Two renderers, one API.** MapLibre or Mapbox, chosen at setup and swappable later. Where the native SDKs genuinely differ, the docs say so instead of faking parity — see the [compatibility matrix](/docs/reference/renderer-compatibility-matrix).
+
+**Basemaps, decoupled from the renderer.** CARTO (no API key), MapTiler, Mapbox, or your own style URL. Light and dark styles resolve from the system color scheme by default.
+
+**A CLI that tracks what it installed.** `init` sets the project up, `add` installs components with their dependencies and native permissions, `diff` shows what you've customized, `doctor` checks the whole setup, and `provider` switches basemaps. State lives in a project-local `mapcn.json` with a hash per file, so an update never silently overwrites your edits.
 
 ## When to use it
 
