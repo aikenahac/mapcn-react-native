@@ -1,0 +1,52 @@
+---
+title: Camera & Viewport
+description: Controlled vs. uncontrolled viewport state, the useMap() camera API, and how mapcn prevents camera feedback loops.
+---
+
+## Controlled vs. uncontrolled
+
+`Map` decides its mode from whether the `viewport` prop is present:
+
+- **Uncontrolled** (no `viewport` prop): `Map` owns its own camera state, seeded from `defaultViewport`.
+- **Controlled** (`viewport` present): the camera always follows the `viewport` prop. Combine it with `onViewportChange` to keep external state in sync.
+
+```tsx
+const [viewport, setViewport] = useState({ center: [-122.4194, 37.7749], zoom: 12 });
+
+<Map viewport={viewport} onViewportChange={setViewport} style="streets" />;
+```
+
+`MapViewport` is `{ center: Coordinate; zoom: number; bearing: number; pitch: number }`. Every prop and callback that isn't the full viewport (`defaultViewport`, `viewport`, the values passed to `onViewportChange`) accepts a `Partial<MapViewport>` -- you don't have to specify every field.
+
+## Loop prevention
+
+A controlled camera has an obvious failure mode: a native camera event updates `onViewportChange`, which calls `setState`, which changes the `viewport` prop, which the map re-applies to the native camera, which re-fires the event. `Map` avoids this with three mechanisms:
+
+1. **Echo suppression.** Every native viewport event is compared against the last viewport `Map` itself pushed to the native camera, using an epsilon (`1e-7` for coordinates, `1e-3` for zoom/bearing/pitch -- see `viewportEquals` in `lib/mapcn/geo.ts`). A matching event is treated as an echo and does not re-invoke `onViewportChange`.
+2. **Prop-write suppression.** When the `viewport` prop changes, `Map` only pushes it to the native camera if it differs (beyond the same epsilon) from the last value it *reported* out. This is what stops `onViewportChange → setState → viewport prop` from ping-ponging.
+3. **Gesture-active suppression.** While the user is actively panning/zooming/rotating, prop-driven camera writes are held off until the gesture ends, so `Map` never fights the user's finger.
+
+`onViewportChange` fires continuously while the camera moves, throttled by `viewportChangeThrottle` (default `100`ms, trailing edge). `onViewportChangeEnd` fires once after movement settles -- prefer it for expensive work (data refetches, heavy layer updates).
+
+## Imperative camera control
+
+`useMap()` returns a `MapInstance` with the full camera API -- this is what `MapControls`'s zoom buttons and `MapClusterLayer`'s tap-to-expand use internally:
+
+```tsx
+function LocateButton() {
+  const map = useMap();
+  return (
+    <Pressable onPress={() => map.flyTo([-122.4194, 37.7749], { zoom: 14, duration: 800 })}>
+      <Text>Fly to San Francisco</Text>
+    </Pressable>
+  );
+}
+```
+
+`flyTo`/`moveTo`/`zoomTo`/`zoomBy`/`fitBounds`/`fitFeatures`/`resetNorth` all accept an optional `MapCameraAnimation` (`{ duration?, easing?, padding? }`). `fitFeatures` computes the bounding box of arbitrary GeoJSON input and calls `fitBounds` for you.
+
+For imperative reads, `getViewport()`, `project()`, and `unproject()` are all async -- they round-trip to the native map.
+
+## Related components
+
+[Map](/docs/core/map) · [Controls](/docs/core/controls)

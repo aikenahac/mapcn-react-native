@@ -1,0 +1,43 @@
+---
+title: provider
+description: Switches renderer and/or basemap provider, rewriting only the renderer-specific files -- never your customized components.
+---
+
+```bash
+npx mapcn-rn provider <target> [--yes] [--force]
+```
+
+`<target>` is a provider id (`maplibre` targets are `carto`/`maptiler`/`custom`; the Mapbox target is `mapbox`). The direction (renderer switch or basemap-only swap) is inferred from the target versus the current config in `mapcn.json`.
+
+## What it does
+
+1. Plans the switch: npm package to add/remove, Expo plugin to add/remove, env key change, and any capability notes (e.g. switching to Mapbox warns that `minPoints` on `MapClusterLayer` has no equivalent there; switching from Mapbox to MapLibre warns that location-puck `pulsing`/`scale`/`images` have no equivalent).
+2. Prints the plan and asks for confirmation (skipped with `--yes`).
+3. Checks for a clean git working tree (`git status --porcelain`) and refuses to proceed on a dirty tree unless `--force` is passed. If the project isn't a git repository, this check is skipped gracefully.
+4. Uninstalls the old renderer package and installs the new one with the detected package manager.
+5. Updates the Expo plugin entry in `app.json`.
+6. Scaffolds the new provider's env key placeholder in `.env.example` only -- **never touches your real `.env`** beyond printing what to change.
+7. **Only if the renderer actually changed**, rewrites the `map`, `marker`, and `location-puck` registry components (the renderer-specific files) for whichever of those are installed -- with `.mapcn-backup/<timestamp>/` snapshots taken automatically. Every other installed component (`controls`, `popup`, `route`, `geojson`, `cluster`, ...) is left completely untouched.
+8. Updates `mapcn.json`'s `renderer`/`provider` fields.
+
+This is the entire point of the renderer adapter boundary: a renderer switch touches at most 3-4 low-level files, never the higher-level components you've customized.
+
+## Flags
+
+| Flag | Description |
+| --- | --- |
+| `--yes` / `-y` | Skip the confirmation prompt. |
+| `--force` | Proceed despite a dirty git working tree. |
+
+## Examples
+
+<PackageManagerCodeBlock command="npx mapcn-rn provider mapbox" />
+<PackageManagerCodeBlock command="npx mapcn-rn provider maptiler" />
+
+The second example stays on MapLibre and only swaps the basemap provider -- no renderer files are touched at all.
+
+After any renderer switch, run `npx expo prebuild --clean` and rebuild your development client.
+
+## Related
+
+[Renderers & providers](/docs/getting-started/renderers-and-providers) · [doctor](/docs/cli/doctor) · [diff](/docs/cli/list-and-diff)

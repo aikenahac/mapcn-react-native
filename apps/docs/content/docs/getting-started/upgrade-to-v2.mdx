@@ -1,0 +1,78 @@
+---
+title: Upgrade to v2
+description: Migrate a copy-owned v1 map file to the v2 registry, configuration, components, and renderer-independent APIs.
+---
+
+v2 replaces the single v1 `components/ui/map.tsx` bundle with a tracked component graph and a renderer-independent public API. The migration command preserves the old source before installing v2 files.
+
+## Before you begin
+
+Commit or otherwise back up your project. The migration command moves the detected v1 file to `components/ui/map.v1.tsx.bak`, but a clean commit makes it easier to review every generated change.
+
+Run migration from the application root:
+
+<PackageManagerCodeBlock command="npx mapcn-rn migrate" />
+
+The command only treats a project as v1 when `components/ui/map.tsx` exists and `mapcn.json` does not. If a config already exists, it stops and directs you to `mapcn-rn doctor`.
+
+## What the command changes
+
+The migration command:
+
+1. detects the v1 renderer and provider from the existing map source, prompting when detection is inconclusive;
+2. warns when the v1 source appears customized;
+3. moves `components/ui/map.tsx` to `components/ui/map.v1.tsx.bak`;
+4. writes a schema-version-2 `mapcn.json` using your detected aliases and styling system;
+5. installs `map`, `marker`, `popup`, `controls`, `route`, `location`, and `location-puck`, plus their transitive dependencies;
+6. scans the backup for known API changes and prints line-specific review notes;
+7. runs the same project checks as `mapcn-rn doctor`.
+
+If component installation fails after the backup is created, the CLI reports the failure and leaves the backup in place. Resolve the error, then install the v2 components explicitly.
+
+## API changes to review
+
+| v1 | v2 | Migration note |
+| --- | --- | --- |
+| `<Map center={center} zoom={zoom}>` | `<Map defaultViewport={{ center, zoom }}>` | Use `viewport` plus `onViewportChange` for controlled state. |
+| `<Map styles={{ light, dark }}>` | `<Map style={{ light, dark }}>` | The prop is singular in v2 and also accepts a named provider style, URL, or style object. |
+| `<Map showLoader={false}>` | `<Map loader={false}>` | Omit `loader` for the default loader, pass `false` to hide it, or pass a React node to replace it. |
+| `cameraRef.current.flyTo(...)` / `moveTo(...)` | `const map = useMap(); map.flyTo(...)` / `map.moveTo(...)` | Camera operations are exposed on the renderer-independent map instance. Raw refs remain advanced escape hatches. |
+| `MapUserLocation` | `MapLocationPuck` | Rename the import and component; see the prop renames below. |
+| `showHeading` | `bearing` | Location-puck rename. |
+| `showAccuracy` | `accuracyRing` | Location-puck rename. |
+| `animated` | `pulsing` | Pulsing is a Mapbox-only capability. |
+| `autoRequestPermission` | `requestPermission` | Permission behavior is explicit in v2. |
+| `EXPO_PUBLIC_MAPBOX_API_KEY` | `EXPO_PUBLIC_MAPBOX_TOKEN` | Rename the public runtime token. |
+| `LocationManager` re-exported from `map.tsx` | `useLocationTracking` / `useCurrentPosition`, or direct renderer import | Prefer v2's shared `expo-location` hooks. Raw `LocationManager` access is renderer-specific; import it directly from MapLibre instead of relying on the compatibility re-export. |
+| Raw `GeolocationPosition` from `useCurrentPosition` | `MapPosition` with `coordinate: [longitude, latitude]` | Update `coords.longitude` / `coords.latitude` call sites. |
+| Native-callout `MarkerPopup` assumptions | Overlay-based `MarkerPopup` / `MapPopup` | Review positioning, close behavior, and custom styling. |
+
+Do not mechanically replace renderer-specific behavior. v2 deliberately documents capability differences: for example, location-puck pulsing, scale, and images are Mapbox-only, while custom children and `onPress` are MapLibre-only.
+
+## Review local customizations
+
+Compare `components/ui/map.v1.tsx.bak` with the newly installed component files. Move intentional changes into the smaller v2 files rather than restoring the v1 bundle over them.
+
+Useful commands during review:
+
+<PackageManagerCodeBlock command="npx mapcn-rn diff map" />
+
+`mapcn-rn diff` compares installed hashes and source with the registry. If a later `add` encounters a locally modified target, it writes the new version to a sidecar unless you explicitly pass `--overwrite`; overwritten files are backed up under `.mapcn-backup/`.
+
+## Migration checklist
+
+- [ ] Commit or back up the v1 project.
+- [ ] Run `npx mapcn-rn migrate` and keep `map.v1.tsx.bak` until the migration is verified.
+- [ ] Review the CLI's line-specific manual-review report.
+- [ ] Move local v1 customizations into the corresponding v2 component files.
+- [ ] Replace `center` and `zoom` with `defaultViewport`, or adopt controlled `viewport` state.
+- [ ] Move camera calls from `cameraRef.current` to the `useMap()` instance.
+- [ ] Rename `MapUserLocation` to `MapLocationPuck` and its changed props.
+- [ ] Update location-hook result access and any `LocationManager` imports.
+- [ ] Rename `EXPO_PUBLIC_MAPBOX_API_KEY` to `EXPO_PUBLIC_MAPBOX_TOKEN` for Mapbox.
+- [ ] Verify the selected renderer package and Expo plugin; never keep both renderer plugins installed.
+- [ ] Add foreground location permissions if location components are installed.
+- [ ] Run `npx mapcn-rn doctor` and resolve errors.
+- [ ] Run `npx expo prebuild --clean` and rebuild the development client.
+- [ ] Verify rendering and interaction on both iOS and Android.
+- [ ] Remove the v1 backup only after the new implementation is accepted.

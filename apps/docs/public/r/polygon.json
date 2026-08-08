@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": [],
+  "description": "An intent-level polygon primitive accepting raw rings or GeoJSON geometry, supporting holes and MultiPolygons via the underlying native source.",
+  "devDependencies": [],
+  "files": [
+    {
+      "content": "import { useId, useMemo } from \"react\";\nimport type { Feature, GeoJsonProperties, MultiPolygon, Polygon, Position } from \"geojson\";\nimport { MapGeoJSON } from \"./map-geojson\";\nimport type { FillStyle, LineStyle, MapFeaturePressEvent } from \"@/lib/mapcn/types\";\n\nexport interface MapPolygonProps {\n  id?: string;\n  /** Ring array (Polygon.coordinates or MultiPolygon.coordinates), or ready GeoJSON geometry/feature. */\n  coordinates?: Array<Array<Position>> | Array<Array<Array<Position>>>;\n  geometry?: Polygon | MultiPolygon | Feature<Polygon | MultiPolygon>;\n\n  fill?: FillStyle | false;\n  stroke?: LineStyle | false;\n  selected?: boolean;\n  selectedStyle?: { fill?: FillStyle; stroke?: LineStyle };\n  onPress?: (event: MapFeaturePressEvent) => void;\n\n  properties?: GeoJsonProperties;\n  beforeId?: string;\n}\n\nconst DEFAULT_FILL: FillStyle = { color: \"#4285F4\", opacity: 0.3 };\nconst DEFAULT_STROKE: LineStyle = { color: \"#4285F4\", width: 2 };\n\nfunction isMultiPolygonRings(coordinates: Array<Array<Position>> | Array<Array<Array<Position>>>): coordinates is Array<Array<Array<Position>>> {\n  // A Polygon's rings are Array<Position> (each ring is [ [lng,lat], ... ]);\n  // a MultiPolygon's are one level deeper (Array<Array<Position>> per polygon).\n  const first = coordinates[0];\n  return Array.isArray(first) && Array.isArray(first[0]) && Array.isArray((first[0] as unknown as Array<unknown>)[0]);\n}\n\n/**\n * An intent-level polygon primitive (plan §7.9) -- accepts either raw\n * rings (the ergonomic case) or a ready geometry/feature (the interop\n * case, including geometry produced by MapDrawing once that ships).\n * Internally a MapGeoJSON with fill+line, so holes and MultiPolygons work\n * for free via the underlying native source.\n */\nexport function MapPolygon({\n  id,\n  coordinates,\n  geometry,\n  fill = DEFAULT_FILL,\n  stroke = DEFAULT_STROKE,\n  selected = false,\n  selectedStyle,\n  onPress,\n  properties,\n  beforeId,\n}: MapPolygonProps) {\n  const autoId = useId();\n  const sourceId = id ?? `polygon-${autoId}`;\n\n  const feature = useMemo<Feature<Polygon | MultiPolygon>>(() => {\n    if (geometry) {\n      return geometry.type === \"Feature\" ? geometry : { type: \"Feature\", properties: properties ?? {}, geometry };\n    }\n    if (!coordinates) {\n      throw new Error(\"MapPolygon requires either `coordinates` or `geometry`.\");\n    }\n    const isMulti = isMultiPolygonRings(coordinates);\n    return {\n      type: \"Feature\",\n      properties: properties ?? {},\n      geometry: isMulti\n        ? { type: \"MultiPolygon\", coordinates: coordinates as Array<Array<Array<Position>>> }\n        : { type: \"Polygon\", coordinates: coordinates as Array<Array<Position>> },\n    };\n     \n  }, [coordinates, geometry, properties]);\n\n  const resolvedFill = selected && selectedStyle?.fill ? selectedStyle.fill : fill;\n  const resolvedStroke = selected && selectedStyle?.stroke ? selectedStyle.stroke : stroke;\n\n  return (\n    <MapGeoJSON\n      id={sourceId}\n      data={feature}\n      point={false}\n      line={resolvedStroke}\n      fill={resolvedFill}\n      beforeId={beforeId}\n      onFeaturePress={onPress}\n    />\n  );\n}\n",
+      "path": "packages/shared/src/components/ui/map-polygon.tsx",
+      "target": "components/ui/map-polygon.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "name": "polygon",
+  "registryDependencies": [
+    "core",
+    "map",
+    "geojson"
+  ],
+  "title": "Polygon",
+  "type": "registry:ui"
+}

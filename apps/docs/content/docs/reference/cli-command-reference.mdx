@@ -1,0 +1,36 @@
+---
+title: CLI command reference
+description: All seven mapcn-rn commands and their flags, in one place.
+---
+
+```text
+mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom|mapbox] [--yes]
+mapcn-rn add <component...> [--overwrite] [--yes] [--renderer maplibre|mapbox]
+mapcn-rn list
+mapcn-rn diff [component]
+mapcn-rn doctor [--json] [--verbose]
+mapcn-rn provider <target> [--yes] [--force]
+mapcn-rn migrate [--yes]
+mapcn-rn --help
+```
+
+| Command | Purpose | Detail page |
+| --- | --- | --- |
+| `init` | Set up renderer, provider, `mapcn.json`, native config, and the base `map` component. | [init](/docs/cli/init) |
+| `add` | Install one or more registry components, resolving dependencies. | [add](/docs/cli/add) |
+| `list` | Show every registry component and what's installed. | [list & diff](/docs/cli/list-and-diff) |
+| `diff` | Compare installed files against their recorded hashes. | [list & diff](/docs/cli/list-and-diff) |
+| `doctor` | Run 14 non-mutating project health checks. | [doctor](/docs/cli/doctor) |
+| `provider` | Switch renderer and/or basemap provider, rewriting only adapter files. | [provider](/docs/cli/provider) |
+| `migrate` | Assisted v1 → v2 upgrade. | [migrate](/docs/cli/migrate) |
+
+## Global options
+
+| Option | Description |
+| --- | --- |
+| `--registry <url>` | Override the registry base URL (default `https://mapcn-rn.dev/r`). Accepts an `https://` URL, a local directory, or a `file://` path. |
+| `-h`, `--help` | Show the command help text. |
+
+## Related
+
+[Configuration](/docs/getting-started/configuration) · [Components index](/docs/reference/components-index)

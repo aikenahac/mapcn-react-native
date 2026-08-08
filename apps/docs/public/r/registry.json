@@ -1,0 +1,71 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "homepage": "https://mapcn-rn.dev",
+  "items": [
+    {
+      "name": "core",
+      "type": "registry:ui"
+    },
+    {
+      "name": "map",
+      "type": "registry:ui"
+    },
+    {
+      "name": "marker",
+      "type": "registry:ui"
+    },
+    {
+      "name": "popup",
+      "type": "registry:ui"
+    },
+    {
+      "name": "controls",
+      "type": "registry:ui"
+    },
+    {
+      "name": "route",
+      "type": "registry:ui"
+    },
+    {
+      "name": "geojson",
+      "type": "registry:ui"
+    },
+    {
+      "name": "circle",
+      "type": "registry:ui"
+    },
+    {
+      "name": "polygon",
+      "type": "registry:ui"
+    },
+    {
+      "name": "cluster",
+      "type": "registry:ui"
+    },
+    {
+      "name": "heatmap",
+      "type": "registry:ui"
+    },
+    {
+      "name": "choropleth",
+      "type": "registry:ui"
+    },
+    {
+      "name": "legend",
+      "type": "registry:ui"
+    },
+    {
+      "name": "location",
+      "type": "registry:ui"
+    },
+    {
+      "name": "location-puck",
+      "type": "registry:ui"
+    },
+    {
+      "name": "style-switcher",
+      "type": "registry:ui"
+    }
+  ],
+  "name": "mapcn-rn"
+}

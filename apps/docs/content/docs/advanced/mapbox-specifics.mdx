@@ -1,0 +1,38 @@
+---
+title: Mapbox specifics
+description: Capabilities and escape hatches specific to the Mapbox renderer.
+---
+
+## Package
+
+`@rnmapbox/maps@^10.3.5`, installed and managed by the CLI. Mapbox collapses renderer and basemap provider into one -- `init`/`provider` don't prompt for a separate basemap provider when the renderer is Mapbox.
+
+## Capabilities only Mapbox has
+
+| Capability | Notes |
+| --- | --- |
+| `pulsing` / `scale` / `images` on [Location puck](/docs/location/location-puck) | Native `<LocationPuck>` supports a pulsing animation, custom scale, and custom top/bearing/shadow images. No MapLibre equivalent. |
+| Native feature state (`setFeatureState`/`getFeatureState`) | Not used by mapcn's own components -- selection is implemented via filter expressions on both renderers so there's no capability gap in mapcn's public API, but it remains available as a raw escape hatch. |
+| `querySourceFeatures` | Mapbox-only native query method, available via the raw `mapRef`. |
+| Globe projection (`projection="globe"`) | A Mapbox-only `MapView` prop, reachable via the `mapbox` escape-hatch prop bag on `Map`. |
+
+## Two required tokens
+
+| Token | Type | Where it's used |
+| --- | --- | --- |
+| `EXPO_PUBLIC_MAPBOX_TOKEN` | Public runtime token | Read by the app at runtime to authenticate style/tile requests. |
+| `MAPBOX_DOWNLOADS_TOKEN` | Build-time secret | Required by the Android build to download the Mapbox SDK. Never give this an `EXPO_PUBLIC_` prefix. |
+
+`doctor` warns if `MAPBOX_DOWNLOADS_TOKEN` isn't set when the renderer is Mapbox.
+
+## Expo plugin
+
+```json
+{ "expo": { "plugins": ["@rnmapbox/maps"] } }
+```
+
+Cannot coexist with `@maplibre/maplibre-react-native` in the same `app.json`.
+
+## Related
+
+[Renderers & providers](/docs/getting-started/renderers-and-providers) · [MapLibre specifics](/docs/advanced/maplibre-specifics) · [Renderer compatibility matrix](/docs/reference/renderer-compatibility-matrix)

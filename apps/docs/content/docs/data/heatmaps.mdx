@@ -1,0 +1,64 @@
+---
+title: Heatmaps
+description: A high-level heatmap primitive -- 5 concepts instead of raw heatmap-* paint properties, with common footguns handled automatically.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add heatmap" />
+
+```ts
+import { MapHeatmap } from "@/components/ui/map-heatmap";
+```
+
+## Overview
+
+`MapHeatmap` exposes five concepts -- weight, radius, intensity, opacity, and colors -- instead of the raw `heatmap-*` paint properties both renderers share. Two common footguns are handled for you: the transparent density-`0` stop (forgetting it makes the whole heatmap look washed out) is always injected automatically, and property-based `weight` is normalized into `0..1` for you via `weightRange` rather than requiring you to hand-write an `interpolate` expression.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | auto-generated | Source id. |
+| `data` | `GeoJSONInput` | — | Required. |
+| `weight` | `string \| number \| Expression` | — | A property key, constant, or raw expression. |
+| `weightRange` | `[min: number, max: number]` | `[0, 1]` | Normalizes a property key's raw range into `0..1`. Only meaningful when `weight` is a property key. |
+| `radius` | `number \| Array<{ zoom, value }>` | `20` | Constant or zoom-stop array, compiled to `["interpolate", ["linear"], ["zoom"], ...]`. |
+| `intensity` | `number \| Array<{ zoom, value }>` | `1` | Same zoom-stop behavior as `radius`. |
+| `opacity` | `number \| Array<{ zoom, value }>` | `1` | Same zoom-stop behavior as `radius`. |
+| `colors` | `Array<string> \| Array<{ at: number; color: string }>` | 5-color blue→red ramp | A plain color array is spread evenly across density `0..1`; explicit `{ at, color }` stops give full control. |
+| `minZoom` / `maxZoom` | `number` | — | Zoom range for the heatmap layer. |
+| `beforeId` | `string` | — | Layer id to insert before. |
+| `heatmapStyle` | `Record<string, unknown>` | — | Raw escape hatch, merged last. |
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapHeatmap } from "@/components/ui/map-heatmap";
+
+export function HeatmapExample({ incidents }: { incidents: GeoJSON.FeatureCollection }) {
+  return (
+    <Map defaultViewport={{ center: [-73.98, 40.75], zoom: 11 }} className="flex-1">
+      <MapHeatmap
+        data={incidents}
+        weight="severity"
+        weightRange={[0, 10]}
+        radius={[
+          { zoom: 10, value: 12 },
+          { zoom: 16, value: 30 },
+        ]}
+        colors={["#3b82f6", "#22d3ee", "#facc15", "#f97316", "#ef4444"]}
+      />
+    </Map>
+  );
+}
+```
+
+### Live example
+
+<ExamplePreview slug="heatmap" />
+
+## Related components
+
+[Clustering](/docs/data/clustering) · [Choropleths](/docs/data/choropleths) · [Legend](/docs/data/legend)

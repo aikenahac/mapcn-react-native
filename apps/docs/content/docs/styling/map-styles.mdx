@@ -1,0 +1,37 @@
+---
+title: Map styles
+description: How Map's style prop resolves against the configured basemap provider's style catalogue.
+---
+
+## The `style` prop
+
+`Map`'s `style` prop accepts a named provider style id (`"streets"`, `"dark"`, ...), an explicit URL or style spec object, or a light/dark pair of either:
+
+```tsx
+<Map style="streets" />
+<Map style={{ light: "light", dark: "dark" }} />
+<Map style="https://api.maptiler.com/maps/streets-v2/style.json?key=..." />
+```
+
+When `style` is omitted, `Map` resolves the provider's `defaultStyle` for the active color scheme (`useColorScheme()`, or the `colorScheme` prop override).
+
+## Provider style catalogues
+
+Each basemap provider (`lib/mapcn/provider.ts`) ships a fixed set of named styles:
+
+| Provider | Renderer | Styles |
+| --- | --- | --- |
+| CARTO | MapLibre | `light`, `dark`, `streets` |
+| MapTiler | MapLibre | `streets`, `light`, `dark`, `satellite`, `hybrid`, `outdoors`, `topo` |
+| Custom | MapLibre | Whatever `init` configured for your project |
+| Mapbox | Mapbox | `streets`, `light`, `dark`, `satellite`, `satelliteStreets`, `outdoors`, `standard` |
+
+MapTiler style URLs are resolved lazily, reading `EXPO_PUBLIC_MAPTILER_API_KEY` at call time (not at module load) -- a missing key throws a clear, actionable error naming the exact style that needs it, rather than silently rendering a blank map. Mapbox reads `EXPO_PUBLIC_MAPBOX_TOKEN` the same way.
+
+## Switching styles at runtime
+
+`useMap().setStyle(styleId)` switches the active style by id -- it's just state `Map` owns directly (there's no native "change style" ref call; `Map` re-renders with a different resolved style URL). [`MapStyleSwitcher`](/docs/styling/style-switcher) is the ready-made UI for this.
+
+## Related components
+
+[Style switcher](/docs/styling/style-switcher) · [Renderers & providers](/docs/getting-started/renderers-and-providers) · [Map](/docs/core/map)

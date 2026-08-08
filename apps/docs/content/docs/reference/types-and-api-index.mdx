@@ -1,0 +1,38 @@
+---
+title: Types & API index
+description: Where every shared type and utility function lives, at a glance.
+---
+
+All of the following ship as part of the `core` registry component (`lib/mapcn/*.ts` and `components/ui/map-types.ts`).
+
+## `lib/mapcn/types.ts`
+
+`Coordinate`, `Bounds`, `MapRenderer`, `MapViewport`, `PartialViewport`, `EdgePadding`, `MapCameraAnimation`, `ScreenPoint`, `MapFeaturePressEvent`, `GeoJSONInput`, `Expression`, `StyleValue<T>`, `PointStyle`, `LineStyle`, `FillStyle`, `TextStyle`, `ColorScheme`, `OrnamentPosition`, `MapLegendData`.
+
+## `lib/mapcn/geo.ts`
+
+`circlePolygon(center, radiusMeters, steps?, properties?)`, `destinationPoint(origin, distanceMeters, bearingDegrees)`, `distance(a, b)`, `coordinateEquals(a, b, epsilon?)`, `viewportEquals(a, partial, epsilon?)`, `stepsForRadius(radiusMeters, requested?)`, `toMeters(distance, unit?)`, `bboxOf(input)` / `boundsOf` (alias), `precomputeValues(data, compute, property)`.
+
+## `lib/mapcn/scale.ts`
+
+`ChoroplethScale` (discriminated union: `quantize`/`quantile`/`threshold`/`linear`), `computeScale(scale, data, property)`, `buildStepExpression(property, computed, missingColor?)`, `buildInterpolateExpression(property, colors, domain, missingColor?)`, `buildChoroplethLegend(scale, computed, options?)`, `buildHeatmapLegend(colors, domain, options?)`, `buildCategoricalLegend(entries)`.
+
+## `lib/mapcn/colors.ts`
+
+Color ramp sampling utilities (`sampleRamp` and friends) used internally by the scale builders above.
+
+## `lib/mapcn/style.ts`
+
+`circlePaintFrom`, `linePaintFrom`, `fillPaintFrom` (style-object builders shared verbatim across renderers), `geometryTypeFilter`, `POINT_GEOMETRY_FILTER` / `LINE_GEOMETRY_FILTER` / `POLYGON_GEOMETRY_FILTER`, `combineFilters`, `selectionFilter(idProperty, id)`, `ClusterStep`, `clusterStepExpression`.
+
+## `lib/mapcn/provider.ts`
+
+`MapProviderId`, `MapProviderDefinition`, `MapStyleDefinition`, `PROVIDERS` (the full catalogue), `providersForRenderer(renderer)`, `resolveStyleUrl(provider, styleId, apiKey?)`.
+
+## `components/ui/map-types.ts`
+
+`MapProps`, `MapInstance`, `MapInstanceMethods`, `RendererCapabilities`, `MapStyleSource`. This is the single file both renderers' `Map` implementations import their prop and instance types from -- API parity between renderers is enforced by the type system, not just convention.
+
+## Related
+
+[Components index](/docs/reference/components-index) · [Renderer compatibility matrix](/docs/reference/renderer-compatibility-matrix)

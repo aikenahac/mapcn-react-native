@@ -1,0 +1,47 @@
+---
+title: Custom layers & expressions
+description: Layer style objects and style-spec expressions are shared verbatim across both renderers -- no translation layer needed.
+---
+
+## Shared style keys
+
+Both MapLibre and Mapbox React Native bindings use the same camelCased paint/layout property names (`lineColor`, `fillOpacity`, `circleRadius`, `heatmapWeight`, ...) and the same expression grammar. This means a raw layer style object written for one renderer works unmodified on the other -- mapcn's style helpers (`circlePaintFrom`, `linePaintFrom`, `fillPaintFrom` in `lib/mapcn/style.ts`) produce these shared-shape objects directly, with no per-renderer branching.
+
+## Expressions
+
+`Expression` (`lib/mapcn/types.ts`) is kept intentionally loose (`Array<any>`) rather than modeling the full style-spec grammar -- both renderers already implement and validate it, so mapcn doesn't re-implement that validation.
+
+```ts
+// Property-driven color
+{ color: ["get", "category"] }
+
+// Zoom-stop interpolation
+["interpolate", ["linear"], ["zoom"], 10, 12, 16, 30]
+
+// Discrete steps (what ClusterStep / choropleth scales compile to)
+["step", ["get", "point_count"], "#4285F4", 100, "#F4B400", 750, "#DB4437"]
+```
+
+`StyleValue<T>` (`T | Expression`) is the type most style props use, so any point/line/fill/text style field can be either a constant or an expression.
+
+## Adding a raw layer
+
+Use `MapSource`/`MapLayer` directly (the same primitives `MapGeoJSON`/`MapRoute`/`MapClusterLayer` are built on) for anything mapcn's higher-level components don't cover:
+
+```tsx
+import { MapLayer, MapSource } from "@/components/ui/map-renderer";
+
+<MapSource id="custom" data={geojson}>
+  <MapLayer id="custom-fill" type="fill" style={{ fillColor: ["get", "color"], fillOpacity: 0.4 }} />
+</MapSource>;
+```
+
+`MapLayer`'s `type` covers the unified layer surface: `"fill" | "line" | "circle" | "symbol" | "heatmap"`.
+
+## Live example
+
+<ExamplePreview slug="custom-layer" />
+
+## Related
+
+[Raw renderer access](/docs/advanced/raw-renderer-access) · [GeoJSON](/docs/data/geojson) · [Choropleths](/docs/data/choropleths)

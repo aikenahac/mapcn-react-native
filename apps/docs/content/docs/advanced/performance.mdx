@@ -1,0 +1,39 @@
+---
+title: Performance
+description: Guidance for large datasets, viewport event frequency, and controlled-camera rendering.
+---
+
+## Native layers, not React Native views
+
+Every data primitive (`MapGeoJSON`, `MapClusterLayer`, `MapHeatmap`, `MapChoropleth`, `MapCircle`, `MapPolygon`) renders through native map sources and layers. React Native views are used only for genuinely per-item interactive UI: `MapMarker`, `MapPopup`, controls, legend.
+
+**Guideline: past roughly 100 points, use [`MapGeoJSON`](/docs/data/geojson) or [`MapClusterLayer`](/docs/data/clustering), not `MapMarker`.** Native layers stay smooth at 10k+ points; the same count as individual `MapMarker` React Native views will not.
+
+## Memoize your data
+
+Every primitive's `data`/style-expression computation is memoized on its inputs, but that only helps if the *identity* of what you pass in is stable. Recreating a `FeatureCollection` object on every render defeats this:
+
+```tsx
+// Re-creates the object every render -- defeats memoization
+<MapGeoJSON data={{ type: "FeatureCollection", features: [...] }} />
+
+// Stable identity across renders
+const data = useMemo(() => buildFeatures(raw), [raw]);
+<MapGeoJSON data={data} />
+```
+
+## Viewport event frequency
+
+`onViewportChange` is throttled (default 100ms, trailing edge) -- see [Camera & Viewport](/docs/core/camera-and-viewport). Do expensive work (data refetches, heavy re-renders) in `onViewportChangeEnd` instead, which only fires once movement settles.
+
+## Choropleths and heatmaps
+
+Choropleth domains/breaks are computed once in JS and memoized on `[data, value, scale]` -- all per-feature styling then happens natively via `["step"]`/`["interpolate"]`, with zero JavaScript per frame. Heatmap radius is the dominant cost at high point density; prefer zoom-stop radii (an array of `{ zoom, value }`) over one large constant, and set `maxZoom` to cut off rendering above a useful zoom level.
+
+## Location tracking battery cost
+
+`useLocationTracking`'s default `accuracy: "balanced"` is appropriate for most in-map use. Reserve `"high"`/`"highest"` for active navigation-style features, set a `distanceInterval` to reduce update frequency, and call `stop()` (or unmount) when the feature isn't in view. See [Location tracking](/docs/location/location-tracking).
+
+## Related
+
+[Location tracking](/docs/location/location-tracking) · [Clustering](/docs/data/clustering) · [Choropleths](/docs/data/choropleths)

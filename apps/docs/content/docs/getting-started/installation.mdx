@@ -1,0 +1,95 @@
+---
+title: Installation
+description: Initialize mapcn-rn, choose a renderer and basemap provider, configure native builds, and verify the project.
+---
+
+## Requirements
+
+mapcn-rn is built and tested for Expo projects. Bare React Native may work, but the CLI reports it as unverified.
+
+Both supported renderers contain native code. **Expo Go is not supported.** Use an Expo development build, run prebuild after changing the renderer or Expo plugin, and rebuild the native client.
+
+## Initialize the project
+
+Run the command from your Expo project root:
+
+<PackageManagerCodeBlock command="npx mapcn-rn init" />
+
+The interactive setup detects your package manager, `src` layout, aliases, and whether you use Uniwind, NativeWind, or neither. It then:
+
+1. asks for a renderer and compatible basemap provider;
+2. writes schema-version-2 `mapcn.json`;
+3. installs the renderer package;
+4. adds its Expo config plugin when `app.json` is available;
+5. adds a required public token placeholder to `.env.example`;
+6. installs the `map` component and its transitive `core` dependency.
+
+For a non-interactive setup, provide the choices explicitly:
+
+<PackageManagerCodeBlock command="npx mapcn-rn init --renderer maplibre --provider maptiler --yes" />
+
+Valid pairs are MapLibre with `carto`, `maptiler`, or `custom`, and Mapbox with `mapbox`.
+
+## Provider setup
+
+| Provider | Renderer dependency | Expo plugin | Runtime environment | Build environment |
+| --- | --- | --- | --- | --- |
+| CARTO | `@maplibre/maplibre-react-native@^11.3.6` | `@maplibre/maplibre-react-native` | None | None |
+| MapTiler | `@maplibre/maplibre-react-native@^11.3.6` | `@maplibre/maplibre-react-native` | `EXPO_PUBLIC_MAPTILER_API_KEY` | None |
+| Custom | `@maplibre/maplibre-react-native@^11.3.6` | `@maplibre/maplibre-react-native` | None; provide your own style URL or style object | None |
+| Mapbox | `@rnmapbox/maps@^10.3.5` | `@rnmapbox/maps` | `EXPO_PUBLIC_MAPBOX_TOKEN` | `MAPBOX_DOWNLOADS_TOKEN` |
+
+MapTiler's public key is read when a named MapTiler style is resolved. Mapbox needs a public runtime token and a downloads token available to the native build. Treat `MAPBOX_DOWNLOADS_TOKEN` as a build secret; do not expose it with an `EXPO_PUBLIC_` prefix.
+
+The two renderer packages cannot coexist in one Expo app. The doctor command treats that combination as an error.
+
+## Native configuration
+
+If the CLI can read `app.json`, it adds the selected renderer plugin to `expo.plugins`. With a dynamic Expo config, add the plugin yourself:
+
+```json title="app.json"
+{
+  "expo": {
+    "plugins": ["@maplibre/maplibre-react-native"]
+  }
+}
+```
+
+Use `@rnmapbox/maps` instead when the selected renderer is Mapbox.
+
+The base `map` component requests no location permissions. Components that use location—`location`, `location-puck`, and locate behavior—require foreground permissions:
+
+```json title="app.json"
+{
+  "expo": {
+    "ios": {
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Show your location on the map."
+      }
+    },
+    "android": {
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    }
+  }
+}
+```
+
+## Build the native client
+
+After initialization or any renderer switch:
+
+<PackageManagerCodeBlock command="npx expo prebuild --clean" />
+
+Then rebuild your development client for iOS or Android. A JavaScript-only reload cannot add or change the native renderer.
+
+## Add components
+
+Install one or more components by registry name. Transitive registry dependencies and npm dependencies are resolved automatically.
+
+<PackageManagerCodeBlock command="npx mapcn-rn add marker popup controls route" />
+
+## Verify the setup
+
+<PackageManagerCodeBlock command="npx mapcn-rn doctor" />
+
+`doctor` checks the project type, package manager, `mapcn.json`, renderer package, conflicting renderer packages, Expo plugin, Mapbox downloads token, provider token, location permissions when applicable, and installed component state. Use `--verbose` to include passing checks or `--json` for machine-readable output.

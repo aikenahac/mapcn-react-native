@@ -1,0 +1,34 @@
+---
+title: list & diff
+description: Inspect the registry and installed component state.
+---
+
+## `list`
+
+```bash
+npx mapcn-rn list
+```
+
+Prints every registry component with a checkmark next to the ones installed in the current project, each component's supported renderers, and the current project's renderer/provider (or a prompt to run `init` if `mapcn.json` is missing).
+
+## `diff`
+
+```bash
+npx mapcn-rn diff [component]
+```
+
+Compares installed files against their recorded hash in `mapcn.json`:
+
+- `=` unmodified since install
+- `~` modified since install
+- `✗` missing (deleted after install)
+
+Without an argument, `diff` reports on every installed component. Pass a component name to check just that one -- an error is thrown if it isn't installed.
+
+<PackageManagerCodeBlock command="npx mapcn-rn diff map" />
+
+Use `diff` before running `add --overwrite` or `provider` to see exactly what local customizations would be affected.
+
+## Related
+
+[add](/docs/cli/add) · [Configuration](/docs/getting-started/configuration)

@@ -1,0 +1,62 @@
+---
+title: Routes
+description: MapRoute renders a LineString as a styled route/path, built on the same MapSource/MapLayer primitives MapGeoJSON uses.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add route" />
+
+```ts
+import { MapRoute } from "@/components/ui/map-route";
+```
+
+## Overview
+
+`MapRoute` is a thin, focused wrapper around `MapSource`/`MapLayer` for the common "draw a path" case -- a line of coordinates styled with color, width, opacity, and an optional dash pattern. It renders `null` for fewer than two coordinates rather than erroring.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `coordinates` | `Array<[number, number]>` | — | Required. Ordered `[longitude, latitude]` pairs. |
+| `color` | `string` | `"#4285F4"` | |
+| `width` | `number` | `3` | |
+| `opacity` | `number` | `0.8` | |
+| `dashArray` | `[number, number]` | — | Dash/gap pixel lengths. Omit for a solid line. |
+| `beforeId` | `string` | — | Layer id to insert before. |
+
+For richer routing needs -- multiple route alternatives, turn-by-turn data, live rerouting -- fetch the geometry from a routing provider (e.g. OSRM) and render it with `MapGeoJSON` or `MapRoute` directly; `MapRoute` itself is intentionally a static-styling primitive, not a routing client.
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapRoute } from "@/components/ui/map-route";
+
+const path: Array<[number, number]> = [
+  [-122.4194, 37.7749],
+  [-122.42, 37.78],
+  [-122.41, 37.785],
+];
+
+export function RouteExample() {
+  return (
+    <Map defaultViewport={{ center: [-122.415, 37.78], zoom: 14 }} className="flex-1">
+      <MapRoute coordinates={path} color="#4285F4" width={4} />
+    </Map>
+  );
+}
+```
+
+### Live examples
+
+<ExamplePreview slug="route" />
+
+Fetching real driving directions from an external routing API (OSRM):
+
+<ExamplePreview slug="osrm-route" />
+
+## Related components
+
+[GeoJSON](/docs/data/geojson) · [Markers](/docs/core/markers)

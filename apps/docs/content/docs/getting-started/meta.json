@@ -1,0 +1,12 @@
+{
+  "title": "Getting Started",
+  "defaultOpen": true,
+  "pages": [
+    "index",
+    "installation",
+    "upgrade-to-v2",
+    "renderers-and-providers",
+    "configuration",
+    "theming"
+  ]
+}

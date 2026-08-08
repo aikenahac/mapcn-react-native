@@ -1,0 +1,80 @@
+---
+title: GeoJSON
+description: The foundational GeoJSON rendering primitive -- one native source, up to three geometry-filtered layers, selection highlighting, and feature press events.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add geojson" />
+
+```ts
+import { MapGeoJSON } from "@/components/ui/map-geojson";
+```
+
+## Overview
+
+`MapGeoJSON` renders any GeoJSON input (a `Feature`, `FeatureCollection`, raw `Geometry`, or a GeoJSON string) through one native source and up to three base layers -- fill, line, and point (circle) -- each automatically filtered by geometry type, so a mixed `FeatureCollection` renders correctly with no per-type wiring on your part. `MapClusterLayer`, `MapHeatmap`, `MapChoropleth`, `MapCircle`, and `MapPolygon` are all built on this component or the same underlying `MapSource`/`MapLayer` primitives.
+
+Every data primitive in mapcn renders through native map layers rather than React Native views -- this is what lets `MapGeoJSON` stay correct with tens of thousands of features where `MapMarker` would not.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | auto-generated | Source id, useful for referencing from sibling raw layers. |
+| `data` | `GeoJSONInput` | — | Required. `Feature \| FeatureCollection \| Geometry \| string`. |
+| `point` | `PointStyle \| false` | `{ color: "#4285F4", radius: 5, strokeColor: "#fff", strokeWidth: 1.5 }` | Point-geometry styling. `false` disables the layer. |
+| `line` | `LineStyle \| false` | `{ color: "#4285F4", width: 3 }` | Line-geometry styling. |
+| `fill` | `FillStyle \| false` | `{ color: "#4285F4", opacity: 0.3, outlineColor: "#4285F4" }` | Polygon-geometry styling. |
+| `selected` | `{ point?, line?, fill? }` | — | Styles applied to the selected feature only, rendered as an extra highlight layer per geometry type. |
+| `selectedId` | `string \| number \| null` | — | The feature id to highlight, compared against `idProperty`. |
+| `idProperty` | `string` | `"id"` | Feature property compared against `selectedId`. |
+| `filter` | `Expression` | — | A style-spec filter expression applied to every base layer. |
+| `minZoom` / `maxZoom` | `number` | — | Zoom range for the base layers. |
+| `beforeId` | `string` | — | Layer id to insert these layers before. |
+| `onFeaturePress` | `(event: MapFeaturePressEvent) => void` | — | Fires with the pressed coordinate, screen point, and features under it. |
+| `hitbox` | `{ width: number; height: number }` | — | Enlarges the press hit area. |
+| `pointStyle` / `lineStyle` / `fillStyle` | `Record<string, unknown>` | — | Raw style escape hatches, merged last over the computed style. |
+| `children` | `ReactNode` | — | Extra raw layers rendered against the same source. |
+
+Selection is implemented via a compiled filter expression (`["==", ["get", idProperty], selectedId]`) on a dedicated highlight layer, not native feature state -- Mapbox has `setFeatureState`, MapLibre RN does not, so mapcn uses the mechanism both renderers share.
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapGeoJSON } from "@/components/ui/map-geojson";
+
+const parks: GeoJSON.FeatureCollection = {
+  type: "FeatureCollection",
+  features: [
+    { type: "Feature", properties: { id: "gg" }, geometry: { type: "Polygon", coordinates: [[[-122.51, 37.77], [-122.45, 37.77], [-122.45, 37.77], [-122.51, 37.77]]] } },
+  ],
+};
+
+export function GeoJSONExample() {
+  return (
+    <Map defaultViewport={{ center: [-122.48, 37.77], zoom: 13 }} className="flex-1">
+      <MapGeoJSON
+        data={parks}
+        fill={{ color: "#22c55e", opacity: 0.4 }}
+        line={{ color: "#16a34a", width: 2 }}
+        point={false}
+        selectedId="gg"
+        selected={{ fill: { color: "#22c55e", opacity: 0.7 } }}
+        onFeaturePress={(e) => console.log(e.features)}
+      />
+    </Map>
+  );
+}
+```
+
+### Live example
+
+Efficient marker rendering with data-driven styling, built directly on `GeoJSONSource`/`Layer`:
+
+<ExamplePreview slug="layer-markers" />
+
+## Related components
+
+[Clustering](/docs/data/clustering) · [Circles](/docs/data/circles) · [Polygons](/docs/data/polygons) · [Choropleths](/docs/data/choropleths) · [Routes](/docs/data/routes)

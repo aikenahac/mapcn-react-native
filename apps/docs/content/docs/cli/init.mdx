@@ -1,0 +1,38 @@
+---
+title: init
+description: Sets up a fresh project -- renderer, basemap provider, mapcn.json, Expo config, and the base map component.
+---
+
+```bash
+npx mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom|mapbox] [--yes]
+```
+
+## What it does
+
+1. Detects the project (Expo vs. bare RN, `src` layout) and warns if `expo` isn't a dependency.
+2. Prompts for a renderer, then a compatible basemap provider (skipped for Mapbox, which has no separate provider prompt), unless `--renderer`/`--provider` are passed.
+3. Detects the package manager (lockfile-based), styling system (Uniwind/NativeWind/none), and path aliases (`components.json` if present, otherwise mapcn's defaults).
+4. Writes `mapcn.json` (schema version 2).
+5. Installs the renderer's npm package with the detected package manager.
+6. Adds the renderer's Expo config plugin to `app.json`, if readable, and warns if both `@maplibre/maplibre-react-native` and `@rnmapbox/maps` end up listed (they cannot coexist in one Expo app).
+7. Scaffolds a placeholder for the provider's required public env key in `.env.example`, if the provider needs one.
+8. Installs the `map` component (and its `core` dependency) via the same logic as `add`.
+
+## Flags
+
+| Flag | Description |
+| --- | --- |
+| `--renderer <maplibre\|mapbox>` | Skip the renderer prompt. |
+| `--provider <maptiler\|carto\|custom\|mapbox>` | Skip the provider prompt. |
+| `--yes` / `-y` | Skip all confirmation prompts. |
+| `--registry <url>` | Override the registry base URL (default `https://mapcn-rn.dev/r`). Point this at a local directory or `file://` path for local development. |
+
+If `mapcn.json` already exists, `init` asks for confirmation before re-running (skipped with `--yes`).
+
+## Example
+
+<PackageManagerCodeBlock command="npx mapcn-rn init --renderer maplibre --provider maptiler --yes" />
+
+## Related
+
+[add](/docs/cli/add) · [doctor](/docs/cli/doctor) · [Installation](/docs/getting-started/installation) · [Configuration](/docs/getting-started/configuration)

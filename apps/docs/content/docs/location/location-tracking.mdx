@@ -1,0 +1,93 @@
+---
+title: Location tracking
+description: useLocationTracking / useCurrentPosition / useLocationPermission, built on expo-location for both renderers.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓ (built on `expo-location`, not a renderer API)
+
+<PackageManagerCodeBlock command="npx mapcn-rn add location" />
+
+```ts
+import { useLocationTracking, useCurrentPosition, useLocationPermission } from "@/hooks/use-location-tracking";
+```
+
+## Overview
+
+Location hooks are built on `expo-location` for both renderers, so the same code works regardless of which renderer is configured.
+
+There is no background tracking or geofencing in 2.0 -- `mode` reserves the extension point (only `"foreground"` ships) so adding background support later is additive, not a breaking redesign.
+
+## `useLocationTracking`
+
+```ts
+function useLocationTracking(options?: UseLocationTrackingOptions): UseLocationTrackingResult;
+```
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `mode` | `"foreground"` | `"foreground"` | Reserved for future background support. |
+| `autoStart` | `boolean` | `false` | Starts tracking on mount instead of requiring an explicit `start()` call. |
+| `requestPermission` | `boolean` | `true` | Requests foreground permission automatically when starting. |
+| `accuracy` | `"lowest" \| "low" \| "balanced" \| "high" \| "highest"` | `"balanced"` | |
+| `distanceInterval` | `number` | — | Meters between updates. |
+| `timeInterval` | `number` | — | Milliseconds between updates. |
+| `onUpdate` | `(position: MapPosition) => void` | — | |
+| `onError` | `(error: Error) => void` | — | |
+
+Return value:
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `position` | `MapPosition \| null` | Latest reading. |
+| `coordinate` / `heading` / `speed` / `accuracy` / `timestamp` | derived from `position` | Convenience accessors, each `null` until a position arrives. |
+| `status` | `"idle" \| "requesting-permission" \| "denied" \| "starting" \| "tracking" \| "stopped" \| "error"` | |
+| `permission` | `"undetermined" \| "granted" \| "denied"` | |
+| `error` | `Error \| null` | |
+| `start` | `() => Promise<void>` | Idempotent -- guarded against overlapping calls even across re-renders. |
+| `stop` | `() => void` | |
+| `requestPermission` | `() => Promise<boolean>` | |
+
+`MapPosition` is `{ coordinate: [lng, lat]; accuracy; altitude; altitudeAccuracy; heading; speed; timestamp }`.
+
+## `useCurrentPosition`
+
+A one-shot-plus-auto-updating convenience wrapper:
+
+```ts
+function useCurrentPosition(options?: { enabled?: boolean; accuracy?: LocationAccuracy }): MapPosition | undefined;
+```
+
+This is the v2 replacement for v1's `useCurrentPosition` -- it now returns `MapPosition` (`coordinate: [lng, lat]`) rather than a raw `GeolocationPosition` (`coords.longitude`/`coords.latitude`). Update call sites accordingly when migrating.
+
+## `useLocationPermission`
+
+For callers that only need permission state, without ongoing tracking:
+
+```ts
+function useLocationPermission(): { permission: "undetermined" | "granted" | "denied"; request: () => Promise<boolean> };
+```
+
+## Example
+
+```tsx
+import { useLocationTracking } from "@/hooks/use-location-tracking";
+
+export function SpeedReadout() {
+  const { speed, status, start } = useLocationTracking({ autoStart: true, accuracy: "high", distanceInterval: 5 });
+
+  if (status !== "tracking") return <Text>Waiting for location…</Text>;
+  return <Text>{speed ? `${(speed * 3.6).toFixed(1)} km/h` : "Stationary"}</Text>;
+}
+```
+
+### Live example
+
+<ExamplePreview slug="locate-me" />
+
+## Battery guidance
+
+Lower accuracy and a larger `distanceInterval` reduce battery use. `"balanced"` (the default) is appropriate for most in-app map use; reserve `"high"`/`"highest"` for active navigation-style features, and always call `stop()` (or set `autoStart: false`) when the feature isn't actively in view.
+
+## Related components
+
+[Location puck](/docs/location/location-puck) · [Permissions](/docs/location/permissions) · [Controls](/docs/core/controls)

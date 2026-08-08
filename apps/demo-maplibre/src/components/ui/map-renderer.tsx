@@ -1,0 +1,377 @@
+/**
+ * The MapLibre implementation of the renderer adapter boundary (plan §2 D2).
+ *
+ * `map.tsx`, `map-marker.tsx` and `map-location-puck.tsx` are the only other
+ * files that differ between the MapLibre and Mapbox apps -- everything else
+ * (map-geojson, map-cluster-layer, map-heatmap, ...) is written once against
+ * this adapter's normalized surface and materialized into both apps
+ * unchanged.
+ *
+ * This file intentionally does NOT re-export a fully-abstracted `<Map>`
+ * component: `map.tsx` still writes its own JSX against the native
+ * `Map`/`Camera` components below, because the two renderers' props differ
+ * enough (see plan §1.2) that a third abstraction layer would just be
+ * indirection without reducing real duplication. What *is* shared here is
+ * everything that's genuinely renderer-specific but reusable: capability
+ * flags, event normalization, and the camera controller that backs
+ * `useMap()`.
+ */
+import {
+  Camera,
+  GeoJSONSource,
+  Layer,
+  Map,
+  Marker,
+  type CameraRef,
+  type GeoJSONSourceRef,
+  type MapRef,
+  type ViewState,
+  type ViewStateChangeEvent,
+} from "@maplibre/maplibre-react-native";
+import type { Feature } from "geojson";
+import type { NativeSyntheticEvent } from "react-native";
+import { useImperativeHandle, useRef, type ReactElement, type ReactNode, type Ref } from "react";
+import type {
+  Bounds,
+  Coordinate,
+  Expression,
+  GeoJSONInput,
+  MapCameraAnimation,
+  MapFeaturePressEvent,
+  MapRenderer,
+  MapViewport,
+} from "@/lib/mapcn/types";
+import type { MapInstanceMethods, RendererCapabilities } from "@/components/ui/map-types";
+import { bboxOf } from "@/lib/mapcn/geo";
+
+export { Map as NativeMap, Camera as NativeCamera };
+export type { CameraRef as NativeCameraRef, MapRef as NativeMapRef };
+
+/**
+ * Anchors arbitrary RN content at a geographic coordinate using the
+ * renderer's native marker mechanism -- correctness (never drifts during
+ * pan/zoom) over a manually re-projected overlay, which is why `MapPopup`
+ * (plan §7.10) is built on this instead of `useMap().project()` polling.
+ */
+export function MapMarkerAnchor({
+  id,
+  coordinate,
+  children,
+}: {
+  id: string;
+  coordinate: Coordinate;
+  children: ReactElement;
+}) {
+  return (
+    <Marker id={id} lngLat={coordinate} anchor="bottom">
+      {children}
+    </Marker>
+  );
+}
+
+export interface MapSourceProps {
+  id: string;
+  data: GeoJSONInput;
+  children?: ReactNode;
+  cluster?: boolean;
+  clusterRadius?: number;
+  clusterMaxZoom?: number;
+  /** MapLibre only -- see CAPABILITIES.clusterMinPoints. */
+  clusterMinPoints?: number;
+  clusterProperties?: Record<string, unknown>;
+  onPress?: (event: NativeSyntheticEvent<unknown>) => void;
+  hitbox?: { width: number; height: number };
+}
+
+/** Normalized cluster-query surface -- see MapClusterLayer, which is the only consumer of this ref. */
+export interface MapSourceRef {
+  getClusterExpansionZoom(cluster: Feature): Promise<number>;
+  getClusterLeaves(cluster: Feature, limit: number, offset: number): Promise<Array<Feature>>;
+}
+
+/** A GeoJSON data source, normalized across renderers -- the foundation MapRoute/MapGeoJSON/MapClusterLayer build on. */
+export function MapSource({
+  id,
+  data,
+  children,
+  cluster,
+  clusterRadius,
+  clusterMaxZoom,
+  clusterMinPoints,
+  clusterProperties,
+  onPress,
+  hitbox,
+  ref,
+}: MapSourceProps & { ref?: Ref<MapSourceRef> }) {
+  const internalRef = useRef<GeoJSONSourceRef | null>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      async getClusterExpansionZoom(clusterFeature) {
+        const clusterId = clusterFeature.properties?.cluster_id as number | undefined;
+        if (clusterId === undefined) throw new Error("[mapcn] getClusterExpansionZoom() called on a non-cluster feature");
+        return (await internalRef.current?.getClusterExpansionZoom(clusterId)) ?? 0;
+      },
+      async getClusterLeaves(clusterFeature, limit, offset) {
+        const clusterId = clusterFeature.properties?.cluster_id as number | undefined;
+        if (clusterId === undefined) throw new Error("[mapcn] getClusterLeaves() called on a non-cluster feature");
+        return (await internalRef.current?.getClusterLeaves(clusterId, limit, offset)) ?? [];
+      },
+    }),
+    [],
+  );
+
+  return (
+    <GeoJSONSource
+      ref={internalRef}
+      id={id}
+      data={data as never}
+      cluster={cluster}
+      clusterRadius={clusterRadius}
+      clusterMaxZoom={clusterMaxZoom}
+      clusterMinPoints={clusterMinPoints}
+      clusterProperties={clusterProperties as never}
+      onPress={onPress as never}
+      // MapLibre's hitbox is edge padding; Mapbox's is a width/height box.
+      // The shared contract uses Mapbox's simpler shape (plan §2 D3) and
+      // this adapter converts it to symmetric padding.
+      hitbox={hitbox ? { top: hitbox.height / 2, bottom: hitbox.height / 2, left: hitbox.width / 2, right: hitbox.width / 2 } : undefined}
+    >
+      {children}
+    </GeoJSONSource>
+  );
+}
+
+export type MapLayerType = "fill" | "line" | "circle" | "symbol" | "heatmap";
+
+export interface MapLayerProps {
+  id: string;
+  type: MapLayerType;
+  style?: Record<string, unknown>;
+  filter?: Expression;
+  beforeId?: string;
+  minZoom?: number;
+  maxZoom?: number;
+  /**
+   * Injected by GeoJSONSource's automatic source-id cloning
+   * (`cloneReactChildrenWithProps` in @maplibre/maplibre-react-native) --
+   * it targets MapLayer directly since that's the actual JSX child, so this
+   * must be declared and forwarded to `<Layer source={...} />`, or every
+   * layer falls back to the native `MLRNSource.insertReactSubview:`/
+   * `addToMap` fallback that infers `sourceID` from view-mount order --
+   * which races with `MLRNMapView`'s `didFinishLoadingStyle:` on first
+   * mount and throws "Cannot find source with id" until a JS reload masks
+   * it via a stale view being reused.
+   */
+  source?: string;
+}
+
+export function MapLayer({ id, type, style, filter, beforeId, minZoom, maxZoom, source }: MapLayerProps) {
+  return (
+    <Layer
+      id={id}
+      source={source}
+      type={type}
+      style={style as never}
+      filter={filter as never}
+      beforeId={beforeId}
+      minzoom={minZoom}
+      maxzoom={maxZoom}
+    />
+  );
+}
+
+export const RENDERER: MapRenderer = "maplibre";
+
+export const CAPABILITIES: RendererCapabilities = {
+  clusterMinPoints: true,
+  locationPuckPulsing: false,
+  locationPuckScale: false,
+  locationPuckImages: false,
+  locationPuckPress: true,
+  locationPuckCustomChildren: true,
+};
+
+export function normalizeViewport(viewState: ViewState): MapViewport {
+  return {
+    center: viewState.center,
+    zoom: viewState.zoom,
+    bearing: viewState.bearing,
+    pitch: viewState.pitch,
+  };
+}
+
+export function normalizeRegionChangeEvent(
+  event: NativeSyntheticEvent<ViewStateChangeEvent>,
+): { viewport: MapViewport; userInteraction: boolean } {
+  const { animated: _animated, userInteraction, ...viewState } = event.nativeEvent;
+  return { viewport: normalizeViewport(viewState), userInteraction };
+}
+
+interface RawPressEvent {
+  lngLat: Coordinate;
+  point: [number, number];
+  features?: Array<unknown>;
+}
+
+export function normalizeFeaturePress(event: NativeSyntheticEvent<RawPressEvent>): MapFeaturePressEvent {
+  const { lngLat, point, features } = event.nativeEvent;
+  return {
+    coordinate: lngLat,
+    point: { x: point[0], y: point[1] },
+     
+    features: (features as Array<any> | undefined) ?? [],
+  };
+}
+
+function mapEasing(easing: MapCameraAnimation["easing"]): "linear" | "ease" | "fly" | undefined {
+  return easing;
+}
+
+/**
+ * Builds the camera-facing subset of `MapInstance` on top of MapLibre's
+ * native `MapRef`/`CameraRef`. `map.tsx` combines this with `isLoaded`,
+ * `renderer` and the raw refs to produce the full instance handed out by
+ * `useMap()`.
+ */
+export function createCameraController(
+  mapRef: { current: MapRef | null },
+  cameraRef: { current: CameraRef | null },
+): MapInstanceMethods {
+  return {
+    async getViewport() {
+      const viewState = await mapRef.current?.getViewState();
+      if (!viewState) throw new Error("[mapcn] getViewport() called before the map finished loading");
+      return normalizeViewport(viewState);
+    },
+
+    setViewport(viewport, animation) {
+      const duration = animation?.duration ?? 0;
+      const options = {
+        center: viewport.center,
+        zoom: viewport.zoom,
+        bearing: viewport.bearing,
+        pitch: viewport.pitch,
+        padding: animation?.padding,
+      };
+      if (duration > 0 && viewport.center) {
+        cameraRef.current?.easeTo({ ...options, center: viewport.center, duration, easing: mapEasing(animation?.easing) });
+      } else if (viewport.center) {
+        cameraRef.current?.jumpTo({ ...options, center: viewport.center });
+      } else {
+        // No center change -- easeTo also accepts a center-less stop via setStop.
+        cameraRef.current?.setStop({ ...options, duration, easing: mapEasing(animation?.easing) });
+      }
+    },
+
+    flyTo(center, options) {
+      cameraRef.current?.flyTo({
+        center,
+        zoom: options?.zoom,
+        duration: options?.duration ?? 1000,
+        easing: mapEasing(options?.easing) ?? "fly",
+        padding: options?.padding,
+      });
+    },
+
+    moveTo(center, options) {
+      const duration = options?.duration ?? 0;
+      if (duration > 0) {
+        cameraRef.current?.easeTo({
+          center,
+          zoom: options?.zoom,
+          duration,
+          easing: mapEasing(options?.easing),
+          padding: options?.padding,
+        });
+      } else {
+        cameraRef.current?.jumpTo({ center, zoom: options?.zoom, padding: options?.padding });
+      }
+    },
+
+    zoomTo(zoom, options) {
+      cameraRef.current?.zoomTo(zoom, {
+        duration: options?.duration,
+        easing: mapEasing(options?.easing),
+        padding: options?.padding,
+      });
+    },
+
+    async zoomBy(delta, options) {
+      const currentZoom = (await mapRef.current?.getZoom()) ?? 0;
+      cameraRef.current?.zoomTo(currentZoom + delta, {
+        duration: options?.duration,
+        easing: mapEasing(options?.easing),
+        padding: options?.padding,
+      });
+    },
+
+    fitBounds(bounds, options) {
+      cameraRef.current?.fitBounds(bounds, {
+        duration: options?.duration,
+        easing: mapEasing(options?.easing),
+        padding: options?.padding,
+      });
+    },
+
+    fitFeatures(data, options) {
+      const bbox = bboxOf(data);
+      cameraRef.current?.fitBounds(bbox, {
+        duration: options?.duration,
+        easing: mapEasing(options?.easing),
+        padding: options?.padding,
+      });
+    },
+
+    resetNorth(options) {
+      // setStop (not easeTo) accepts a center-less stop.
+      cameraRef.current?.setStop({
+        bearing: 0,
+        duration: options?.duration ?? 300,
+        easing: mapEasing(options?.easing),
+      });
+    },
+
+    async project(coordinate) {
+      const point = await mapRef.current?.project(coordinate);
+      if (!point) throw new Error("[mapcn] project() called before the map finished loading");
+      return { x: point[0], y: point[1] };
+    },
+
+    async unproject(point) {
+      const coordinate = await mapRef.current?.unproject([point.x, point.y]);
+      if (!coordinate) throw new Error("[mapcn] unproject() called before the map finished loading");
+      return coordinate;
+    },
+
+    async queryFeatures(options) {
+      // `Expression`/filter is intentionally loosely typed in the shared
+      // contract (plan §7.0) to match both renderers' style-spec grammar;
+      // MapLibre's own FilterSpecification union is far stricter, so the
+      // cast happens right at this adapter boundary, not in the public API.
+      const queryOptions = {
+        layers: options?.layers,
+        filter: options?.filter as never,
+      };
+
+      if (options?.point) {
+        return (
+          (await mapRef.current?.queryRenderedFeatures([options.point.x, options.point.y], queryOptions)) ?? []
+        );
+      }
+
+      if (options?.bounds) {
+        // MapRef.queryRenderedFeatures takes *pixel* bounds, not geographic
+        // ones, so the geographic Bounds get projected to screen space first.
+        const [west, south, east, north] = options.bounds as Bounds;
+        const topLeft = await mapRef.current?.project([west, north]);
+        const bottomRight = await mapRef.current?.project([east, south]);
+        if (!topLeft || !bottomRight) return [];
+        return (await mapRef.current?.queryRenderedFeatures([topLeft, bottomRight], queryOptions)) ?? [];
+      }
+
+      return (await mapRef.current?.queryRenderedFeatures(queryOptions)) ?? [];
+    },
+  };
+}

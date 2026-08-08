@@ -1,69 +1,56 @@
 <div align="center">
   <img src="https://github.com/aikenahac/mapcn-react-native-docs/blob/master/public/banner.png?raw=true" alt="mapcn banner" />
 
-  <h1>mapcn-react-native</h1>
-  <p><strong>Beautiful maps, made simple.</strong></p>
+  <h1>mapcn-rn</h1>
+  <p><strong>shadcn-style, copy-owned spatial UI primitives for React Native.</strong></p>
 
   <p>
-    Free & open source map components. Zero config, one command setup.<br/>
-    Built on <a href="https://maplibre.org/maplibre-react-native/">MapLibre React Native</a>, styled with <a href="https://uniwind.dev/">Uniwind</a>, works seamlessly with <a href="https://reactnativereusables.com/">React Native Reusables</a>.
-  </p>
-
-  <p>
-    <a href="https://mapcn-rn.aiken.si/">Get Started</a> •
-    <a href="https://mapcn-rn.aiken.si/docs/installation">Installation</a> •
-    <a href="https://mapcn-rn.aiken.si/docs/basic-map">Examples</a>
+    <a href="https://mapcn-rn.dev/">Docs</a> •
+    <a href="https://mapcn-rn.dev/docs/installation">Installation</a>
   </p>
 </div>
 
 ---
 
-## Features
+## Layout
 
-- 🎨 **Theme-aware** — Automatically adapts to light/dark mode
-- 🎯 **Zero config** — Works out of the box with sensible defaults
-- 📦 **shadcn/ui compatible** — Uses the same patterns and styling conventions
-- 🗺️ **MapLibre GL powered** — Full access to MapLibre's powerful mapping capabilities
-- 🧩 **Composable** — Build complex map UIs with simple, declarative components
-- 📍 **Markers & Popups** — Rich marker system with popups, tooltips, and labels
-- 🛤️ **Routes** — Draw routes and paths on your maps
-- 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
+```
+apps/
+  demo-maplibre/   Expo app — canonical MapLibre component source + examples
+  demo-mapbox/     Expo app — canonical Mapbox component source + examples
+  docs/            Next.js docs site (mapcn-rn.dev), serves the component registry
+packages/
+  cli/             the `mapcn-rn` CLI (npx mapcn-rn ...)
+  shared/          renderer-independent source: types, geo/scale/color utils,
+                   high-level components — materialized into both demo apps
+  registry/        registry manifest + sync/check tooling
+```
 
-## Basemap Options
+Component source is edited in `apps/demo-maplibre` and `apps/demo-mapbox` (or
+`packages/shared` for renderer-independent pieces) and synchronized into the
+CLI's registry — see `packages/registry` once the sync tooling lands.
 
-Alternatively use the [mapbox version](https://github.com/aikenahac/mapcn-react-native-mapbox)
+## Development
 
-This project provides two map component options:
+```bash
+pnpm install
+pnpm --filter demo-maplibre start
+pnpm --filter demo-mapbox start
+pnpm --filter docs dev
+pnpm --filter mapcn-rn dev   # CLI, package name "mapcn-rn"
+```
 
-### Option 1: Carto Basemaps (Default)
+`pnpm lint` / `pnpm typecheck` / `pnpm test` run across every workspace
+package. `pnpm registry:sync` / `pnpm registry:check` are not implemented yet.
 
-Import from `@/components/ui/map` to use [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps).
+## Basemap options (current, pre-2.0 API)
 
-- **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
-- **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
+- **MapLibre + CARTO** (default) — `@/components/ui/map` in `apps/demo-maplibre`
+- **MapLibre + MapTiler** — `@/components/ui/map-maptiler` in `apps/demo-maplibre`
+- **Mapbox** — `@/components/ui/map` in `apps/demo-mapbox`
 
-### Option 2: Maptiler (Cheaper Alternative for commercial use)
-
-Import from `@/components/ui/map-maptiler` to use [Maptiler](https://maptiler.com) tiles.
-
-**Setup:**
-
-1. Get a free access token at [https://cloud.maptiler.com/account/keys/](https://cloud.maptiler.com/account/keys/)
-2. Create a `.env` file in the project root:
-   ```env
-   EXPO_PUBLIC_MAPTILER_API_KEY=your_token_here
-   ```
-3. Update your imports:
-   ```tsx
-   import { Map } from "@/components/ui/map-maptiler";
-   ```
-
-**Pricing:**
-
-- Free 100k requests
-- Pricing details: [https://www.maptiler.com/cloud/pricing/](https://www.maptiler.com/cloud/pricing/)
-
-Both components have identical APIs and props. Choose based on your licensing and budget needs.
+2.0 replaces the per-provider file fork with a single `Map` component
+configured by a renderer + basemap-provider choice at `init` time.
 
 ## Contributing
 

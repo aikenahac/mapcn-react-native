@@ -1,0 +1,58 @@
+---
+title: Circles
+description: An intent-based circle/radius primitive using real-world units and a geodesically-accurate polygon, not a pixel-radius circle layer.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add circle" />
+
+```ts
+import { MapCircle } from "@/components/ui/map-circle";
+```
+
+## Overview
+
+`MapCircle` is for search radii, delivery zones, geofence previews, and accuracy circles -- anything where the radius needs to mean an actual distance on the ground. It generates a real geodesic polygon via `circlePolygon()` (`lib/mapcn/geo.ts`) rather than using a native `circle` layer, whose `circleRadius` is in **screen pixels** and therefore does not represent a true geographic radius -- it would look right at one zoom level and wrong at every other.
+
+Polygon resolution (`steps`) scales automatically with radius: 64 points below 100km, 128 above, so large circles stay smooth without over-allocating points for small ones. Circles crossing the antimeridian, and distortion near the poles, are inherent to any planar rendering of a geodesic circle and are documented rather than "fixed."
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | auto-generated | Source id. |
+| `center` | `Coordinate` | — | Required. |
+| `radius` | `number` | — | Required. Real-world radius, in `units`. |
+| `units` | `"meters" \| "kilometers" \| "miles" \| "feet"` | `"meters"` | |
+| `steps` | `number` | auto (64, or 128 above 100km) | Polygon resolution override. |
+| `fill` | `FillStyle \| false` | `{ color: "#4285F4", opacity: 0.2 }` | |
+| `stroke` | `LineStyle \| false` | `{ color: "#4285F4", width: 2 }` | |
+| `selected` | `boolean` | `false` | Switches to `selectedStyle` when true. |
+| `selectedStyle` | `{ fill?: FillStyle; stroke?: LineStyle }` | — | |
+| `onPress` | `(event: MapFeaturePressEvent) => void` | — | |
+| `properties` | `GeoJsonProperties` | — | Extra properties on the generated feature. |
+| `beforeId` | `string` | — | Layer id to insert before. |
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapCircle } from "@/components/ui/map-circle";
+
+export function DeliveryRadius() {
+  return (
+    <Map defaultViewport={{ center: [-122.4194, 37.7749], zoom: 12 }} className="flex-1">
+      <MapCircle center={[-122.4194, 37.7749]} radius={5} units="kilometers" fill={{ color: "#f97316", opacity: 0.15 }} stroke={{ color: "#f97316", width: 2 }} />
+    </Map>
+  );
+}
+```
+
+### Live example
+
+<ExamplePreview slug="circle" />
+
+## Related components
+
+[Polygons](/docs/data/polygons) · [GeoJSON](/docs/data/geojson)

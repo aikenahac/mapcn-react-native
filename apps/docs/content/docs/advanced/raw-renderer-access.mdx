@@ -1,0 +1,49 @@
+---
+title: Raw renderer access
+description: Escape hatches for reaching the underlying MapLibre or Mapbox API directly, for the cases mapcn's normalized API doesn't cover.
+---
+
+mapcn deliberately keeps every escape hatch documented rather than hiding raw access behind an unofficial workaround.
+
+## `useMap()`'s raw refs
+
+```ts
+const map = useMap();
+map.renderer;  // "maplibre" | "mapbox" -- branch on this before touching the refs below
+map.mapRef;    // RefObject<any> -- the native map component instance
+map.cameraRef; // RefObject<any> -- the native camera component instance
+```
+
+The types differ per renderer, so always check `map.renderer` before calling renderer-specific methods on either ref.
+
+## Raw children
+
+`<Map>{children}</Map>` still renders arbitrary raw renderer children -- native `Marker`/`MarkerView`, `GeoJSONSource`/`ShapeSource`, `Layer`/`*Layer`, anything the underlying library exports. mapcn's own components (`MapGeoJSON`, `MapClusterLayer`, ...) are just structured wrappers around the same primitives; nothing prevents mixing raw layers alongside them.
+
+## Raw style escape hatches
+
+Every data primitive accepts a raw style object merged **last** over its computed style:
+
+```tsx
+<MapGeoJSON data={data} fill={{ color: "#4285F4" }} fillStyle={{ fillPattern: "hatch" }} />
+```
+
+`pointStyle`/`lineStyle`/`fillStyle` on `MapGeoJSON`, `clusterStyle`/`countStyle`/`pointStyle` on `MapClusterLayer`, `heatmapStyle` on `MapHeatmap`, `fillStyle`/`borderStyle` on `MapChoropleth` -- all follow the same pattern.
+
+## `Map`'s per-renderer prop bags
+
+```tsx
+<Map maplibre={{ /* passed through to MapLibre-specific internals */ }} mapbox={{ /* passed through to Mapbox-specific internals */ }} />
+```
+
+Loosely typed on purpose -- documented as advanced, not part of the stable cross-renderer contract.
+
+## Live example
+
+Dynamic layer toggling and mixed content -- a route and a set of markers, each independently shown/hidden:
+
+<ExamplePreview slug="advanced-usage" />
+
+## Related
+
+[MapLibre specifics](/docs/advanced/maplibre-specifics) · [Mapbox specifics](/docs/advanced/mapbox-specifics) · [Custom layers & expressions](/docs/advanced/custom-layers-and-expressions)

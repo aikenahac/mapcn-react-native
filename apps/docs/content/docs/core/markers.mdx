@@ -1,0 +1,71 @@
+---
+title: Markers
+description: MapMarker, MarkerContent, and MarkerLabel -- native-anchored markers with custom content and text labels.
+---
+
+**Renderer support:** MapLibre ✓ (⚠ `allowOverlap` is a documented no-op) &nbsp;·&nbsp; Mapbox ✓
+
+<PackageManagerCodeBlock command="npx mapcn-rn add marker" />
+
+```ts
+import { MapMarker, MarkerContent, MarkerLabel } from "@/components/ui/map-marker";
+```
+
+## Overview
+
+`MapMarker` is one of the four renderer-specific files (along with `map.tsx`, `map-renderer.tsx`, and `map-location-puck.tsx`) -- MapLibre's `Marker` takes a string anchor (`"top-left"`, `"center"`, ...) while Mapbox's `MarkerView` takes an `{x, y}` anchor and understands `allowOverlap` natively. mapcn's `MapMarker` normalizes both to the same `{x, y}` prop.
+
+`MapMarker` uses native marker views, which is the right tool up to roughly a hundred markers. Past that, switch to [GeoJSON](/docs/data/geojson) or [Clustering](/docs/data/clustering) -- both render through native map layers instead of one React Native view per point, and stay correct at 10k+ points.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `coordinate` | `[number, number]` | — | `[longitude, latitude]`. Mutually exclusive with `longitude`/`latitude`. |
+| `longitude` / `latitude` | `number` | — | Alternative to `coordinate`. |
+| `children` | `ReactNode` | a default dot | Custom marker content. |
+| `label` | `string` | — | Text label rendered via `MarkerLabel`. |
+| `anchor` | `{ x: number; y: number }` | `{ x: 0.5, y: 0.5 }` | Anchor point, `0.0`–`1.0` on each axis. |
+| `allowOverlap` | `boolean` | `false` | Honored on Mapbox. **No MapLibre equivalent -- accepted but a documented no-op there**, not a silent drop. |
+| `onPress` | `() => void` | — | Fires on marker press. |
+
+`MarkerContent` (`{ children?, className? }`) wraps custom marker content; without `children` it renders the same default dot as a bare `MapMarker`.
+
+`MarkerLabel` (`{ children, className?, classNameText?, position?: "top" | "bottom" }`, default `position: "top"`) renders a small text label anchored above or below the marker, positioned with a measured layout + transform rather than the web-style `left-1/2`/`translate-x-[-50%]` hack v1 used (which doesn't work correctly in React Native).
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapMarker, MarkerContent, MarkerLabel } from "@/components/ui/map-marker";
+
+const places = [
+  { id: "sf", coordinate: [-122.4194, 37.7749] as const, label: "San Francisco" },
+  { id: "oak", coordinate: [-122.2712, 37.8044] as const, label: "Oakland" },
+];
+
+export function MarkersExample() {
+  return (
+    <Map defaultViewport={{ center: [-122.35, 37.79], zoom: 10 }} className="flex-1">
+      {places.map((place) => (
+        <MapMarker key={place.id} coordinate={place.coordinate} onPress={() => console.log(place.id)}>
+          <MarkerContent />
+          <MarkerLabel>{place.label}</MarkerLabel>
+        </MapMarker>
+      ))}
+    </Map>
+  );
+}
+```
+
+### Live example
+
+<ExamplePreview slug="markers" />
+
+## Renderer support
+
+`allowOverlap` has no MapLibre equivalent and is accepted-but-ignored there, rather than pretending both renderers behave identically. `MAP_LOCATION_PUCK_CAPABILITIES`-style capability constants aren't needed for markers specifically since the gap is a single documented prop, not a whole feature area.
+
+## Related components
+
+[Popups](/docs/core/popups) · [GeoJSON](/docs/data/geojson) · [Clustering](/docs/data/clustering)

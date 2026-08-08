@@ -1,0 +1,84 @@
+---
+title: Configuration
+description: Reference for the schema-version-2 mapcn.json file written and maintained by the mapcn-rn CLI.
+---
+
+`mapcn.json` is the CLI's source of truth for project integration and installed registry state. It is written by `mapcn-rn init` or `mapcn-rn migrate` and updated by commands such as `add` and `provider`.
+
+## Example
+
+```json title="mapcn.json"
+{
+  "$schema": "https://mapcn-rn.dev/schema/mapcn.json",
+  "schemaVersion": 2,
+  "renderer": "maplibre",
+  "provider": {
+    "id": "maptiler",
+    "envKey": "EXPO_PUBLIC_MAPTILER_API_KEY"
+  },
+  "styling": "uniwind",
+  "aliases": {
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks",
+    "components": "@/components"
+  },
+  "components": {
+    "core": {
+      "version": "2.0.0-alpha.0",
+      "files": [
+        {
+          "path": "lib/mapcn/types.ts",
+          "hash": "<content hash written by the CLI>"
+        }
+      ]
+    }
+  }
+}
+```
+
+The hash above is illustrative. Do not copy or edit installed hashes by hand; they are generated from the actual installed files.
+
+## Fields
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `$schema` | `string` | Schema URL. The CLI writes `https://mapcn-rn.dev/schema/mapcn.json`. |
+| `schemaVersion` | `number` | Configuration format version. The current CLI supports version `2` and rejects configs written by a newer schema. |
+| `renderer` | `"maplibre" \| "mapbox"` | Native map renderer installed in the project. |
+| `provider.id` | `"maptiler" \| "carto" \| "custom" \| "mapbox"` | Basemap provider paired with the renderer. |
+| `provider.envKey` | `string \| null` | Public runtime environment key used by the provider. |
+| `styling` | `"uniwind" \| "nativewind" \| "none"` | Styling integration detected from Metro configuration or dependencies. |
+| `aliases.ui` | `string` | Destination alias for generated UI components. |
+| `aliases.lib` | `string` | Destination alias for library utilities. |
+| `aliases.hooks` | `string` | Destination alias for hooks. |
+| `aliases.components` | `string` | General components alias. |
+| `components` | `Record<string, InstalledComponent>` | Installed registry components keyed by component name. |
+
+Each installed component contains:
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `version` | `string` | Registry version installed for the component. |
+| `files` | `Array<{ path: string; hash: string }>` | Project-relative installed file paths and normalized content hashes. |
+
+## Aliases
+
+When `components.json` exists, initialization merges its `aliases` into the mapcn defaults. Otherwise the defaults shown above are used. Targets beginning with `@/` are resolved against the detected source directory: `src` when the project has one, otherwise the project root.
+
+## Provider environment keys
+
+The standard values are:
+
+| Provider | `provider.envKey` |
+| --- | --- |
+| CARTO | `null` |
+| MapTiler | `"EXPO_PUBLIC_MAPTILER_API_KEY"` |
+| Custom | `null` |
+| Mapbox | `"EXPO_PUBLIC_MAPBOX_TOKEN"` |
+
+`MAPBOX_DOWNLOADS_TOKEN` is a separate build-time secret and is not stored in `provider.envKey`.
+
+## Ownership and editing
+
+Treat renderer, provider, and installed component records as CLI-managed state. Use `mapcn-rn provider` to switch providers and `mapcn-rn add` to install or update source. Local edits belong in the copied component files; their recorded hashes let `diff`, `add`, and `doctor` detect drift without preventing customization.

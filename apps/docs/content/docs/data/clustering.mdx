@@ -1,0 +1,77 @@
+---
+title: Clustering
+description: Native point clustering with cluster/count/unclustered-point styling, tap-to-expand, and lazy cluster-leaves queries.
+---
+
+**Renderer support:** MapLibre ✓ &nbsp;·&nbsp; Mapbox ✓ (⚠ `minPoints` has no equivalent on Mapbox's `ShapeSource` -- accepted but ignored)
+
+<PackageManagerCodeBlock command="npx mapcn-rn add cluster" />
+
+```ts
+import { MapClusterLayer } from "@/components/ui/map-cluster-layer";
+```
+
+## Overview
+
+`MapClusterLayer` renders a clustering GeoJSON source plus three layers -- a cluster circle layer, a count-label symbol layer, and an unclustered-point layer -- entirely through native map layers. There is no React Native marker view involved, so this stays correct at 10k+ points; the docs' general guidance is to reach for `MapGeoJSON`/`MapClusterLayer` rather than hundreds of `MapMarker`s.
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | auto-generated | Source id. |
+| `data` | `GeoJSONInput` | — | Required. Point features to cluster. |
+| `radius` | `number` | `50` | Cluster radius, in pixels. |
+| `maxZoom` | `number` | `14` | Zoom above which points stop clustering. |
+| `minPoints` | `number` | — | **MapLibre only.** Minimum points to form a cluster. Warns and is ignored on Mapbox. |
+| `clusterProperties` | `Record<string, unknown>` | — | Native cluster aggregation expressions, e.g. `{ sum: ["+", ["get", "value"]] }`. |
+| `cluster` | `{ color?, radius?, steps?: ClusterStep[], strokeColor?, strokeWidth?, opacity? }` | `{ color: "#4285F4", radius: 18, opacity: 0.85 }` | Cluster-circle styling. `steps` compiles to a `["step", ["get", "point_count"], ...]` expression for size/color that scales with cluster size. |
+| `count` | `{ color?, size? } \| false` | `{ color: "#ffffff", size: 12 }` | Count-label styling. `false` hides the label layer. |
+| `point` | `PointStyle \| false` | `{ color: "#4285F4", radius: 5, strokeColor: "#fff", strokeWidth: 1.5 }` | Unclustered-point styling. |
+| `onClusterPress` | `(cluster: Feature, leaves: () => Promise<Feature[]>) => void` | — | Fires on cluster tap. `leaves()` lazily queries the cluster's leaves -- it only runs the (potentially expensive) query if you call it. |
+| `onPointPress` | `(feature: Feature, event: MapFeaturePressEvent) => void` | — | Fires on an unclustered point tap. |
+| `expandOnPress` | `boolean` | `true` | Eases the camera to the cluster's expansion zoom on tap, using the source ref's `getClusterExpansionZoom` (present on both renderers). |
+| `beforeId` | `string` | — | Layer id to insert before. |
+| `clusterStyle` / `countStyle` / `pointStyle` | `Record<string, unknown>` | — | Raw style escape hatches, merged last. |
+| `children` | `ReactNode` | — | Extra raw layers against the same source. |
+
+`ClusterStep` is `{ at: number; color: string; radius: number }` -- an array of these compiles into the `["step", ...]` expression used for `cluster.color`/`cluster.radius` when you want cluster appearance to scale with `point_count`.
+
+## Example
+
+```tsx
+import { Map } from "@/components/ui/map";
+import { MapClusterLayer } from "@/components/ui/map-cluster-layer";
+
+export function ClusteringExample({ points }: { points: GeoJSON.FeatureCollection }) {
+  return (
+    <Map defaultViewport={{ center: [-98, 39], zoom: 3 }} className="flex-1">
+      <MapClusterLayer
+        data={points}
+        cluster={{
+          steps: [
+            { at: 0, color: "#4285F4", radius: 16 },
+            { at: 100, color: "#F4B400", radius: 22 },
+            { at: 750, color: "#DB4437", radius: 28 },
+          ],
+        }}
+        onClusterPress={(cluster, leaves) => {
+          leaves().then((features) => console.log(`${features.length} leaves`));
+        }}
+      />
+    </Map>
+  );
+}
+```
+
+### Live example
+
+<ExamplePreview slug="clustering" />
+
+## Renderer support
+
+`minPoints` (MapLibre's `clusterMinPoints`) has no Mapbox `ShapeSource` equivalent. It's accepted on both renderers for a uniform prop type but has no effect on Mapbox -- a tracked, documented capability gap, not a silent drop. `getClusterExpansionZoom`/`getClusterLeaves` are normalized across both renderers' native method signatures (MapLibre extracts `cluster_id` from feature properties internally; Mapbox passes the feature directly) so `onClusterPress`'s `leaves()` and `expandOnPress` behave identically either way.
+
+## Related components
+
+[GeoJSON](/docs/data/geojson) · [Heatmaps](/docs/data/heatmaps) · [Legend](/docs/data/legend)

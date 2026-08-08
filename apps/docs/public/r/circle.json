@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "dependencies": [],
+  "description": "An intent-based circle/radius primitive (search radius, delivery zone, geofence preview) using real-world units and a geodesically-accurate polygon, not a pixel-radius circle layer.",
+  "devDependencies": [],
+  "files": [
+    {
+      "content": "import { useId, useMemo } from \"react\";\nimport type { GeoJsonProperties } from \"geojson\";\nimport { circlePolygon, type DistanceUnit, toMeters } from \"@/lib/mapcn/geo\";\nimport { MapGeoJSON } from \"./map-geojson\";\nimport type { Coordinate, FillStyle, LineStyle, MapFeaturePressEvent } from \"@/lib/mapcn/types\";\n\nexport interface MapCircleProps {\n  id?: string;\n  center: Coordinate;\n  /** Real-world radius, in `units` (default meters). */\n  radius: number;\n  units?: DistanceUnit;\n  /** Polygon resolution. Default scales automatically with radius (see stepsForRadius). */\n  steps?: number;\n\n  fill?: FillStyle | false;\n  stroke?: LineStyle | false;\n  selected?: boolean;\n  selectedStyle?: { fill?: FillStyle; stroke?: LineStyle };\n  onPress?: (event: MapFeaturePressEvent) => void;\n\n  properties?: GeoJsonProperties;\n  beforeId?: string;\n}\n\nconst DEFAULT_FILL: FillStyle = { color: \"#4285F4\", opacity: 0.2 };\nconst DEFAULT_STROKE: LineStyle = { color: \"#4285F4\", width: 2 };\n\n/**\n * An intent-based circle/radius primitive for search radii, delivery\n * zones, geofence previews, accuracy circles, etc. (plan §7.8). Generates\n * a real geodesic polygon via `circlePolygon` rather than using a native\n * `circle` layer, whose radius is in screen pixels and doesn't represent a\n * true geographic distance -- it would look right at one zoom level and\n * wrong at every other.\n */\nexport function MapCircle({\n  id,\n  center,\n  radius,\n  units = \"meters\",\n  steps,\n  fill = DEFAULT_FILL,\n  stroke = DEFAULT_STROKE,\n  selected = false,\n  selectedStyle,\n  onPress,\n  properties,\n  beforeId,\n}: MapCircleProps) {\n  const autoId = useId();\n  const sourceId = id ?? `circle-${autoId}`;\n\n  const feature = useMemo(\n    () => circlePolygon(center, toMeters(radius, units), steps, properties),\n    // eslint-disable-next-line react-hooks/exhaustive-deps\n    [center[0], center[1], radius, units, steps, properties],\n  );\n\n  // A single-feature primitive doesn't need MapGeoJSON's selectedId/filter\n  // mechanism (that's for picking one feature out of many) -- selection\n  // here is just \"which style set applies\", resolved directly.\n  const resolvedFill = selected && selectedStyle?.fill ? selectedStyle.fill : fill;\n  const resolvedStroke = selected && selectedStyle?.stroke ? selectedStyle.stroke : stroke;\n\n  return (\n    <MapGeoJSON\n      id={sourceId}\n      data={feature}\n      point={false}\n      line={resolvedStroke}\n      fill={resolvedFill}\n      beforeId={beforeId}\n      onFeaturePress={onPress}\n    />\n  );\n}\n",
+      "path": "packages/shared/src/components/ui/map-circle.tsx",
+      "target": "components/ui/map-circle.tsx",
+      "type": "registry:ui"
+    }
+  ],
+  "name": "circle",
+  "registryDependencies": [
+    "core",
+    "map",
+    "geojson"
+  ],
+  "title": "Circle",
+  "type": "registry:ui"
+}

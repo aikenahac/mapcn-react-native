@@ -1,0 +1,21 @@
+{
+  "name": "registry",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Registry manifest, sync/check/api/docs tooling. Reads packages/shared and the two demo apps; writes into apps/demo-*/src and apps/docs/public/r.",
+  "type": "module",
+  "scripts": {
+    "sync": "tsx src/sync.ts",
+    "check": "tsx src/sync.ts --check",
+    "api": "tsx src/api.ts",
+    "docs": "tsx src/docs.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.6",
+    "typescript": "~5.9.2",
+    "vitest": "^3.0.0"
+  }
+}
