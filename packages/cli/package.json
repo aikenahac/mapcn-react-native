@@ -1,8 +1,8 @@
 {
   "name": "mapcn-rn",
-  "version": "0.1.1",
-  "description": "Tiny CLI wrapper for installing mapcn React Native components.",
-  "repository": "https://github.com/aikenahac/mapcn-rn",
+  "version": "2.0.0-alpha.0",
+  "description": "CLI for installing and managing mapcn-rn map components -- init, add, list, diff, doctor, provider, and migrate.",
+  "repository": "https://github.com/aikenahac/mapcn-react-native",
   "type": "module",
   "bin": {
     "mapcn-rn": "./dist/cli.js"
