@@ -82,7 +82,7 @@ export function Examples() {
         <ExampleCard
           label="Analytics"
           description="Layer location data without losing the map underneath."
-          href="/docs/markers"
+          href="/docs/core/markers"
           index="01 / Layers"
           className="lg:col-span-7 lg:row-span-2"
           screenshot="analytics.png"
@@ -90,7 +90,7 @@ export function Examples() {
         <ExampleCard
           label="Delivery"
           description="Routes, markers, and contextual stops in one surface."
-          href="/docs/routes"
+          href="/docs/data/routes"
           index="02 / Routes"
           className="lg:col-span-5 lg:row-span-2"
           screenshot="delivery.png"
@@ -98,7 +98,7 @@ export function Examples() {
         <ExampleCard
           label="Heatmap"
           description="Density visualization over incident data."
-          href="/docs/heatmaps"
+          href="/docs/data/heatmaps"
           index="03 / Density"
           className="lg:col-span-4 lg:row-span-2"
           screenshot="heatmap.png"
@@ -106,7 +106,7 @@ export function Examples() {
         <ExampleCard
           label="Point Clustering"
           description="Cluster thousands of points with native performance."
-          href="/docs/clustering"
+          href="/docs/data/clustering"
           index="04 / Scale"
           className="lg:col-span-4 lg:row-span-2"
           screenshot="clustering.png"
@@ -114,7 +114,7 @@ export function Examples() {
         <ExampleCard
           label="Service Area"
           description="Static geofence polygon with fill and stroke."
-          href="/docs/polygons"
+          href="/docs/data/polygons"
           index="05 / Geometry"
           className="lg:col-span-4 lg:row-span-2"
           screenshot="polygon.png"
@@ -122,7 +122,7 @@ export function Examples() {
         <ExampleCard
           label="EV Charging"
           description="Turn nearby places into clear, tappable choices."
-          href="/docs/popups"
+          href="/docs/core/popups"
           index="06 / Places"
           className="lg:col-span-6 lg:row-span-2"
           screenshot="ev-charging.png"
@@ -130,7 +130,7 @@ export function Examples() {
         <ExampleCard
           label="Locate Me"
           description="User location and camera controls that feel native."
-          href="/docs/controls"
+          href="/docs/core/controls"
           index="07 / Location"
           className="lg:col-span-6 lg:row-span-2"
           screenshot="locate-me.png"
@@ -153,7 +153,7 @@ export function Examples() {
             size="lg"
             className="h-12 shrink-0 rounded-full bg-background px-6 text-foreground shadow-xl ring-1 ring-background/20 hover:bg-background/90"
           >
-            <Link href="/docs/installation">
+            <Link href="/docs/getting-started/installation">
               Read the installation guide <ArrowUpRight className="size-4" />
             </Link>
           </Button>
