@@ -1,5 +1,5 @@
 import path from "node:path";
-import { cancel, confirm, groupMultiselect, intro, isCancel, log, note, outro, select, spinner } from "@clack/prompts";
+import { cancel, confirm, groupMultiselect, intro, isCancel, log, note, outro, select } from "@clack/prompts";
 import { detectProject, ProjectDetectionError } from "../core/detect-project.js";
 import { detectPackageManager, installCommand } from "../core/detect-package-manager.js";
 import { detectStyling } from "../core/detect-styling.js";
@@ -9,8 +9,8 @@ import { MAPCN_SCHEMA_VERSION, mapcnConfigPath, readMapcnConfig, writeMapcnConfi
 import { ensurePlugin, hasConflictingRendererPlugins, readAppJson, writeAppJson } from "../core/app-json.js";
 import { ensureEnvKeyPlaceholder } from "../core/env-file.js";
 import { fetchManifest } from "../core/registry-client.js";
-import { allComponentNames, componentsForRenderer, groupByCategory, MINIMAL_COMPONENTS, shortHint } from "../core/component-selection.js";
-import { runCommand } from "../utils/exec-command.js";
+import { groupByCategory, MINIMAL_COMPONENTS, selectableComponents, shortHint } from "../core/component-selection.js";
+import { runInstallCommand } from "../utils/exec-command.js";
 import { runAddCommand } from "./add.js";
 import type { MapcnConfig, ProviderId, RegistryManifest, Renderer } from "../types.js";
 
@@ -106,11 +106,11 @@ export async function runInitCommand(options: InitOptions): Promise<void> {
   writeMapcnConfig(projectRoot, config);
   log.success("Wrote mapcn.json");
 
-  const installSpinner = spinner();
-  installSpinner.start(`Installing ${provider.npmPackage}`);
-  const install = installCommand(packageManager, [`${provider.npmPackage}@${provider.npmVersionRange}`]);
-  await runCommand(install[0]!, install.slice(1), projectRoot);
-  installSpinner.stop(`Installed ${provider.npmPackage}`);
+  // No spinner here: the package manager inherits stdio and draws its own
+  // progress, which would fight a spinner for the same line.
+  log.step(`Installing ${provider.npmPackage}`);
+  await runInstallCommand(installCommand(packageManager, [`${provider.npmPackage}@${provider.npmVersionRange}`]), projectRoot);
+  log.success(`Installed ${provider.npmPackage}`);
 
   const appJson = readAppJson(projectRoot);
   if (appJson) {
@@ -174,10 +174,10 @@ async function selectComponents(options: InitOptions, renderer: Renderer): Promi
     return [];
   }
 
-  if (options.all) return allComponentNames(manifest, renderer);
-  if (options.yes) return MINIMAL_COMPONENTS;
+  const available = selectableComponents(manifest, renderer);
 
-  const available = componentsForRenderer(manifest, renderer);
+  if (options.all) return available.map((entry) => entry.name);
+  if (options.yes) return MINIMAL_COMPONENTS;
 
   const preset = await select({
     message: "What do you want to install?",

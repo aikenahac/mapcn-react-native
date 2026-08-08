@@ -8,12 +8,27 @@ import type { RegistryManifest, RegistryManifestEntry, Renderer } from "../types
 export const MINIMAL_COMPONENTS: Array<string> = ["map", "marker", "popup", "controls"];
 
 /**
+ * Components every other component depends on. They are always installed, so
+ * offering them as a choice is noise -- and confusing next to the `core`
+ * category that shares the name.
+ */
+export const IMPLICIT_COMPONENTS: Array<string> = ["core"];
+
+/**
  * Manifest entries installable with `renderer`. `fetchComponentItem` throws for
  * a component that has no variant for the active renderer, so anything that
  * expands to "everything" has to filter rather than pass every name blindly.
  */
 export function componentsForRenderer(manifest: RegistryManifest, renderer: Renderer): Array<RegistryManifestEntry> {
   return manifest.components.filter((entry) => entry.renderers === "any" || entry.renderers.includes(renderer));
+}
+
+/**
+ * What the picker offers: everything for the renderer, minus the implicit
+ * components that arrive as transitive dependencies regardless.
+ */
+export function selectableComponents(manifest: RegistryManifest, renderer: Renderer): Array<RegistryManifestEntry> {
+  return componentsForRenderer(manifest, renderer).filter((entry) => !IMPLICIT_COMPONENTS.includes(entry.name));
 }
 
 /** Every installable component name for `renderer` -- the expansion of `--all`. */

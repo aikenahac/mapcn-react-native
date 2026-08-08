@@ -14,7 +14,7 @@ import {
   readAppJson,
   writeAppJson,
 } from "../core/app-json.js";
-import { runCommand } from "../utils/exec-command.js";
+import { runInstallCommand } from "../utils/exec-command.js";
 import { runInitCommand } from "./init.js";
 import type { MapcnConfig, ProviderId, RegistryManifestEntry, Renderer } from "../types.js";
 
@@ -96,8 +96,8 @@ export async function runAddCommand(options: AddOptions): Promise<void> {
 
   if (npmDeps.size > 0) {
     const packageManager = detectPackageManager(projectRoot);
-    const install = installCommand(packageManager, [...npmDeps]);
-    await runCommand(install[0]!, install.slice(1), projectRoot);
+    log.step(`Installing ${[...npmDeps].join(", ")}`);
+    await runInstallCommand(installCommand(packageManager, [...npmDeps]), projectRoot);
   }
 
   if (anyConflict) {

@@ -5,6 +5,7 @@ import {
   groupByCategory,
   MINIMAL_COMPONENTS,
   parseComponentList,
+  selectableComponents,
   shortHint,
 } from "./component-selection.js";
 import type { RegistryManifest, RegistryManifestEntry, Renderer } from "../types.js";
@@ -43,6 +44,18 @@ describe("componentsForRenderer", () => {
   it("preserves manifest order", () => {
     const m = manifest([entry("c"), entry("a"), entry("b")]);
     expect(allComponentNames(m, "maplibre")).toEqual(["c", "a", "b"]);
+  });
+});
+
+describe("selectableComponents", () => {
+  it("hides core, which is always installed as a transitive dependency", () => {
+    const m = manifest([entry("core"), entry("map"), entry("legend", "data")]);
+    expect(selectableComponents(m, "maplibre").map((e) => e.name)).toEqual(["map", "legend"]);
+  });
+
+  it("still applies the renderer filter", () => {
+    const m = manifest([entry("core"), entry("puck", "location", ["mapbox"])]);
+    expect(selectableComponents(m, "maplibre")).toEqual([]);
   });
 });
 
