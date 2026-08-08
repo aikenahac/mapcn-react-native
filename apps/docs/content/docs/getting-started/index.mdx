@@ -21,17 +21,20 @@ That ownership has a tradeoff. Upgrades are source updates, not opaque package b
 
 ## When to use it
 
-Use mapcn-rn when you want a native vector map, a component API you can customize in your repository, and the option to choose between MapLibre and Mapbox without rewriting higher-level map features.
+Reach for mapcn-rn when:
+
+- **you want a real native vector map.** MapLibre and Mapbox render on the GPU through their native SDKs — smooth at 60fps, correct at 10k+ points, with the tile caching and gesture handling users expect from a map.
+- **you want to own the component, not rent it.** The source lands in your repo. Restyle a marker, change how a popup animates, or rewrite a layer's paint properties without waiting on a maintainer or fighting a prop API that doesn't expose what you need.
+- **you haven't committed to a provider.** Start on MapLibre with CARTO for free, no API key, no account. Move to MapTiler or Mapbox later with `mapcn-rn provider` — the components are re-installed underneath you, but the API your app calls stays the same.
+- **you want the hard parts already solved.** Clustering, heatmaps, choropleths with real scale functions, geodesically-accurate circles, GeoJSON sources, location tracking, and a style switcher — built on native layers and expressions rather than React Native views, so they stay fast at scale.
+- **you're building anything place-shaped:** store locators, delivery and driver tracking, real estate and travel browsing, fleet dashboards, run and ride tracking, coverage and territory maps.
 
 ## When not to use it
 
 It is probably not the right fit when:
 
-- you need maps to run in Expo Go; both native renderers require a custom development build;
-- you want a hosted, zero-code map rather than source files owned by your application;
-- you need background location tracking today—the v2 location component is foreground-only;
-- you need every renderer-specific feature to behave identically. mapcn-rn exposes capability differences instead of faking parity;
-- you are building for the web only. These components target React Native native map SDKs.
+- **you're building for the web.** These components target React Native's native map SDKs. Use [mapcn](https://mapcn.dev) instead — same idea, built for the web.
+- **you want a hosted, zero-code map** rather than source files owned by your application.
 
 ## Get started
 
