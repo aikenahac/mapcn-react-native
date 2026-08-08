@@ -15,20 +15,21 @@ Run the command from your Expo project root:
 
 <PackageManagerCodeBlock command="npx mapcn-rn init" />
 
-The interactive setup detects your package manager, `src` layout, aliases, and whether you use Uniwind, NativeWind, or neither. It then:
+This is the only command you need to get started. The interactive setup detects your package manager, `src` layout, aliases, and whether you use Uniwind, NativeWind, or neither. It then:
 
 1. asks for a renderer and compatible basemap provider;
-2. writes schema-version-2 `mapcn.json`;
-3. installs the renderer package;
-4. adds its Expo config plugin when `app.json` is available;
-5. adds a required public token placeholder to `.env.example`;
-6. installs the `map` component and its transitive `core` dependency.
+2. asks which components to install — **Minimal** (`map`, `marker`, `popup`, `controls`), **Everything**, or a grouped checkbox list;
+3. writes schema-version-2 `mapcn.json`;
+4. installs the renderer package;
+5. adds its Expo config plugin and the components' native permissions when `app.json` is available;
+6. adds a required public token placeholder to `.env.example`;
+7. installs the selected components and their transitive dependencies.
 
 For a non-interactive setup, provide the choices explicitly:
 
-<PackageManagerCodeBlock command="npx mapcn-rn init --renderer maplibre --provider maptiler --yes" />
+<PackageManagerCodeBlock command="npx mapcn-rn init --renderer maplibre --provider maptiler --all --yes" />
 
-Valid pairs are MapLibre with `carto`, `maptiler`, or `custom`, and Mapbox with `mapbox`.
+Valid pairs are MapLibre with `carto`, `maptiler`, or `custom`, and Mapbox with `mapbox`. With `--yes` and no explicit pair, `init` defaults to MapLibre with CARTO, which needs no API key.
 
 ## Provider setup
 
@@ -57,7 +58,7 @@ If the CLI can read `app.json`, it adds the selected renderer plugin to `expo.pl
 
 Use `@rnmapbox/maps` instead when the selected renderer is Mapbox.
 
-The base `map` component requests no location permissions. Components that use location—`location`, `location-puck`, and locate behavior—require foreground permissions:
+The base `map` component requests no location permissions. Components that use location—`location`, `location-puck`, and `controls`' locate behavior—require foreground permissions. `init` and `add` write these into `app.json` when they install such a component, without overwriting a usage description you already wrote. With a dynamic Expo config, add them yourself:
 
 ```json title="app.json"
 {
@@ -84,9 +85,15 @@ Then rebuild your development client for iOS or Android. A JavaScript-only reloa
 
 ## Add components
 
-Install one or more components by registry name. Transitive registry dependencies and npm dependencies are resolved automatically.
+If you chose Minimal at init, install the rest by registry name at any time. Transitive registry dependencies, npm dependencies, and native permissions are resolved automatically.
 
-<PackageManagerCodeBlock command="npx mapcn-rn add marker popup controls route" />
+<PackageManagerCodeBlock command="npx mapcn-rn add cluster heatmap route" />
+
+Or install everything the renderer supports:
+
+<PackageManagerCodeBlock command="npx mapcn-rn add --all" />
+
+Run `npx mapcn-rn list` to see every component and which are already installed.
 
 ## Verify the setup
 

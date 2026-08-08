@@ -11,19 +11,29 @@ the renderer (MapLibre or Mapbox) and basemap provider for you.
 
 ```bash
 npx mapcn-rn init
-npx mapcn-rn add map marker controls
 ```
 
-`init` detects your project (package manager, `src` layout, tsconfig aliases,
-uniwind/nativewind), installs the renderer package, wires the Expo config
-plugin, writes `mapcn.json`, and sets up the provider API key env var.
+That's the whole setup. `init` detects your project (package manager, `src`
+layout, tsconfig aliases, uniwind/nativewind), asks for a renderer and basemap
+provider, lets you pick components — Minimal, Everything, or a grouped checkbox
+list — then installs the renderer package, wires the Expo config plugin and
+native permissions, writes `mapcn.json`, and sets up the provider API key env
+var.
+
+Already have a project set up, or want everything at once:
+
+```bash
+npx mapcn-rn add --all
+```
+
+`add` runs `init` for you if the project has no `mapcn.json` yet.
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
-| `init` | Set up mapcn-rn in the current project. `--renderer maplibre\|mapbox`, `--provider maptiler\|carto\|custom\|mapbox`, `--yes` |
-| `add <component...>` | Install components and their dependencies. `--overwrite`, `--yes`, `--renderer` |
+| `init` | Set up mapcn-rn in the current project. `--renderer maplibre\|mapbox`, `--provider maptiler\|carto\|custom\|mapbox`, `--all`, `--components a,b`, `--yes` |
+| `add <component...>` | Install components and their dependencies. `--all` installs everything; `--overwrite`, `--yes`, `--renderer` |
 | `list` | List every registry component and show which are installed |
 | `diff [component]` | Compare installed files against the registry, showing local edits |
 | `doctor` | Check the project for config, dependency, permission, and env problems. `--json`, `--verbose` |
@@ -57,7 +67,9 @@ Switch later with `mapcn-rn provider mapbox`.
 ## Files it manages
 
 `mapcn.json` in your project root records the renderer, provider, styling
-system, aliases, and a hash per installed file. `diff` uses those hashes to
+system, aliases, and a hash per installed file. Installing a component also
+writes its declared Expo config plugins and native permissions into `app.json`,
+leaving any values you already set alone. `diff` uses those hashes to
 detect local edits, and `add` writes to a sidecar instead of overwriting a file
 you've changed unless you pass `--overwrite` (overwritten files are backed up
 under `.mapcn-backup/`).

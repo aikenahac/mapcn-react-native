@@ -57,6 +57,35 @@ export function ensureAndroidPermissions(config: ExpoConfig, permissions: Array<
   return changed;
 }
 
+/**
+ * Default copy for the iOS usage-description keys the registry declares. Apple
+ * rejects builds that use a capability without a description string, so an
+ * installed component needs a value here, not just the key.
+ */
+export const IOS_PERMISSION_DESCRIPTIONS: Record<string, string> = {
+  NSLocationWhenInUseUsageDescription: "Show your location on the map.",
+  NSLocationAlwaysAndWhenInUseUsageDescription: "Show your location on the map, including in the background.",
+};
+
+/**
+ * Adds iOS `infoPlist` usage descriptions for `keys` that aren't set yet.
+ * Never overwrites an existing description -- the user's wording wins, and
+ * App Review sees whatever they wrote. Mutates `config`.
+ */
+export function ensureInfoPlistEntries(config: ExpoConfig, keys: Array<string>): boolean {
+  if (keys.length === 0) return false;
+  config.expo ??= {};
+  config.expo.ios ??= {};
+  config.expo.ios.infoPlist ??= {};
+  let changed = false;
+  for (const key of keys) {
+    if (config.expo.ios.infoPlist[key] !== undefined) continue;
+    config.expo.ios.infoPlist[key] = IOS_PERMISSION_DESCRIPTIONS[key] ?? "Required by mapcn-rn.";
+    changed = true;
+  }
+  return changed;
+}
+
 /** Checks (without mutating) whether both renderer plugins are present -- the documented "cannot have both" conflict. */
 export function hasConflictingRendererPlugins(config: ExpoConfig): boolean {
   const names = new Set((config.expo?.plugins ?? []).map(pluginName));

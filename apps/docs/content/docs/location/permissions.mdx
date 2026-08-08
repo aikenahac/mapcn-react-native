@@ -11,7 +11,7 @@ The base `map` component requests no permissions at all. Location permissions ar
 - [`location`](/docs/location/location-tracking) (`useLocationTracking`/`useCurrentPosition`)
 - [`location-puck`](/docs/location/location-puck) (`MapLocationPuck`)
 
-Each of these registry components declares the same permissions, and `mapcn-rn init`/`add` write them into `app.json` automatically when it's readable.
+Each of these registry components declares the same permissions, and `mapcn-rn init`/`add` write them into `app.json` automatically when it's readable. An existing iOS usage description is never overwritten, so your own wording survives a re-install. With a dynamic Expo config, or no `app.json`, the CLI prints the strings to add instead.
 
 ## Required permission strings
 

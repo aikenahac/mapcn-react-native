@@ -8,12 +8,13 @@ import { runDoctorCommand } from "./commands/doctor.js";
 import { runProviderCommand } from "./commands/provider.js";
 import { runMigrateCommand } from "./commands/migrate.js";
 import { DEFAULT_REGISTRY_URL } from "./core/registry-client.js";
+import { parseComponentList } from "./core/component-selection.js";
 import type { ProviderId, Renderer } from "./types.js";
 
 const HELP_TEXT = `
 Usage:
-  mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom|mapbox] [--yes]
-  mapcn-rn add <component...> [--overwrite] [--yes] [--renderer maplibre|mapbox]
+  mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom|mapbox] [--all] [--components a,b] [--yes]
+  mapcn-rn add <component...> | --all [--overwrite] [--yes] [--renderer maplibre|mapbox]
   mapcn-rn list
   mapcn-rn diff [component]
   mapcn-rn doctor [--json] [--verbose]
@@ -22,8 +23,12 @@ Usage:
   mapcn-rn --help
 
 Options:
+  --all              Install every component available for the renderer
+  --components <a,b> Comma-separated component list for init (skips the picker)
   --registry <url>   Override the registry base URL (default: ${DEFAULT_REGISTRY_URL})
   -h, --help         Show this help message
+
+Running \`add\` in a project with no mapcn.json runs \`init\` first.
 `;
 
 async function main(): Promise<void> {
@@ -41,6 +46,8 @@ async function main(): Promise<void> {
       renderer: { type: "string" },
       provider: { type: "string" },
       overwrite: { type: "boolean" },
+      all: { type: "boolean" },
+      components: { type: "string" },
       yes: { type: "boolean", short: "y" },
       json: { type: "boolean" },
       verbose: { type: "boolean" },
@@ -63,20 +70,24 @@ async function main(): Promise<void> {
         registry,
         renderer: values.renderer as Renderer | undefined,
         provider: values.provider as ProviderId | undefined,
+        all: Boolean(values.all),
+        components: values.components ? parseComponentList(values.components as string) : undefined,
         yes: Boolean(values.yes),
       });
       return;
 
     case "add":
-      if (positionals.length === 0) {
-        throw new Error("Usage: mapcn-rn add <component...>");
+      if (positionals.length === 0 && !values.all) {
+        throw new Error("Usage: mapcn-rn add <component...>, or `mapcn-rn add --all` to install everything.");
       }
       await runAddCommand({
         components: positionals,
         projectRoot,
         registry,
         renderer: values.renderer as Renderer | undefined,
+        provider: values.provider as ProviderId | undefined,
         overwrite: Boolean(values.overwrite),
+        all: Boolean(values.all),
         yes: Boolean(values.yes),
       });
       return;

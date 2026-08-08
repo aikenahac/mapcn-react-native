@@ -5,26 +5,40 @@ description: Installs one or more registry components, resolving transitive depe
 
 ```bash
 npx mapcn-rn add <component...> [--overwrite] [--yes] [--renderer maplibre|mapbox]
+npx mapcn-rn add --all
 ```
 
 ## What it does
 
-1. Requires `mapcn.json` (run `init` first).
+1. Reads `mapcn.json`. If the project has none, `add` runs [init](/docs/cli/init) first, then continues with the components you asked for.
 2. Fetches the registry manifest and resolves every requested component's transitive `registryDependencies`, topologically sorted -- already-satisfied dependencies are skipped, and the resolved set is printed before anything is written.
 3. For each file:
    - **New file:** written directly.
    - **Unmodified since install:** upgraded silently if the registry version differs.
    - **Locally modified (or an untracked file already at that path):** never overwritten. The new version is written to a `<name>.new.tsx` sidecar instead, and the CLI prints a `diff` command to review it -- unless `--overwrite` is passed, in which case the original is snapshotted to `.mapcn-backup/<timestamp>/` first, then replaced.
 4. Installs any newly-required npm dependencies with the detected package manager.
-5. Updates `mapcn.json` with the installed component versions and file hashes.
+5. Writes the components' declared Expo config plugins and native permissions into `app.json` — see [Permissions](/docs/location/permissions).
+6. Updates `mapcn.json` with the installed component versions and file hashes.
+
+## Install everything
+
+<PackageManagerCodeBlock command="npx mapcn-rn add --all" />
+
+`--all` installs every component available for the renderer recorded in `mapcn.json`. Combined with the auto-init above, this is the one-command path from an empty Expo project to every map primitive installed and `doctor`-clean:
+
+<PackageManagerCodeBlock command="npx mapcn-rn add --all --yes" />
+
+With `--yes` and no existing config, setup is fully non-interactive and defaults to MapLibre with CARTO, which needs no API key. Pass `--renderer` / `--provider` to choose something else without prompts.
 
 ## Flags
 
 | Flag | Description |
 | --- | --- |
+| `--all` | Install every component available for the active renderer. The `<component...>` argument becomes optional. |
 | `--overwrite` | Allow overwriting locally-modified files (always backed up first). |
 | `--yes` / `-y` | Skip the install confirmation prompt. |
-| `--renderer <maplibre\|mapbox>` | Install the given renderer's variant instead of the one recorded in `mapcn.json`. |
+| `--renderer <maplibre\|mapbox>` | Install the given renderer's variant instead of the one recorded in `mapcn.json`. Also used when `add` has to run `init` first. |
+| `--provider <maptiler\|carto\|custom\|mapbox>` | Only used when `add` has to run `init` first. |
 | `--registry <url>` | Override the registry base URL. |
 
 ## Example

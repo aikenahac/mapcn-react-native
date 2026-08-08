@@ -114,6 +114,7 @@ export async function runMigrateCommand(options: MigrateOptions): Promise<void> 
       renderer,
       overwrite: false,
       yes: true,
+      skipInitCheck: true,
     });
     log.success("Installed v2 components");
   } catch (error) {

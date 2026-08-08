@@ -4,8 +4,8 @@ description: All seven mapcn-rn commands and their flags, in one place.
 ---
 
 ```text
-mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom|mapbox] [--yes]
-mapcn-rn add <component...> [--overwrite] [--yes] [--renderer maplibre|mapbox]
+mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom|mapbox] [--all] [--components a,b] [--yes]
+mapcn-rn add <component...> | --all [--overwrite] [--yes] [--renderer maplibre|mapbox]
 mapcn-rn list
 mapcn-rn diff [component]
 mapcn-rn doctor [--json] [--verbose]
@@ -16,8 +16,8 @@ mapcn-rn --help
 
 | Command | Purpose | Detail page |
 | --- | --- | --- |
-| `init` | Set up renderer, provider, `mapcn.json`, native config, and the base `map` component. | [init](/docs/cli/init) |
-| `add` | Install one or more registry components, resolving dependencies. | [add](/docs/cli/add) |
+| `init` | Set up renderer, provider, `mapcn.json`, native config, and the components you pick. | [init](/docs/cli/init) |
+| `add` | Install one or more registry components (or `--all`), resolving dependencies. Runs `init` first if the project has none. | [add](/docs/cli/add) |
 | `list` | Show every registry component and what's installed. | [list & diff](/docs/cli/list-and-diff) |
 | `diff` | Compare installed files against their recorded hashes. | [list & diff](/docs/cli/list-and-diff) |
 | `doctor` | Run 14 non-mutating project health checks. | [doctor](/docs/cli/doctor) |

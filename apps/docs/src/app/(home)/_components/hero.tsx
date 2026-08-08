@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { type PointerEvent, useState } from "react";
 
-const installCommand = "npx mapcn-rn add";
+const installCommand = "npx mapcn-rn init";
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);

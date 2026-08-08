@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { ensureAndroidPermissions, ensurePlugin, hasConflictingRendererPlugins, removePlugin, type ExpoConfig } from "./app-json.js";
+import {
+  ensureAndroidPermissions,
+  ensureInfoPlistEntries,
+  ensurePlugin,
+  hasConflictingRendererPlugins,
+  IOS_PERMISSION_DESCRIPTIONS,
+  removePlugin,
+  type ExpoConfig,
+} from "./app-json.js";
 
 describe("ensurePlugin", () => {
   it("adds a plugin that isn't present", () => {
@@ -55,5 +63,36 @@ describe("ensureAndroidPermissions", () => {
   it("returns false for an empty permissions list", () => {
     const config: ExpoConfig = { expo: {} };
     expect(ensureAndroidPermissions(config, [])).toBe(false);
+  });
+});
+
+describe("ensureInfoPlistEntries", () => {
+  it("adds a default usage description for a missing key", () => {
+    const config: ExpoConfig = { expo: {} };
+    expect(ensureInfoPlistEntries(config, ["NSLocationWhenInUseUsageDescription"])).toBe(true);
+    expect(config.expo?.ios?.infoPlist?.NSLocationWhenInUseUsageDescription).toBe(
+      IOS_PERMISSION_DESCRIPTIONS.NSLocationWhenInUseUsageDescription,
+    );
+  });
+
+  it("never overwrites a description the user already wrote", () => {
+    const config: ExpoConfig = {
+      expo: { ios: { infoPlist: { NSLocationWhenInUseUsageDescription: "We use your location to find nearby stores." } } },
+    };
+    expect(ensureInfoPlistEntries(config, ["NSLocationWhenInUseUsageDescription"])).toBe(false);
+    expect(config.expo?.ios?.infoPlist?.NSLocationWhenInUseUsageDescription).toBe(
+      "We use your location to find nearby stores.",
+    );
+  });
+
+  it("falls back to a generic description for an unknown key", () => {
+    const config: ExpoConfig = { expo: {} };
+    expect(ensureInfoPlistEntries(config, ["NSSomeFutureUsageDescription"])).toBe(true);
+    expect(config.expo?.ios?.infoPlist?.NSSomeFutureUsageDescription).toBe("Required by mapcn-rn.");
+  });
+
+  it("returns false for an empty key list", () => {
+    const config: ExpoConfig = { expo: {} };
+    expect(ensureInfoPlistEntries(config, [])).toBe(false);
   });
 });

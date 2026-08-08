@@ -4,19 +4,38 @@ description: Sets up a fresh project -- renderer, basemap provider, mapcn.json, 
 ---
 
 ```bash
-npx mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom|mapbox] [--yes]
+npx mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom|mapbox] [--all] [--components a,b] [--yes]
 ```
+
+`init` is the entrypoint: it configures the project and installs the components you pick, in one pass.
 
 ## What it does
 
 1. Detects the project (Expo vs. bare RN, `src` layout) and warns if `expo` isn't a dependency.
 2. Prompts for a renderer, then a compatible basemap provider (skipped for Mapbox, which has no separate provider prompt), unless `--renderer`/`--provider` are passed.
 3. Detects the package manager (lockfile-based), styling system (Uniwind/NativeWind/none), and path aliases (`components.json` if present, otherwise mapcn's defaults).
-4. Writes `mapcn.json` (schema version 2).
-5. Installs the renderer's npm package with the detected package manager.
-6. Adds the renderer's Expo config plugin to `app.json`, if readable, and warns if both `@maplibre/maplibre-react-native` and `@rnmapbox/maps` end up listed (they cannot coexist in one Expo app).
-7. Scaffolds a placeholder for the provider's required public env key in `.env.example`, if the provider needs one.
-8. Installs the `map` component (and its `core` dependency) via the same logic as `add`.
+4. Asks which components to install (see below).
+5. Writes `mapcn.json` (schema version 2).
+6. Installs the renderer's npm package with the detected package manager.
+7. Adds the renderer's Expo config plugin to `app.json`, if readable, and warns if both `@maplibre/maplibre-react-native` and `@rnmapbox/maps` end up listed (they cannot coexist in one Expo app).
+8. Scaffolds a placeholder for the provider's required public env key in `.env.example`, if the provider needs one.
+9. Installs the selected components and their transitive dependencies via the same logic as `add`, including their native permissions.
+
+## Choosing components
+
+After the renderer and provider, `init` offers three options:
+
+| Option | Installs |
+| --- | --- |
+| **Minimal** | `map`, `marker`, `popup`, `controls` — enough for a map with pins you can tap |
+| **Everything** | every component available for the renderer |
+| **Let me choose** | a checkbox list grouped by category; selecting a category row toggles the whole group |
+
+`core` is never listed: it is a transitive dependency of everything and is always installed.
+
+To skip the picker, pass the choice up front:
+
+<PackageManagerCodeBlock command="npx mapcn-rn init --components map,cluster,legend" />
 
 ## Flags
 
@@ -24,14 +43,18 @@ npx mapcn-rn init [--renderer maplibre|mapbox] [--provider maptiler|carto|custom
 | --- | --- |
 | `--renderer <maplibre\|mapbox>` | Skip the renderer prompt. |
 | `--provider <maptiler\|carto\|custom\|mapbox>` | Skip the provider prompt. |
-| `--yes` / `-y` | Skip all confirmation prompts. |
+| `--all` | Install every component available for the renderer, skipping the picker. |
+| `--components <a,b,c>` | Install exactly these components, skipping the picker. Takes precedence over `--all`. |
+| `--yes` / `-y` | Skip every prompt. Defaults to MapLibre with CARTO and the Minimal component set unless `--renderer` / `--provider` / `--all` / `--components` say otherwise. |
 | `--registry <url>` | Override the registry base URL (default `https://mapcn-rn.dev/r`). Point this at a local directory or `file://` path for local development. |
 
 If `mapcn.json` already exists, `init` asks for confirmation before re-running (skipped with `--yes`).
 
 ## Example
 
-<PackageManagerCodeBlock command="npx mapcn-rn init --renderer maplibre --provider maptiler --yes" />
+Fully non-interactive, with every component:
+
+<PackageManagerCodeBlock command="npx mapcn-rn init --renderer maplibre --provider maptiler --all --yes" />
 
 ## Related
 
