@@ -6,7 +6,11 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "environment": "development",
+      "env": {
+        "NODE_ENV": "development"
+      }
     },
     "ios-simulator": {
       "extends": "development",
@@ -16,14 +20,16 @@
     },
     "preview": {
       "distribution": "internal",
+      "environment": "preview",
       "env": {
-        "EXPO_PUBLIC_MAPBOX_API_KEY": "@EXPO_PUBLIC_MAPBOX_API_KEY"
+        "NODE_ENV": "production"
       }
     },
     "production": {
       "autoIncrement": true,
+      "environment": "production",
       "env": {
-        "EXPO_PUBLIC_MAPBOX_API_KEY": "@EXPO_PUBLIC_MAPBOX_API_KEY"
+        "NODE_ENV": "production"
       }
     }
   },

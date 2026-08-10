@@ -2,6 +2,7 @@
 
 const inquirer = require('inquirer').default;
 const { spawn } = require('node:child_process');
+const { delimiter, dirname } = require('node:path');
 
 const RED_COLOR_TEXT = '\x1b[31m%s\x1b[0m';
 const GREEN_COLOR_TEXT = '\x1b[36m%s\x1b[0m';
@@ -41,17 +42,14 @@ async function main() {
     },
   ]);
 
-  const command = [
-    'eas build',
-    `--platform ${platform}`,
-    `--profile ${buildProfile}`,
-    service === 'local' ? '--local' : null,
-    service === 'local' ? `--output ${createBuildName({ platform, profile: buildProfile })}` : null,
-  ]
-    .filter((a) => a)
-    .join(' ');
+  const args = ['build', '--platform', platform, '--profile', buildProfile];
 
-  console.log(ORANGE_COLOR_TEXT, `Running command: ${command}`);
+  if (service === 'local') {
+    args.push('--local', '--output', createBuildName({ platform, profile: buildProfile }));
+  }
+
+  const easCommand = process.platform === 'win32' ? 'eas.cmd' : 'eas';
+  console.log(ORANGE_COLOR_TEXT, `Running command: ${easCommand} ${args.join(' ')}`);
 
   const { confirm } = await inquirer.prompt({
     name: 'confirm',
@@ -65,8 +63,10 @@ async function main() {
     return;
   }
 
-  const [cmd, ...args] = command.split(' ');
-  const child = spawn(cmd, args, { stdio: 'inherit', shell: true });
+  const child = spawn(easCommand, args, {
+    stdio: 'inherit',
+    env: createBuildEnvironment({ platform, service }),
+  });
   await new Promise((resolve, reject) => {
     child.on('close', (code) => {
       if (code === 0) {
@@ -91,9 +91,22 @@ function createBuildName({ platform, profile }) {
     extension = 'tar.gz'; // iOS Simulator builds are packaged as tar.gz
   }
 
-  if (profile === "production" && platform === "android") {
-    extension = 'aab'
+  if (profile === 'production' && platform === 'android') {
+    extension = 'aab';
   }
 
   return `./builds/${profile}-${appConfig.expo.slug}.${extension}`;
+}
+
+function createBuildEnvironment({ platform, service }) {
+  const env = { ...process.env };
+
+  if (platform !== 'android' || service !== 'local') {
+    return env;
+  }
+
+  env.PATH = [dirname(process.execPath), env.PATH].filter(Boolean).join(delimiter);
+  env.GRADLE_OPTS = [env.GRADLE_OPTS, '-Dorg.gradle.daemon=false'].filter(Boolean).join(' ');
+
+  return env;
 }

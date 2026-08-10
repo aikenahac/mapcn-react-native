@@ -13,11 +13,8 @@
       "bundleIdentifier": "si.aiken.mapcnrn-mapbox",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
-        },
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show you on the map.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to your location to show you on the map."
+        "NSMotionUsageDescription": "This app uses motion data to improve heading-aware location features on the map."
       }
     },
     "android": {
@@ -35,8 +32,13 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "This app needs access to your location to show you on the map.",
-          "locationWhenInUsePermission": "This app needs access to your location to show you on the map."
+          "locationAlwaysAndWhenInUsePermission": false,
+          "locationAlwaysPermission": false,
+          "locationWhenInUsePermission": "This app needs access to your location to show you on the map.",
+          "motionUsagePermission": "This app uses motion data to improve heading-aware location features on the map.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false,
+          "isAndroidForegroundServiceEnabled": false
         }
       ],
       [

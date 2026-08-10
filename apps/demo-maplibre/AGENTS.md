@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React Native mobile application built with Expo SDK 55, using file-based routing via Expo Router. The app features MapLibre-based map integration with location services and uses Uniwind (Tailwind CSS v4) for styling.
+This is a React Native mobile application built with Expo SDK 57, using file-based routing via Expo Router. The app features MapLibre-based map integration with location services and uses Uniwind (Tailwind CSS v4) for styling.
 
 ## Development Commands
 
@@ -20,7 +20,7 @@ npm run web            # Open in web browser
 ```bash
 npm run build          # Custom build script
 npm run lint           # Run ESLint
-npx expo prebuild --clean   # Regenerate native projects on demand for local native validation
+npx expo config --type public   # Inspect the resolved Expo configuration
 ```
 
 ### EAS Build Profiles (see eas.json)
@@ -28,7 +28,7 @@ npx expo prebuild --clean   # Regenerate native projects on demand for local nat
 eas build --profile development          # Development build
 eas build --profile ios-simulator        # iOS simulator build
 eas build --profile preview              # Preview/internal distribution
-eas build --profile production           # Production build (auto-increment version, APK for Android)
+eas build --profile production           # Production build (auto-increment version, AAB for Android)
 ```
 
 ## Architecture
@@ -65,14 +65,15 @@ eas build --profile production           # Production build (auto-increment vers
 - Strict mode enabled
 - Includes Uniwind types via `uniwind-env.d.ts`
 
-### Native Configuration (app.json)
-- **React Native New Architecture**: Enabled by default in Expo SDK 55
+### Native Configuration (app.json + committed native projects)
+- **React Native New Architecture**: Enabled by default in Expo SDK 57
 - **iOS**:
-  - `NSAppTransportSecurity.NSAllowsArbitraryLoads: true` - Required for map tile loading
-  - Location permission descriptions configured
+  - Foreground location and motion purpose strings are configured
+  - Background/always location access is intentionally disabled
 - **Android**:
   - Location permissions: `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`
 - **Plugins**: expo-router, expo-location, expo-splash-screen
+- **Workflow**: `ios/` and `android/` are committed and used directly by EAS; native settings in `app.json` are not applied automatically
 
 ## Important Patterns
 
@@ -82,11 +83,7 @@ eas build --profile production           # Production build (auto-increment vers
 3. Call hooks like `useCurrentPosition()` unconditionally (not inside conditionals)
 
 ### Rebuilding After Config Changes
-This repo uses Continuous Native Generation, so `ios/` and `android/` are generated only when needed. After modifying `app.json` (permissions, plugins, native settings):
-```bash
-npx expo prebuild --clean
-npx expo run:ios    # or run:android
-```
+This app intentionally uses Expo's bare/generic workflow with committed `ios/` and `android/` directories. When changing permissions, identifiers, plugins, or other native settings, mirror the change in both `app.json` and the committed native project. Do not run `expo prebuild --clean` over the committed projects without reviewing every generated native change. The Expo Doctor app-config synchronization check is disabled for this app because that workflow is intentional.
 
 ### Map Styling
 - Map component automatically switches between light/dark themes based on system color scheme

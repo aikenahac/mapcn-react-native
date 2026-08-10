@@ -4,7 +4,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Project Overview
 
-This is a React Native mobile application built with Expo SDK 55, using file-based routing via Expo Router. The app features Mapbox-based map integration (`@rnmapbox/maps`) with location services and uses Uniwind (Tailwind CSS v4) for styling. This is a demo/example app showcasing the mapcn React Native map component library for Mapbox.
+This is a React Native mobile application built with Expo SDK 57, using file-based routing via Expo Router. The app features Mapbox-based map integration (`@rnmapbox/maps`) with location services and uses Uniwind (Tailwind CSS v4) for styling. This is a demo/example app showcasing the mapcn React Native map component library for Mapbox.
 
 ## Development Commands
 
@@ -28,7 +28,7 @@ npx expo prebuild --clean   # Regenerate native projects (after app.json changes
 eas build --profile development          # Development build
 eas build --profile ios-simulator        # iOS simulator build
 eas build --profile preview              # Preview/internal distribution
-eas build --profile production           # Production build (auto-increment version, APK for Android)
+eas build --profile production           # Production build (auto-increment version, AAB for Android)
 ```
 
 ## Architecture
@@ -47,9 +47,9 @@ eas build --profile production           # Production build (auto-increment vers
   - Use `className` prop for styling components
 
 ### Map Integration (@rnmapbox/maps)
-- **Mapbox Setup**: Requires `EXPO_PUBLIC_MAPBOX_API_KEY` environment variable
+- **Mapbox Setup**: Requires `EXPO_PUBLIC_MAPBOX_TOKEN` environment variable
   - Get free token at: https://account.mapbox.com/access-tokens/
-  - Add to `.env` file as `EXPO_PUBLIC_MAPBOX_API_KEY=your_token_here`
+  - Add to `.env` file as `EXPO_PUBLIC_MAPBOX_TOKEN=your_token_here`
 
 - **Custom Map Component**: `src/components/ui/map.tsx` provides React-friendly wrapper around Mapbox
   - `<Map>`: Main container with theme-aware styles (Mapbox Dark/Street styles by default)
@@ -73,8 +73,8 @@ eas build --profile production           # Production build (auto-increment vers
 ### Native Configuration (app.json)
 - **React Native New Architecture**: Enabled (`newArchEnabled: true`)
 - **iOS**:
-  - `NSAppTransportSecurity.NSAllowsArbitraryLoads: true` - Required for map tile loading
-  - Location permission descriptions configured
+  - Foreground location and motion purpose strings are configured
+  - Background/always location access is intentionally disabled
 - **Android**:
   - Location permissions: `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`
 - **Plugins**: expo-router, expo-location, expo-splash-screen, @rnmapbox/maps
@@ -111,7 +111,7 @@ npx expo run:ios    # or run:android
 ### Environment Variables
 Required environment variables (create `.env` file in project root):
 ```bash
-EXPO_PUBLIC_MAPBOX_API_KEY=your_mapbox_token_here
+EXPO_PUBLIC_MAPBOX_TOKEN=your_mapbox_token_here
 ```
 
 ## Map Component API
