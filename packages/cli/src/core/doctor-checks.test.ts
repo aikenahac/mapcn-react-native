@@ -41,6 +41,18 @@ describe("runDoctorChecks", () => {
     expect(pmCheck?.message).toContain("pnpm");
   });
 
+  it("detects a workspace package manager from a nested app", async () => {
+    const appDir = path.join(dir, "apps", "demo");
+    fs.mkdirSync(appDir, { recursive: true });
+    fs.writeFileSync(path.join(appDir, "package.json"), JSON.stringify({ dependencies: { expo: "1.0.0" } }));
+    fs.writeFileSync(path.join(dir, "pnpm-lock.yaml"), "");
+
+    const checks = await runDoctorChecks(appDir);
+    const pmCheck = checks.find((c) => c.id === "package-manager");
+    expect(pmCheck?.level).toBe("ok");
+    expect(pmCheck?.message).toContain("pnpm");
+  });
+
   it("warns when no lockfile is present", async () => {
     fs.writeFileSync(path.join(dir, "package.json"), JSON.stringify({ dependencies: { expo: "1.0.0" } }));
     const checks = await runDoctorChecks(dir);

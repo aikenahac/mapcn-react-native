@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { detectProject, ProjectDetectionError } from "./detect-project.js";
-import { detectPackageManager } from "./detect-package-manager.js";
+import { detectPackageManager, hasPackageManagerLockfile } from "./detect-package-manager.js";
 import { readMapcnConfig } from "./mapcn-config.js";
 import { PROVIDERS } from "./providers.js";
 import { readAppJson } from "./app-json.js";
@@ -47,8 +47,7 @@ export async function runDoctorChecks(projectRoot: string, manifest?: RegistryMa
   // 2. Package manager detected
   try {
     const packageManager = detectPackageManager(projectRoot);
-    const lockfiles = ["pnpm-lock.yaml", "bun.lock", "bun.lockb", "yarn.lock", "package-lock.json"];
-    const hasLockfile = lockfiles.some((f) => fs.existsSync(path.join(projectRoot, f)));
+    const hasLockfile = hasPackageManagerLockfile(projectRoot);
     if (hasLockfile) {
       checks.push({ id: "package-manager", level: "ok", message: `Package manager: ${packageManager}` });
     } else {

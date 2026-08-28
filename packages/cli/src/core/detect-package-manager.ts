@@ -10,19 +10,50 @@ const LOCKFILES: Array<[string, PackageManager]> = [
   ["package-lock.json", "npm"],
 ];
 
-/** Detects the package manager from the nearest lockfile -- never assumed, matches feedback recorded from the v1 CLI. */
-export function detectPackageManager(projectRoot: string): PackageManager {
-  for (const [lockfile, manager] of LOCKFILES) {
-    if (fs.existsSync(path.join(projectRoot, lockfile))) return manager;
+function parentDirectories(projectRoot: string): Array<string> {
+  const directories: Array<string> = [];
+  let directory = path.resolve(projectRoot);
+
+  while (true) {
+    directories.push(directory);
+    const parent = path.dirname(directory);
+    if (parent === directory) return directories;
+    directory = parent;
   }
-  const packageJsonPath = path.join(projectRoot, "package.json");
-  if (fs.existsSync(packageJsonPath)) {
-    const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as { packageManager?: string };
-    if (pkg.packageManager) {
-      const name = pkg.packageManager.split("@")[0];
-      if (name === "pnpm" || name === "yarn" || name === "bun" || name === "npm") return name;
+}
+
+export function hasPackageManagerLockfile(projectRoot: string): boolean {
+  return parentDirectories(projectRoot).some((directory) =>
+    LOCKFILES.some(([lockfile]) => fs.existsSync(path.join(directory, lockfile))),
+  );
+}
+
+/**
+ * Detects the package manager from the nearest lockfile or packageManager
+ * declaration. Walking ancestors is important for apps inside a monorepo,
+ * where those files normally live at the workspace root.
+ */
+export function detectPackageManager(projectRoot: string): PackageManager {
+  for (const directory of parentDirectories(projectRoot)) {
+    for (const [lockfile, manager] of LOCKFILES) {
+      if (fs.existsSync(path.join(directory, lockfile))) return manager;
+    }
+
+    const packageJsonPath = path.join(directory, "package.json");
+    if (fs.existsSync(packageJsonPath)) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as { packageManager?: string };
+        if (pkg.packageManager) {
+          const name = pkg.packageManager.split("@")[0];
+          if (name === "pnpm" || name === "yarn" || name === "bun" || name === "npm") return name;
+        }
+      } catch {
+        // Project validation reports malformed package.json separately. Keep
+        // looking for a package-manager marker at the workspace root.
+      }
     }
   }
+
   return "npm";
 }
 
